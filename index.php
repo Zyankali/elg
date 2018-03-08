@@ -58,7 +58,7 @@ die('keine Verbindung möglich: ' . mysqli_error());
          <p align="center">N/A</p>
          <p>LoL</p>
          <p align="center">N/A</p>
-         <p>WoWers</p>
+         <p>WoW</p>
          <p align="center">N/A</p>
          </div>
     </div>
