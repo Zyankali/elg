@@ -1,12 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 
 <meta charset="UTF-8">
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="shortcut icon" type="image/x-icon" href="http://46.5.246.249/favicon.ico">
-<link rel="icon" type="image/png" href="http://46.5.246.249/favicon.png" sizes="48x48">
+<link rel="shortcut icon" type="image/x-icon" href="http://127.0.0.1/favicon.ico">
+<link rel="icon" type="image/png" href="http://127.0.0.1/favicon.png" sizes="48x48">
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <title>Eiserne Legenden</title>
 </head>
@@ -18,16 +17,34 @@
 <!--Main-->
 <main>
 
-
-
 <header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
+<?php
+
+// Verbindung zur Datenbank herstellen
+if (file_exists("inc/connect.inc.php"))
+	
+	{
+		
+require_once ('inc/connect.inc.php');
+
+	}
+
+else
+
+	{
+
+die('keine Verbindung m�glich: ' . mysqli_error());
+
+	}
+
+?>
 
 <nav> <a title="Hauptseite" href="index.php?page=index">START</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum">Forum</a> | <a title="Forum" href="index.php?page=claninfo">ClanInfo</a> | <a title="login" href="index.php?page=login">LogIN</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> </nav>
 
 <div class="row">
   <div class="spalte side"> <!--Linke Spalte-->
          <div class="sidespacer"><h2>KurzInfo</h2>
-         <p>Kurz Infos zu allem M&ouml;glichem. Wie GT Gr&uuml;&szlig;e, Neuzug&auml;nge, etc.</p>
+         <p>Kurz Infos zu allem Möglichem. Wie GT Größ, Neuzugänge, etc.</p>
          <h2>Events</h2>
          <p>Rust</p>
          <p align="center">N/A</p>
@@ -41,7 +58,7 @@
          <p align="center">N/A</p>
          <p>LoL</p>
          <p align="center">N/A</p>
-         <p>WoW</p>
+         <p>WoWers</p>
          <p align="center">N/A</p>
          </div>
     </div>
@@ -64,22 +81,46 @@ if (!isset($page))
   if ($_GET['page'] == "index")
 
   {
-  ?>
+  
 
-  <article>
-  <div class="titel">
-  #:1 <img src="img/author.png" alt="" border="0" width="11" height="11"> Zyankali <img src="img/clock.png" alt="" border="0" width="11" height="11"> 01:57:25 <img src="img/calendar.png" alt="" border="0" width="11" height="11"> 07-03-2018<br>
-  <b id="titel">Eintragstitel von Irgendwas</b></div>
-  <div class="inhalt">Inhalt<br>
-  Tags: Standart oder eigene<br>
-  Sticky : FALSE<br>
-  </div>
-  <wbr></wbr>
-  </article>
+  //Inhalt aus der DB von Main ausgeben
+	$sql = "SELECT * FROM main ORDER BY ID DESC";
+	$result = mysqli_query($db_link, $sql);
+	
+	if (mysqli_num_rows($result) > 0) {
+    // output data of each row
+    while($row = mysqli_fetch_assoc($result)) {
+        echo "<article>
+		<div class=\"titel\"> #:" . $row["ID"]. 
+		" <img src=\"img/author.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Author"]. 
+		" <img src=\"img/clock.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Uhrzeit"]. 
+		" <img src=\"img/calendar.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Datum"]. 
+		" <br> <b id=\"titel\"> " . $row["Titel"]. 
+		" </b></div>
+		<div class=\"inhalt\"> " . $row["Inhalt"]. 
+		"<br>" . $row["Tags"]. 
+		"<br>" . $row["Sticky"]. 
+		"<br>
+		</div>
+		<wbr></wbr>
+		</article>";
+    }
+} else {
+    echo "Keine Ausgabe, da Datenbank leer ist";
+}
 
+mysqli_close($db_link);
+
+
+?>
+
+
+  <!-- !!Vorlage!!
     <article>
   <div class="titel">
-  #:1 <img src="img/author.png" alt="" border="0" width="11" height="11"> Zyankali <img src="img/clock.png" alt="" border="0" width="11" height="11"> 01:57:25 <img src="img/calendar.png" alt="" border="0" width="11" height="11"> 07-03-2018<br>
+  #:1 <img src="img/author.png" alt="" border="0" width="11" height="11"> Zyankali 
+  <img src="img/clock.png" alt="" border="0" width="11" height="11"> 01:57:25 
+  <img src="img/calendar.png" alt="" border="0" width="11" height="11"> 07-03-2018<br>
   <b id="titel">Eintragstitel von Irgendwas</b></div>
   <div class="inhalt">Inhalt<br>
   Tags: Standart oder eigene<br>
@@ -87,6 +128,8 @@ if (!isset($page))
   </div>
   <wbr></wbr>
   </article>
+
+  !!Vorlage ENDE!! -->
 
    <?php
 
@@ -201,7 +244,7 @@ Impressme
 
 <footer>Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>
-&copy;2013 - <?php echo date("Y");?>
+©2013 - <?php echo date("Y");?>
 
 </footer>
 
