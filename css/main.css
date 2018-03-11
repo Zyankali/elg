@@ -26,19 +26,60 @@ nav {
          margin: auto;
          padding: 5px 5px 5px 5px;
          background-color: #ff751a;
-         color: white;
+         color: #cc3300;
          font-style: normal;
          font-weight: bold;
          font-family: "Arial Verdana", Arial, Sans-serif;
-         font-size: 16px
+         font-size: 16px;
+		 text-shadow: 0 0 3px #cc0000;
+		 
 
 }
 
-nav.a {
+.navi 
 
-color: black;
+{
+	
+	color: #cc3300;
+    transition-duration: 0.3s;
+	text-shadow: 0 0 3px #ff751a;
+    cursor: pointer;	
+	
+}
+
+.navi1:link {
+
+text-decoration: none;
+color: #1a0600;
+text-shadow: 0 0 3px #cc0000;
+
 
 }
+
+.navi1:visited {
+	text-decoration: none;
+	color: #1a0600;
+	text-shadow: 0 0 3px #cc0000;
+
+
+
+	}
+	
+.navi1:hover {
+    text-decoration: none;
+	color: #cc3300;
+	text-shadow: 0 0 3px #cc0000;
+
+
+	}
+	
+.navi1:active {
+	text-decoration: none;
+	color: #cc3300;
+	text-shadow: 0 0 3px #cc0000;
+	
+	}
+	
 
 main {
 
@@ -69,7 +110,7 @@ height: 5px;
          padding: 15px;
 }
 
-/* Linke and rechte Spalte */
+/* Linke und rechte Spalte */
 .spalte.side {
     width: 200px;
     color: white;
@@ -94,13 +135,12 @@ height: 5px;
 height: auto;
 width: auto;
 padding: 5px ;
+
 border-radius: 5px 5px 0px 0px;
 color: white;
+box-shadow: 5px 5px 5px #1a1a1a;
 font-size: 12px;
 background-color: #FF3F00;
-
-background-repeat: repeat;
-background-position: left top;
 
 }
 
@@ -119,6 +159,7 @@ padding: 5px ;
 border-radius: 0px 0px 5px 5px;
 color: black;
 background-color: white;
+box-shadow: inset 0px 5px 2px #8c8c8c;
 
 }
 
@@ -138,10 +179,65 @@ background-color: white;
 }
 
 
+.button
+
+{
+	text-decoration: none;
+	border: 0px;
+	height: 40px;
+	width: auto;
+	padding: 10px ;
+	background-color: white;
+	border-radius: 5px 5px 5px 5px;	
+	color: black;
+	font-style: normal;
+    font-family: "Arial Verdana", Arial, Sans-serif;
+    font-size: 16px;
+	box-shadow: 0px 0px 0px #cc0000;
+	text-shadow: 0px 0px 0px #cc0000;
+	transition-duration: 0.3s;
+    cursor: pointer;
+		
+}
+
+.button1:link
+{
+	
+
+	box-shadow: 0px 0px 0px #cc0000;
+	text-shadow: 0px 0px 0px red;
+	
+}
+
+.button1:visited
+{
+	
+
+	box-shadow: 0px 0px 0px #cc0000;
+	text-shadow: 0px 0px 0px red;
+	
+}
+
+.button1:hover
+{
+
+	color: #cc3300;
+	box-shadow: 5px 5px 5px #cc0000;
+	text-shadow: 0px 0px 5px #cc0000;
+	
+}
+
+.button1:active
+{
+
+	box-shadow: 0px 0px 0px #cc0000;
+	text-shadow: 0px 0px 0px red;
+	
+}
 
 footer {
 
-         height: 60px;
+         height: auto;
          width: 950px;
          margin: auto;
          padding: 10px 15px 10px 15px;
@@ -150,5 +246,5 @@ footer {
          border-radius: 15px 15px 15px 15px;
          font-style: normal;
          font-family: "Arial Verdana", Arial, Sans-serif;
-         font-size: 16px
+         font-size: 12px
 }

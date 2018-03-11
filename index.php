@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="shortcut icon" type="image/x-icon" href="http://127.0.0.1/favicon.ico">
-<link rel="icon" type="image/png" href="http://127.0.0.1/favicon.png" sizes="48x48">
+<link rel="shortcut icon" type="image/x-icon" href="http://www.eisernelegenden.delocalhost/favicon.ico">
+<link rel="icon" type="image/png" href="http://www.eisernelegenden.de/favicon.png" sizes="48x48">
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <title>Eiserne Legenden</title>
 </head>
@@ -33,13 +33,13 @@ else
 
 	{
 
-die('keine Verbindung m�glich: ' . mysqli_error());
+die('keine Verbindung möglich: ' . mysqli_error());
 
 	}
 
 ?>
 
-<nav> <a title="Hauptseite" href="index.php?page=index">START</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum">Forum</a> | <a title="Forum" href="index.php?page=claninfo">ClanInfo</a> | <a title="login" href="index.php?page=login">LogIN</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> </nav>
+<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | <a class="navi navi1" title="login" href="index.php?page=login">LogIN</a> | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a> </nav>
 
 <div class="row">
   <div class="spalte side"> <!--Linke Spalte-->
@@ -62,7 +62,7 @@ die('keine Verbindung m�glich: ' . mysqli_error());
          <p align="center">N/A</p>
          </div>
     </div>
-  <div class="spalte mitte">
+  <div class="spalte mitte"> <!-- Mittlere Spalte -->
 
 
 <?php
@@ -102,7 +102,7 @@ if (!isset($page))
 		"<br>" . $row["Sticky"]. 
 		"<br>
 		</div>
-		<wbr></wbr>
+		<wbr></wbr><br>
 		</article>";
     }
 } else {
@@ -189,20 +189,56 @@ ClanInfoPage.
    <?php
 
   }
-
+  
+  
     if ($_GET['page'] == "login")
+		
+
 
   {
 
    ?>
   <!-- LoginForm -->
-<form action="./admin/index.php" method="post">
+<form action="2admin/index2.php" method="post">
  <fieldset>
     <legend>Login</legend><br>
 
 Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
+Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
+
+
+<input class="button button1" type="submit" value="Login" > 
+
+
+</form>
+<a class="button button1" title="Registrieren" href="index.php?page=register">Registrieren</a>
+</fieldset>
+
+
+     
+	 
+	 <?php
+
+  }
+  
+		
+      if ($_GET ['page'] == "register")
+
+  {
+
+   ?>
+  <!-- RegisterForm -->
+<form action="registrieren.php" method="post">
+ <fieldset>
+    <legend>Registrieren</legend><br>
+
+Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
 Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br>
-<input type="submit" value="Login" >
+Passwort2: <input type="password" name="Passwort2" placeholder="Passwort wiederholen"><br>
+E-Mail <input type="text" name="email" placeholder="name@xyz.welt"><br>
+E-Mail2 <input type="text" name="email2" placeholder="name@xyz.welt"><br><br>
+
+<input class="button button1" type="submit" value="Registrieren" >
 </fieldset>
 </form>
 
@@ -242,10 +278,12 @@ Impressme
 
 <wbr></wbr>
 
-<footer>Sonictechnologic <br>
+<footer>
+© 2005  - <?php echo date("Y");?> by  D.Giera, M.Gellfart, M.Mitterbacher, S.Buch (EISERNE LEGENDEN). <br><br>
+Webhosting + webpage developed and created by<br>
+Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>
 ©2013 - <?php echo date("Y");?>
-
 </footer>
 
          <p>
