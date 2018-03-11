@@ -4,8 +4,12 @@
 
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="shortcut icon" type="image/x-icon" href="http://www.eisernelegenden.delocalhost/favicon.ico">
 <link rel="icon" type="image/png" href="http://www.eisernelegenden.de/favicon.png" sizes="48x48">
+
+<!-- f..k P.O.S. icons
+<link rel="shortcut icon" type="image/x-icon" href="http://www.eisernelegenden.delocalhost/favicon.ico">
+
+-->
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <title>Eiserne Legenden</title>
 </head>
@@ -199,7 +203,8 @@ ClanInfoPage.
 
    ?>
   <!-- LoginForm -->
-<form action="2admin/index2.php" method="post">
+  <!-- actionlink Needs to be set properly-->
+<form action="2/2.php" method="post">
  <fieldset>
     <legend>Login</legend><br>
 
