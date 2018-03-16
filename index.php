@@ -1,3 +1,39 @@
+<?php
+
+session_start();
+
+
+
+// Verbindung zur Datenbank herstellen
+if (file_exists("inc/connect.inc.php"))
+	
+	{
+		
+require_once ('inc/connect.inc.php');
+
+	}
+
+else
+
+	{
+
+die('keine Verbindung möglich: ' . mysqli_error());
+
+	}
+
+
+
+if (!isset($_SESSION["user"]))
+	
+	{
+
+$_SESSION["user"] = "gast";
+
+
+	}
+
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,28 +58,58 @@
 <main>
 
 <header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
+
+
+<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | 
 <?php
 
-// Verbindung zur Datenbank herstellen
-if (file_exists("inc/connect.inc.php"))
+if ($_SESSION["user"] == "gast")
+	
+	{
+	?>	
+		<a class="navi navi1" title="login" href="index.php?page=login">LogIN</a>		
+	<?php
+	}
+
+	else
+		
+		{
+			?>
+			
+			<a class="navi navi1" title="logOUT" href="index.php?page=logout">LogOUT</a>
+			
+			<?php
+		}
+	?>
+	
+	
+ | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a>
+
+
+<?php
+
+//Adminlink wird nur angezeigt wenn auch ein Admin angemeldet ist
+
+if ($_SESSION["user"] == "gast")
+
+{
+?>
+
+| <a class="navi navi1" title="Administration" target="_blank" href="admin/index.php">Admin</a> </nav>
+
+<?php
+
+}
+
+else
 	
 	{
 		
-require_once ('inc/connect.inc.php');
-
+		echo "</nav>";
+			
 	}
-
-else
-
-	{
-
-die('keine Verbindung möglich: ' . mysqli_error());
-
-	}
-
 ?>
 
-<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | <a class="navi navi1" title="login" href="index.php?page=login">LogIN</a> | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a> </nav>
 
 <div class="row">
   <div class="spalte side"> <!--Linke Spalte-->
@@ -108,14 +174,17 @@ if (!isset($page))
 		</div>
 		<wbr></wbr><br>
 		</article>";
+		
+
     }
 } else {
     echo "Keine Ausgabe, da Datenbank leer ist";
 }
 
-mysqli_close($db_link);
+			mysqli_free_result($result);
 
 
+	
 ?>
 
 
@@ -199,12 +268,18 @@ ClanInfoPage.
 		
 
 
-  {
+	{
 
-   ?>
-  <!-- LoginForm -->
-  <!-- actionlink Needs to be set properly-->
-<form action="2/2.php" method="post">
+   
+   
+    // LoginForm //
+		if (!isset($_POST["Benutzer"]))
+			
+		{
+  
+		?>
+		<!-- actionlink Needs to be set properly-->
+<form action="index.php?page=login" method="post">
  <fieldset>
     <legend>Login</legend><br>
 
@@ -219,17 +294,132 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 <a class="button button1" title="Registrieren" href="index.php?page=register">Registrieren</a>
 </fieldset>
 
-
      
 	 
 	 <?php
+	 
+	 
+	 
+}	 
 
-  }
-  
+
+	// Benutzer und Passwort Prüfen YEEHARRR CHECK IT!
+	if (isset($_POST["Benutzer"]))
+	
+
+		{
 		
-      if ($_GET ['page'] == "register")
+			//banned variable setzen.
+		
+			$banned = "";
+		
+		//Inhalt aus der DB von benutzer ausgeben
+			$sql = "SELECT user, Banned FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
+			$abfrage = mysqli_query($db_link, $sql);
+	
+			if (mysqli_num_rows($abfrage) > 0) 
+			{
+			// output data of each row
+			while($row = mysqli_fetch_assoc($abfrage)) 
+				{
+        
+		
+				echo $row["user"];
+			
+			
+				if ($row["Banned"] == "1")
+				
+					{
+					
+						echo ", ";
+						echo "Sie wurden gebannt! <br><br>";
+					
+					}
+				
+				$banned = $row["Banned"];
+			
+			
+				}
+			
+			
+				if (!$banned == "1")
+				
+					{
+					
+						//Inhalt aus der DB von benutzer ausgeben
+						$sql = "SELECT Banned, Passwort, Passwort_2 FROM benutzer WHERE Passwort = '" . $_POST["Passwort"] . "' AND Passwort_2 = '" . $_POST["Passwort"] . "'";
+						$abfrage = mysqli_query($db_link, $sql);
+	
+						if (mysqli_num_rows($abfrage) > 0) 
+							{
+								// output data of each row
+								while($row = mysqli_fetch_assoc($abfrage)) 
+								{
+        
+		
+								echo $row["Passwort"];
+					
+					
+								echo "Free to go!";
+				
+								}
+							}	
+							
+							else
+				
+							{
+					
+							echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+					
+							}
+							
+					}
+				
+					else
+					
+					{
+					
+					echo "Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!";
+					
+					}
+				
+			
+		
+			}
+		
+			else
+			
+			{
+				
+					echo "Unbekannter Benutzer. Bitte Loggen Sie sich neu ein oder Registrieren Sie sich.";
+				
+			}
+		
+			mysqli_free_result($abfrage);
+		
+		}
 
-  {
+	}
+  
+	if ($_GET ['page'] == "logout")
+		 
+		{
+			
+			echo "" . $_SESSION["user"] . " - Du wurdest erfolgreich abgemeldet!";
+			
+			// vernichte alle session variablen
+			session_unset();
+
+			// toete die session an sich
+			session_destroy();
+				
+			
+		}
+
+		 
+		if ($_GET ['page'] == "register")
+
+		{
 
    ?>
   <!-- RegisterForm -->
@@ -306,7 +496,9 @@ We deliver offensive and defensive solutions.<br>
 
 <?php
 echo "001";
+
 ?>
+
 
 </body>
 </html>
