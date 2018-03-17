@@ -323,10 +323,6 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			while($row = mysqli_fetch_assoc($abfrage)) 
 				{
         
-		
-				echo $row["user"];
-			
-			
 				if ($row["Banned"] == "1")
 				
 					{
@@ -341,13 +337,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			
 				}
 			
-			
+				$Passwort = "";
+				
+				$Passwort2 = "";
+				
 				if (!$banned == "1")
 				
+			
 					{
 					
 						//Inhalt aus der DB von benutzer ausgeben
-						$sql = "SELECT Banned, Passwort, Passwort_2 FROM benutzer WHERE Passwort = '" . $_POST["Passwort"] . "' AND Passwort_2 = '" . $_POST["Passwort"] . "'";
+						$sql = "SELECT Passwort, Passwort_2 FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
 						$abfrage = mysqli_query($db_link, $sql);
 	
 						if (mysqli_num_rows($abfrage) > 0) 
@@ -355,13 +355,11 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 								// output data of each row
 								while($row = mysqli_fetch_assoc($abfrage)) 
 								{
-        
-		
-								echo $row["Passwort"];
+        								
+								$Passwort = $row["Passwort"];
 					
-					
-								echo "Free to go!";
-				
+								$Passwort2 = $row["Passwort_2"];
+												
 								}
 							}	
 							
@@ -372,6 +370,49 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 							echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
 					
 							}
+							
+							if (password_verify ($_POST["Passwort"], $Passwort) AND password_verify ($_POST["Passwort"], $Passwort2))
+									
+									{
+										//Wenn das passwort Stimmt YEHARRRl THE PASSWORD MUSST BE CORRECT! and NOW LET US LOOK IF WE NEED TO REHASH THAT little one
+										if ( password_needs_rehash ($Passwort, PASSWORD_DEFAULT) OR password_needs_rehash ($Passwort2, PASSWORD_DEFAULT))
+											
+											{
+												
+												$hash = password_hash($Passwort, PASSWORD_DEFAULT);
+												$hash2 = password_hash($Passwort2, PASSWORD_DEFAULT);
+												
+												$sql_update = "UPDATE benutzer SET Passwort='" . $hash . "', Passwort_2='" . $hash2 . "' WHERE user='" .  $_POST["Benutzer"] . "'";
+												
+													if (mysqli_query ($db_link, $sql_update))
+														
+														{
+															
+															echo "Passwort wurde erfolgreich neu Abgesichert";
+															
+														}
+													
+													else
+														
+														{
+															
+															echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
+															
+														}
+											
+											}
+									
+									echo"Passwort stimmt";
+									
+									}
+									
+									else
+										
+									{
+
+											echo"Passwort Falsch";
+											
+									}
 							
 					}
 				
