@@ -1,3 +1,8 @@
+<?php
+
+session_start();
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +16,7 @@
 </head>
 <body>
 
-<header>Kontrolling</header>
+<header>Kontrolling : Hallo <?php echo "" . $_SESSION["user"] . ""; ?></header>
 
 <nav> <a title="&Uuml;bersicht" href="index.php?page=overview">&Uuml;bersicht</a> | <a title="hauptseite" href="index.php?page=main">Hauptseite</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum">Forum</a> | <a title="ClanInfo" href="index.php?page=claninfo">ClanInfo</a> | <a title="Benutzer" href="index.php?page=user">Benutzer</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> | <a title="Einstellungen" href="index.php?page=settings">Einstellungen</a> </nav>
 
@@ -32,7 +37,7 @@ Seien Sie sich stets dessen bewusst dass Sie hier im Root bereich ihrer Seite be
 We deliver offensive and defensive solutions.<br>
 &copy;2013 - <?php echo date("Y");?></footer>
 <?php
-echo "001";
+echo "Version d5d9cf8";
 ?>
 
 </body>

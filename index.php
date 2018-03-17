@@ -1,24 +1,8 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-
-<meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="shortcut icon" type="image/x-icon" href="http://127.0.0.1/favicon.ico">
-<link rel="icon" type="image/png" href="http://127.0.0.1/favicon.png" sizes="48x48">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<title>Eiserne Legenden</title>
-</head>
-<body>
-
-<!--EISERNE LEGENDEN Netzpresents-->
-<!--wurde von Sonictechnologic erstellt-->
-
-<!--Main-->
-<main>
-
-<header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
 <?php
+
+session_start();
+
+
 
 // Verbindung zur Datenbank herstellen
 if (file_exists("inc/connect.inc.php"))
@@ -33,13 +17,99 @@ else
 
 	{
 
-die('keine Verbindung m�glich: ' . mysqli_error());
+die('keine Verbindung möglich: ' . mysqli_error());
 
 	}
 
+
+
+if (!isset($_SESSION["user"]))
+	
+	{
+
+$_SESSION["user"] = "gast";
+
+
+	}
+
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="icon" type="image/png" href="http://www.eisernelegenden.de/favicon.png" sizes="48x48">
+
+<!-- f..k P.O.S. icons
+<link rel="shortcut icon" type="image/x-icon" href="http://www.eisernelegenden.delocalhost/favicon.ico">
+
+-->
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<title>Eiserne Legenden</title>
+</head>
+<body>
+
+<!--EISERNE LEGENDEN Netzpresents-->
+<!--wurde von Sonictechnologic erstellt-->
+
+<!--Main-->
+<main>
+
+<header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
+
+
+<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | 
+<?php
+
+if ($_SESSION["user"] == "gast")
+	
+	{
+	?>	
+		<a class="navi navi1" title="login" href="index.php?page=login">LogIN</a>		
+	<?php
+	}
+
+	else
+		
+		{
+			?>
+			
+			<a class="navi navi1" title="logOUT" href="index.php?page=logout">LogOUT</a>
+			
+			<?php
+		}
+	?>
+	
+	
+ | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a>
+
+
+<?php
+
+//Adminlink wird nur angezeigt wenn auch ein Admin angemeldet ist
+
+if ($_SESSION["user"] == "gast")
+
+{
 ?>
 
-<nav> <a title="Hauptseite" href="index.php?page=index">START</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum">Forum</a> | <a title="Forum" href="index.php?page=claninfo">ClanInfo</a> | <a title="login" href="index.php?page=login">LogIN</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> </nav>
+| <a class="navi navi1" title="Administration" target="_blank" href="admin/index.php">Admin</a> </nav>
+
+<?php
+
+}
+
+else
+	
+	{
+		
+		echo "</nav>";
+			
+	}
+?>
+
 
 <div class="row">
   <div class="spalte side"> <!--Linke Spalte-->
@@ -62,7 +132,7 @@ die('keine Verbindung m�glich: ' . mysqli_error());
          <p align="center">N/A</p>
          </div>
     </div>
-  <div class="spalte mitte">
+  <div class="spalte mitte"> <!-- Mittlere Spalte -->
 
 
 <?php
@@ -102,16 +172,19 @@ if (!isset($page))
 		"<br>" . $row["Sticky"]. 
 		"<br>
 		</div>
-		<wbr></wbr>
+		<wbr></wbr><br>
 		</article>";
+		
+
     }
 } else {
     echo "Keine Ausgabe, da Datenbank leer ist";
 }
 
-mysqli_close($db_link);
+			mysqli_free_result($result);
 
 
+	
 ?>
 
 
@@ -189,20 +262,219 @@ ClanInfoPage.
    <?php
 
   }
-
+  
+  
     if ($_GET['page'] == "login")
+		
 
-  {
 
-   ?>
-  <!-- LoginForm -->
-<form action="./admin/index.php" method="post">
+	{
+
+   
+   
+    // LoginForm //
+		if (!isset($_POST["Benutzer"]))
+			
+		{
+  
+		?>
+		<!-- actionlink Needs to be set properly-->
+<form action="index.php?page=login" method="post">
  <fieldset>
     <legend>Login</legend><br>
 
 Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
+Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
+
+
+<input class="button button1" type="submit" value="Login" > 
+
+
+</form>
+<a class="button button1" title="Registrieren" href="index.php?page=register">Registrieren</a>
+</fieldset>
+
+     
+	 
+	 <?php
+	 
+	 
+	 
+}	 
+
+
+	// Benutzer und Passwort Prüfen YEEHARRR CHECK IT!
+	if (isset($_POST["Benutzer"]))
+	
+
+		{
+		
+			//banned variable setzen.
+		
+			$banned = "";
+		
+		//Inhalt aus der DB von benutzer ausgeben
+			$sql = "SELECT user, Banned FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
+			$abfrage = mysqli_query($db_link, $sql);
+	
+			if (mysqli_num_rows($abfrage) > 0) 
+			{
+			// output data of each row
+			while($row = mysqli_fetch_assoc($abfrage)) 
+				{
+        
+				if ($row["Banned"] == "1")
+				
+					{
+					
+						echo ", ";
+						echo "Sie wurden gebannt! <br><br>";
+					
+					}
+				
+				$banned = $row["Banned"];
+			
+			
+				}
+			
+				$Passwort = "";
+				
+				$Passwort2 = "";
+				
+				if (!$banned == "1")
+				
+			
+					{
+					
+						//Inhalt aus der DB von benutzer ausgeben
+						$sql = "SELECT Passwort, Passwort_2 FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
+						$abfrage = mysqli_query($db_link, $sql);
+	
+						if (mysqli_num_rows($abfrage) > 0) 
+							{
+								// output data of each row
+								while($row = mysqli_fetch_assoc($abfrage)) 
+								{
+        								
+								$Passwort = $row["Passwort"];
+					
+								$Passwort2 = $row["Passwort_2"];
+												
+								}
+							}	
+							
+							else
+				
+							{
+					
+							echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+					
+							}
+							
+							if (password_verify ($_POST["Passwort"], $Passwort) AND password_verify ($_POST["Passwort"], $Passwort2))
+									
+									{
+										//Wenn das passwort Stimmt YEHARRRl THE PASSWORD MUSST BE CORRECT! and NOW LET US LOOK IF WE NEED TO REHASH THAT little one
+										if ( password_needs_rehash ($Passwort, PASSWORD_DEFAULT) OR password_needs_rehash ($Passwort2, PASSWORD_DEFAULT))
+											
+											{
+												
+												$hash = password_hash($Passwort, PASSWORD_DEFAULT);
+												$hash2 = password_hash($Passwort2, PASSWORD_DEFAULT);
+												
+												$sql_update = "UPDATE benutzer SET Passwort='" . $hash . "', Passwort_2='" . $hash2 . "' WHERE user='" .  $_POST["Benutzer"] . "'";
+												
+													if (mysqli_query ($db_link, $sql_update))
+														
+														{
+															
+															echo "Passwort wurde erfolgreich neu Abgesichert";
+															
+														}
+													
+													else
+														
+														{
+															
+															echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
+															
+														}
+											
+											}
+									
+									echo"Passwort stimmt";
+									
+									}
+									
+									else
+										
+									{
+
+											echo"Passwort Falsch";
+											
+									}
+							
+					}
+				
+					else
+					
+					{
+					
+					echo "Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!";
+					
+					}
+				
+			
+		
+			}
+		
+			else
+			
+			{
+				
+					echo "Unbekannter Benutzer. Bitte Loggen Sie sich neu ein oder Registrieren Sie sich.";
+				
+			}
+		
+			mysqli_free_result($abfrage);
+		
+		}
+
+	}
+  
+	if ($_GET ['page'] == "logout")
+		 
+		{
+			
+			echo "" . $_SESSION["user"] . " - Du wurdest erfolgreich abgemeldet!";
+			
+			// vernichte alle session variablen
+			session_unset();
+
+			// toete die session an sich
+			session_destroy();
+				
+			
+		}
+
+		 
+		if ($_GET ['page'] == "register")
+
+		{
+
+   ?>
+  <!-- RegisterForm -->
+<form action="registrieren.php" method="post">
+ <fieldset>
+    <legend>Registrieren</legend><br>
+
+Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
 Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br>
-<input type="submit" value="Login" >
+Passwort2: <input type="password" name="Passwort2" placeholder="Passwort wiederholen"><br>
+E-Mail <input type="text" name="email" placeholder="name@xyz.welt"><br>
+E-Mail2 <input type="text" name="email2" placeholder="name@xyz.welt"><br><br>
+
+<input class="button button1" type="submit" value="Registrieren" >
 </fieldset>
 </form>
 
@@ -242,10 +514,12 @@ Impressme
 
 <wbr></wbr>
 
-<footer>Sonictechnologic <br>
+<footer>
+© 2005  - <?php echo date("Y");?> by  D.Giera, M.Gellfart, M.Mitterbacher, S.Buch (EISERNE LEGENDEN). <br><br>
+Webhosting + webpage developed and created by<br>
+Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>
 ©2013 - <?php echo date("Y");?>
-
 </footer>
 
          <p>
@@ -263,7 +537,9 @@ We deliver offensive and defensive solutions.<br>
 
 <?php
 echo "001";
+
 ?>
+
 
 </body>
 </html>
