@@ -31,6 +31,16 @@ $_SESSION["user"] = "gast";
 
 
 	}
+	
+	
+	if (!isset($_SESSION["rang"]))
+	
+	{
+
+$_SESSION["rang"] = "4";
+
+
+	}
 
 
 ?>
@@ -60,10 +70,12 @@ $_SESSION["user"] = "gast";
 <header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
 
 
+<!--//Dynamische LinknavLeiste -->
+
 <nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | 
 <?php
 
-if ($_SESSION["user"] == "gast")
+if ($_SESSION["rang"] == "4")
 	
 	{
 	?>	
@@ -83,14 +95,15 @@ if ($_SESSION["user"] == "gast")
 	?>
 	
 	
- | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a>
+ | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a> | <a class="navi navi1" title="Kontakt" href="index.php?page=kontakt">Kontakt</a>
 
 
 <?php
 
 //Adminlink wird nur angezeigt wenn auch ein Admin angemeldet ist
 
-if ($_SESSION["user"] == "gast")
+
+if ($_SESSION["rang"] <= "1")
 
 {
 ?>
@@ -399,10 +412,88 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 															echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
 															
 														}
-											
+												
+														
 											}
 									
 									echo"Passwort stimmt";
+									$benutzer = "";
+									$benutzer = $_POST["Benutzer"];
+									
+									
+										//Inhalt aus der DB von benutzer ausgeben
+										$sql = "SELECT ID, user, email, gtag, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, intinfo FROM benutzer WHERE user = '" . $benutzer . "' ";
+										$readuserdata = mysqli_query($db_link, $sql);
+	
+										if (mysqli_num_rows($readuserdata) > 0) 
+											{
+											// output data of each row
+											while($row = mysqli_fetch_assoc($readuserdata)) 
+												{
+        						
+								
+								
+												$_SESSION["userID"] = $row["ID"];
+					
+												$_SESSION["user"] = $row["user"];
+								
+												$_SESSION["email"] = $row["email"];
+								
+												$_SESSION["gtag"] = $row["gtag"];
+								
+												$_SESSION["profile_image"] = $row["profile_image"];
+								
+												$_SESSION["rang"] = $row["Rang"];
+								
+												$_SESSION["login_date"] = $row["Login_Date"];
+								
+												$_SESSION["login_uhrzeit"] = $row["Login_Uhrzeit"];
+								
+												$_SESSION["erstellt_datum"] = $row["erstellt_datum"];
+								
+												$_SESSION["clanmitglied"] = $row["clanmitglied"];
+								
+												$_SESSION["intinfo"] = $row["intinfo"];
+												
+												}
+											}	
+							
+											else
+				
+											{
+					
+												echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+					
+											}
+											
+											// readuserdata Variable frei stellen 
+											mysqli_free_result($readuserdata);
+											
+											// BenutzerDaten von Angemeldeter Benutzer Aktuallisieren
+											
+											// Set Time
+											$anmeldezeit = date ("H:i:s");
+											
+											// Set Date
+											$anmeldedatum = date ("d.m.Y");
+											
+											$sql = "UPDATE benutzer SET Login_Date='" . $anmeldedatum . "', Login_Uhrzeit='" . $anmeldezeit . "' WHERE ID='" . $_SESSION["userID"] . "'";
+											if (mysqli_query($db_link, $sql))
+												{
+												
+													//Delite ECHO Note!!!
+													echo "Zeit und Datum vom benutzer " . $_SESSION["user"] . " wurde erfolgreich aktualisiert.";
+												
+												}
+												
+											else
+													
+												{
+												
+													echo "da war irgendwas falsch " . mysqli_error($db_link);
+												
+												}
+									
 									
 									}
 									
@@ -410,7 +501,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										
 									{
 
-											echo"Passwort Falsch";
+										echo"Passwort Falsch";
 											
 									}
 							
@@ -461,40 +552,102 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 		if ($_GET ['page'] == "register")
 
 		{
+			
+			if (!isset($_POST["Benutzer"]))
+				
+				{
+					
+				
+			
+				?>
+				<!-- RegisterForm -->
+				<form action="index.php?page=register" method="post">
+				<fieldset>
+				<legend>Registrieren</legend>
+				
+				<p>Bitte füllen Sie alle Felder aus.</p>
+				
+				<br>
 
-   ?>
-  <!-- RegisterForm -->
-<form action="registrieren.php" method="post">
- <fieldset>
-    <legend>Registrieren</legend><br>
-
-Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
-Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br>
-Passwort2: <input type="password" name="Passwort2" placeholder="Passwort wiederholen"><br>
-E-Mail <input type="text" name="email" placeholder="name@xyz.welt"><br>
-E-Mail2 <input type="text" name="email2" placeholder="name@xyz.welt"><br><br>
-
-<input class="button button1" type="submit" value="Registrieren" >
-</fieldset>
-</form>
+				Benutzer:<br> <input type="text" name="Benutzer" placeholder="Benutzer" maxlength="50" size="50" autofocus required><br>
+				Passwort:<br> <input type="password" name="Passwort" placeholder="Passwort" maxlength="256" size="50" required><br>
+				Passwort2:<br> <input type="password" name="Passwort2" placeholder="Passwort wiederholen" maxlength="256" size="50" required><br>
+				E-Mail:<br> <input type="text" name="email" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
+				E-Mail2:<br> <input type="text" name="email2" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
+				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT.MM.JJJJ" size="50" maxlength="10" required><br><br>
+				
+				<p>* Sie haben gewissenhaft unsere <a class="navi navi1" title="Datenschutzerklaerung" target="_blank" href="nbedingung.php">Datenschutzerklärung</a> und <a class="navi navi1" title="Nutzungsbedingung" target="_blank" href="nbeding.php">Nutzungsbedingungen</a> gelesen und sind über 14 Jahre alt.</p> 
+				
+				<input type="checkbox" name="allesgelesen" value="read"> * Ich bin mit den oben Genannten Bedingungen und Vorraussetzungen einverstanden! <br>
+				
+				<br><br>
+				<input class="button button1" type="submit" value="Registrieren" >
+				</fieldset>
+				</form>
 
 
      <?php
+	 
+				}
+				
+			if (isset($_POST["Benutzer"]))
+				
+				{
+					
+					
+					
+				}
 
-  }
+		}
 
     if ($_GET['page'] == "impressum")
 
   {
 
    ?>
-  Impressum<br>
-  <br>
-Impressme
+   
+   <!-- LANG LEBE IMPERATOR IMPRESSUM! -->
+<div class='impressum'><h1>Impressum</h1>
+
+<p>Aus Selbstschutzgründen wird lediglich eine E-Mail zur Verfügung gestellt,<br>
+die für Private und Geschäftliche belänge verwendet werden darf, sofehrn diese KEINE Werbung oder Spam beinhalten!</p>
+
+<p><strong>Kontakt:</strong> <br>
+E-Mail: <a href='mailto:sonictechnologic@gmail.com'>sonictechnologic@gmail.com</a><br></p>
+
+<p><strong>Haftungsausschluss: </strong><br><br><strong>Haftung für Inhalte</strong><br><br>
+Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.<br><br><strong>Haftung für Links</strong><br><br>
+Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.<br><br><strong>Urheberrecht</strong><br><br>
+Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.<br><br><strong>Datenschutz</strong><br><br>
+Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder eMail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben. <br>
+Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
+Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.<br>
+<br><br><strong>Google Analytics</strong><br><br>
+Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. (''Google''). Google Analytics verwendet sog. ''Cookies'', Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) wird an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Sie können die Installation der Cookies durch eine entsprechende Einstellung Ihrer Browser Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.<br><br><strong>Google AdSense</strong><br><br>
+Diese Website benutzt Google Adsense, einen Webanzeigendienst der Google Inc., USA (''Google''). Google Adsense verwendet sog. ''Cookies'' (Textdateien), die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Google Adsense verwendet auch sog. ''Web Beacons'' (kleine unsichtbare Grafiken) zur Sammlung von Informationen. Durch die Verwendung des Web Beacons können einfache Aktionen wie der Besucherverkehr auf der Webseite aufgezeichnet und gesammelt werden. Die durch den Cookie und/oder Web Beacon erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) werden an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website im Hinblick auf die Anzeigen auszuwerten, um Reports über die Websiteaktivitäten und Anzeigen für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Das Speichern von Cookies auf Ihrer Festplatte und die Anzeige von Web Beacons können Sie verhindern, indem Sie in Ihren Browser-Einstellungen ''keine Cookies akzeptieren'' wählen (Im MS Internet-Explorer unter ''Extras > Internetoptionen > Datenschutz > Einstellung''; im Firefox unter ''Extras > Einstellungen > Datenschutz > Cookies''); wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.</p>
+ </div>
+ 
+ 
    <?php
 
-  }
+}
 
+  
+  if ($_GET['page'] == "kontakt")
+
+{
+
+   ?>
+   
+  Kontakt<br>
+  <br>
+kontakt
+   
+   
+   <?php
+
+}
+  
   ?>
 
 
