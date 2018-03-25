@@ -327,7 +327,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			$banned = "";
 		
 		//Inhalt aus der DB von benutzer ausgeben
-			$sql = "SELECT user, Banned FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
+			$sql = "SELECT user, Banned, setfree FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
 			$abfrage = mysqli_query($db_link, $sql);
 	
 			if (mysqli_num_rows($abfrage) > 0) 
@@ -340,13 +340,24 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				
 					{
 					
-						echo ", ";
+						
 						echo "Sie wurden gebannt! <br><br>";
 					
 					}
 				
 				$banned = $row["Banned"];
-			
+				
+				if ($row["setfree"] != "1")
+					
+				
+					{
+					
+						echo "Sie wurden noch nicht von einem Admin freigeschaltet!";
+						
+					
+					}
+					
+				$setfree = $row["setfree"];
 			
 				}
 			
@@ -354,7 +365,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				
 				$Passwort2 = "";
 				
-				if (!$banned == "1")
+				if (!$banned == "1" AND $setfree == "1")
 				
 			
 					{
@@ -506,7 +517,16 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									}
 							
 					}
-				
+					
+					if ($setfree == "0" AND !$banned == "1")
+						
+					
+					{
+						
+						echo "<br> Bitte haben Sie noch etwas gedult. Meist wird ihr Account in 1-2 Werktagen freigeschaltet.";
+						
+					}
+					
 					else
 					
 					{
@@ -570,15 +590,15 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				<br>
 
 				Benutzer:<br> <input type="text" name="Benutzer" placeholder="Benutzer" maxlength="50" size="50" autofocus required><br>
-				Passwort:<br> <input type="password" name="Passwort" placeholder="Passwort" maxlength="256" size="50" required><br>
-				Passwort2:<br> <input type="password" name="Passwort2" placeholder="Passwort wiederholen" maxlength="256" size="50" required><br>
+				Passwort:<br> <input type="password" name="Passwort" maxlength="256" size="50" required><br>
+				Passwort2:<br> <input type="password" name="Passwort2" maxlength="256" size="50" required><br>
 				E-Mail:<br> <input type="text" name="email" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
 				E-Mail2:<br> <input type="text" name="email2" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
-				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT.MM.JJJJ" size="50" maxlength="10" required><br><br>
+				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT" size="2" maxlength="2" required>.<input type="text" name="gmon" placeholder="MM" size="2" maxlength="2" required>.<input type="text" name="gjahr" placeholder="JJJJ" size="4" maxlength="4" required><br><br>
 				
 				<p>* Sie haben gewissenhaft unsere <a class="navi navi1" title="Datenschutzerklaerung" target="_blank" href="nbedingung.php">Datenschutzerklärung</a> und <a class="navi navi1" title="Nutzungsbedingung" target="_blank" href="nbeding.php">Nutzungsbedingungen</a> gelesen und sind über 14 Jahre alt.</p> 
 				
-				<input type="checkbox" name="allesgelesen" value="read"> * Ich bin mit den oben Genannten Bedingungen und Vorraussetzungen einverstanden! <br>
+				<input type="checkbox" name="AllesGelesen" value="read"> * Ich bin mit den oben Genannten Bedingungen und Vorraussetzungen einverstanden! <br>
 				
 				<br><br>
 				<input class="button button1" type="submit" value="Registrieren" >
@@ -590,15 +610,186 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 	 
 				}
 				
+				
+				// Eingabe ueberpruefen und anpassen...
+				function eingabe_testen($satz) {
+				$satz = trim($satz);
+				$satz = stripslashes($satz);
+				$satz = htmlspecialchars($satz);
+				return $satz;
+}
+				
 			if (isset($_POST["Benutzer"]))
 				
 				{
+				
+					if ($_POST["Benutzer"] == "")
+						
+						{
+							
+							echo "<br>";
+							echo "Bitte füllen Sie ALLE felder aus!";
+							
+						}
+						
+						$Benutzer = "";
+						$Benutzer = eingabe_testen($_POST["Benutzer"]);
+						
+						//Inhalt aus der DB von benutzer ausgeben
+						$sql = "SELECT user FROM benutzer WHERE user = '" . $Benutzer . "' ";
+						$abfrage = mysqli_query($db_link, $sql);
+	
+						if (mysqli_num_rows($abfrage) > 0) 
+							{
+							// output data of each row
+							while($row = mysqli_fetch_assoc($abfrage)) 
+								{
+        
+								if ($Benutzer == $row["user"])
+				
+									{
 					
+						
+									echo "Benutzer: " . $row["user"] . " wurde bereits vergeben!<br>Bitte wählen Sie einen anderen Benutzernamen!";
 					
-					
+									}
+								
+								}
+								
+							}
+							
+						else
+								
+							{
+				
+								if (!isset($_POST["Passwort"]) OR empty($_POST["Passwort"]) OR $_POST["Passwort"] == "")
+						
+									{
+							
+										echo "<br>";
+										echo "Bitte füllen sie ALLE felder aus!";
+							
+									}
+						
+								if (!isset($_POST["Passwort2"]) OR empty($_POST["Passwort2"]) OR $_POST["Passwort2"] == "")
+								
+									{
+								
+								
+										echo "<br>";
+										echo "Bitte füllen sie ALLE felder aus!";
+									
+									}
+								
+								if ($_POST["Passwort"] != $_POST["Passwort2"] OR $_POST["Passwort2"] != $_POST["Passwort"])
+									
+									{
+									
+										echo "<br>";
+										echo "Passwort Eingaben sind NICHT identisch! Bitte Korrigieren SIE diesen Fehler!";
+										
+									}
+														
+								if ($_POST["email"] != $_POST["email2"])
+															
+									{
+										
+										echo "<br>";
+										echo "E-Mail Felder Stimmen nicht überein, sind nicht identisch!";
+															
+									}
+														
+								if ($_POST["email"] == "" OR $_POST["email2"] == "")
+															
+									{
+								
+										echo "<br>";
+										echo "E-Mail Felder sind Leer! Bitte eine gültige E-mail Adresse eintragen.";
+															
+									}
+									
+								/*if ()
+									
+									{
+										
+										echo "";
+										
+									}*/
+								
+								if 	(!isset($_POST["AllesGelesen"]))
+															
+									{
+									
+									
+										$_POST["AllesGelesen"] = FALSE;
+									
+										echo "<br>";
+										echo "Bitte Stimmen Sie unseren Datenschutz- und Nutzungsbestimmungen zu!";
+								
+									}
+									
+										
+								if 	(isset($_POST["AllesGelesen"]) AND $_POST["AllesGelesen"] == "read")				
+							
+									{
+								
+										echo "<br>";
+										echo "Danke für ihre Zustimmung der Nutzungs- und Datenschutzbestimmungen";
+								
+									}
+										
+								if (isset($_POST["Passwort"]) AND isset($_POST["Passwort2"]) AND $_POST["Passwort"] == $_POST["Passwort2"] AND !empty($_POST["Passwort"]) AND !empty($_POST["Passwort2"]))
+										
+									{
+											
+										//passwort VARIABLE setzen und zuordnen
+										$passwort = "";
+										$passwort = eingabe_testen($_POST["Passwort"]);
+										//passwort2 VARIABLE setzen und zuordnen
+										$passwort2 = "";
+										$passwort2 = eingabe_testen($_POST["Passwort2"]);
+								
+									}
+										
+								if (isset($_POST["email"]) AND isset($_POST["email2"]) AND $_POST["email"] == $_POST["email2"] AND !empty($_POST["email"]) AND !empty($_POST["email2"]))
+													
+									{
+									
+										//Email VARIABLE setzen,ordnen und zuordnen.
+										$email = "";
+										$email = eingabe_testen($_POST["email"]);
+											
+										//Email2 VARIABLE setzen und zuordnen.
+										$email2 = "";
+										$email2 = eingabe_testen($_POST["email2"]);
+								
+										//Wenn was mit der E-Mail eingabe seltsam ist. Die eingabe Variablen zurück setzen!
+											
+										if 	(!filter_var($email, FILTER_VALIDATE_EMAIL) OR !filter_var($email2, FILTER_VALIDATE_EMAIL)) 
+										
+											{
+												
+												echo "<br>";
+												echo "Falsches E-Mail Format!";
+													
+												$email = "";
+												$email2 = "";
+												
+											}
+												
+									}
+										
+							}
+									
+								mysqli_free_result($abfrage);
+							
 				}
-
+						
+					
+					
 		}
+
+	
 
     if ($_GET['page'] == "impressum")
 
