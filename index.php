@@ -42,7 +42,17 @@ $_SESSION["rang"] = "4";
 
 	}
 
-
+				//functionenliste
+				
+				// Eingabe ueberpruefen und anpassen...
+				function eingabe_testen($satz) 	{
+				$satz = trim($satz);
+				$satz = stripslashes($satz);
+				$satz = htmlspecialchars($satz);
+				return $satz;
+												}
+	
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -72,7 +82,7 @@ $_SESSION["rang"] = "4";
 
 <!--//Dynamische LinknavLeiste -->
 
-<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=claninfo">ClanInfo</a> | 
+<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=info">Info</a> | 
 <?php
 
 if ($_SESSION["rang"] == "4")
@@ -83,16 +93,16 @@ if ($_SESSION["rang"] == "4")
 	<?php
 	}
 
-	else
+else
 		
-		{
-			?>
+	{
+		?>
 			
-			<a class="navi navi1" title="logOUT" href="index.php?page=logout">LogOUT</a>
+		<a class="navi navi1" title="logOUT" href="index.php?page=logout">LogOUT</a>
 			
-			<?php
-		}
-	?>
+		<?php
+	}
+?>
 	
 	
  | <a class="navi navi1" title="impressum" href="index.php?page=impressum">Impressum</a> | <a class="navi navi1" title="Kontakt" href="index.php?page=kontakt">Kontakt</a>
@@ -161,65 +171,50 @@ if (!isset($page))
 
 
 
-  if ($_GET['page'] == "index")
+	if ($_GET['page'] == "index")
 
-  {
+		{
   
 
-  //Inhalt aus der DB von Main ausgeben
-	$sql = "SELECT * FROM main ORDER BY ID DESC";
-	$result = mysqli_query($db_link, $sql);
+			//Inhalt aus der DB von Main ausgeben
+			$sql = "SELECT * FROM main ORDER BY ID DESC";
+		$result = mysqli_query($db_link, $sql);
 	
-	if (mysqli_num_rows($result) > 0) {
-    // output data of each row
-    while($row = mysqli_fetch_assoc($result)) {
-        echo "<article>
-		<div class=\"titel\"> #:" . $row["ID"]. 
-		" <img src=\"img/author.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Author"]. 
-		" <img src=\"img/clock.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Uhrzeit"]. 
-		" <img src=\"img/calendar.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Datum"]. 
-		" <br> <b id=\"titel\"> " . $row["Titel"]. 
-		" </b></div>
-		<div class=\"inhalt\"> " . $row["Inhalt"]. 
-		"<br>" . $row["Tags"]. 
-		"<br>" . $row["Sticky"]. 
-		"<br>
-		</div>
-		<wbr></wbr><br>
-		</article>";
+		if (mysqli_num_rows($result) > 0) 
+			{
+				// output data of each row
+				while($row = mysqli_fetch_assoc($result)) 
+				
+					{
+						echo "<article>
+						<div class=\"titel\"> #:" . $row["ID"]. 
+						" <img src=\"img/author.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Author"]. 
+						" <img src=\"img/clock.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Uhrzeit"]. 
+						" <img src=\"img/calendar.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Datum"]. 
+						" <br> <b id=\"titel\"> " . $row["Titel"]. 
+						" </b></div>
+						<div class=\"inhalt\"> " . $row["Inhalt"]. 
+						"<br>" . $row["Tags"]. 
+						"<br>" . $row["Sticky"]. 
+						"<br>
+						</div>
+						<wbr></wbr><br>
+						</article>";
 		
 
-    }
-} else {
-    echo "Keine Ausgabe, da Datenbank leer ist";
-}
+					}
+			} 
+		else 
+			{
+				echo "Keine Ausgabe, da Datenbank leer ist";
+			}
 
 			mysqli_free_result($result);
 
 
 	
-?>
 
-
-  <!-- !!Vorlage!!
-    <article>
-  <div class="titel">
-  #:1 <img src="img/author.png" alt="" border="0" width="11" height="11"> Zyankali 
-  <img src="img/clock.png" alt="" border="0" width="11" height="11"> 01:57:25 
-  <img src="img/calendar.png" alt="" border="0" width="11" height="11"> 07-03-2018<br>
-  <b id="titel">Eintragstitel von Irgendwas</b></div>
-  <div class="inhalt">Inhalt<br>
-  Tags: Standart oder eigene<br>
-  Sticky : FALSE<br>
-  </div>
-  <wbr></wbr>
-  </article>
-
-  !!Vorlage ENDE!! -->
-
-   <?php
-
-  }
+		}
 
 
   // Server Section
@@ -264,7 +259,7 @@ ForumSeite
 
   }
 
-  if ($_GET['page'] == "claninfo")
+  if ($_GET['page'] == "info")
 
   {
 
@@ -325,126 +320,119 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			//banned variable setzen.
 		
 			$banned = "";
+			
+			$benutzer = "";
+			$benutzer = eingabe_testen($_POST["Benutzer"]);
 		
 		//Inhalt aus der DB von benutzer ausgeben
-			$sql = "SELECT user, Banned, setfree FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
+			$sql = "SELECT user, Banned, setfree FROM benutzer WHERE user = '" . $benutzer . "' ";
 			$abfrage = mysqli_query($db_link, $sql);
 	
 			if (mysqli_num_rows($abfrage) > 0) 
-			{
-			// output data of each row
-			while($row = mysqli_fetch_assoc($abfrage)) 
 				{
+				// output data of each row
+					while($row = mysqli_fetch_assoc($abfrage)) 
+						{
         
-				if ($row["Banned"] == "1")
+							if ($row["Banned"] == "1")
 				
-					{
-					
-						
-						echo "Sie wurden gebannt! <br><br>";
-					
-					}
-				
-				$banned = $row["Banned"];
-				
-				if ($row["setfree"] != "1")
-					
-				
-					{
-					
-						echo "Sie wurden noch nicht von einem Admin freigeschaltet!";
-						
-					
-					}
-					
-				$setfree = $row["setfree"];
-			
-				}
-			
-				$Passwort = "";
-				
-				$Passwort2 = "";
-				
-				if (!$banned == "1" AND $setfree == "1")
-				
-			
-					{
-					
-						//Inhalt aus der DB von benutzer ausgeben
-						$sql = "SELECT Passwort, Passwort_2 FROM benutzer WHERE user = '" . $_POST["Benutzer"] . "' ";
-						$abfrage = mysqli_query($db_link, $sql);
-	
-						if (mysqli_num_rows($abfrage) > 0) 
-							{
-								// output data of each row
-								while($row = mysqli_fetch_assoc($abfrage)) 
 								{
-        								
-								$Passwort = $row["Passwort"];
 					
-								$Passwort2 = $row["Passwort_2"];
-												
+									echo "Sie wurden gebannt! <br><br>Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!";
+					
+								}	
+				
+							$banned = $row["Banned"];
+				
+							if ($row["setfree"] != "1")
+					
+				
+								{
+					
+									echo "Sie wurden noch nicht von einem Admin freigeschaltet!";
+											
 								}
-							}	
+					
+							$setfree = $row["setfree"];
+			
+						}
+			
+					if (!$banned == "1" AND $setfree == "1")
+				
+			
+						{
+					
+							//Inhalt aus der DB von benutzer ausgeben
+							$sql = "SELECT Passwort, Passwort_2 FROM benutzer WHERE user = '" . $benutzer . "' ";
+							$abfrage = mysqli_query($db_link, $sql);
+	
+							if (mysqli_num_rows($abfrage) > 0) 
+								{
+									// output data of each row
+									while($row = mysqli_fetch_assoc($abfrage)) 
+										{
+        								
+											$Passwort = $row["Passwort"];
+					
+											$Passwort2 = $row["Passwort_2"];
+												
+										}
+								}	
 							
 							else
 				
-							{
+								{
 					
-							echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+									echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
 					
-							}
+								}
 							
 							if (password_verify ($_POST["Passwort"], $Passwort) AND password_verify ($_POST["Passwort"], $Passwort2))
 									
-									{
-										//Wenn das passwort Stimmt YEHARRRl THE PASSWORD MUSST BE CORRECT! and NOW LET US LOOK IF WE NEED TO REHASH THAT little one
-										if ( password_needs_rehash ($Passwort, PASSWORD_DEFAULT) OR password_needs_rehash ($Passwort2, PASSWORD_DEFAULT))
+								{
+									//Wenn das passwort Stimmt YEHARRRl THE PASSWORD MUSST BE CORRECT! and NOW LET US LOOK IF WE NEED TO REHASH THAT little one
+									if ( password_needs_rehash($Passwort, PASSWORD_DEFAULT) OR password_needs_rehash($Passwort2, PASSWORD_DEFAULT))
 											
-											{
+										{
 												
-												$hash = password_hash($Passwort, PASSWORD_DEFAULT);
-												$hash2 = password_hash($Passwort2, PASSWORD_DEFAULT);
+											$hash = password_hash($Passwort, PASSWORD_DEFAULT);
+											$hash2 = password_hash($Passwort2, PASSWORD_DEFAULT);
 												
-												$sql_update = "UPDATE benutzer SET Passwort='" . $hash . "', Passwort_2='" . $hash2 . "' WHERE user='" .  $_POST["Benutzer"] . "'";
+											$sql_update = "UPDATE benutzer SET Passwort='" . $hash . "', Passwort_2='" . $hash2 . "' WHERE user='" .  $_POST["Benutzer"] . "'";
 												
-													if (mysqli_query ($db_link, $sql_update))
+												if (mysqli_query ($db_link, $sql_update))
 														
-														{
+													{
 															
-															echo "Passwort wurde erfolgreich neu Abgesichert";
+														echo "";
 															
-														}
+													}
 													
-													else
+												else
 														
-														{
+													{
 															
-															echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
+														echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
 															
-														}
+													}
 												
 														
-											}
-									
-									echo"Passwort stimmt";
-									$benutzer = "";
-									$benutzer = $_POST["Benutzer"];
+										}
 									
 									
-										//Inhalt aus der DB von benutzer ausgeben
-										$sql = "SELECT ID, user, email, gtag, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, intinfo FROM benutzer WHERE user = '" . $benutzer . "' ";
-										$readuserdata = mysqli_query($db_link, $sql);
+									//Inhalt aus der DB von benutzer ausgeben
+									$sql = "SELECT ID, user, email, gtag, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, intinfo FROM benutzer WHERE user = '" . $benutzer . "' ";
+									$readuserdata = mysqli_query($db_link, $sql);
 	
-										if (mysqli_num_rows($readuserdata) > 0) 
+									if (mysqli_num_rows($readuserdata) > 0) 
+										{
+										// output data of each row
+										while($row = mysqli_fetch_assoc($readuserdata)) 
 											{
-											// output data of each row
-											while($row = mysqli_fetch_assoc($readuserdata)) 
-												{
         						
 								
 								
-												$_SESSION["userID"] = $row["ID"];
+												$_SESSION["ID"] = $row["ID"];
 					
 												$_SESSION["user"] = $row["user"];
 								
@@ -466,55 +454,56 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 								
 												$_SESSION["intinfo"] = $row["intinfo"];
 												
-												}
-											}	
-							
-											else
-				
-											{
-					
-												echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
-					
 											}
-											
-											// readuserdata Variable frei stellen 
-											mysqli_free_result($readuserdata);
-											
-											// BenutzerDaten von Angemeldeter Benutzer Aktuallisieren
-											
-											// Set Time
-											$anmeldezeit = date ("H:i:s");
-											
-											// Set Date
-											$anmeldedatum = date ("d.m.Y");
-											
-											$sql = "UPDATE benutzer SET Login_Date='" . $anmeldedatum . "', Login_Uhrzeit='" . $anmeldezeit . "' WHERE ID='" . $_SESSION["userID"] . "'";
-											if (mysqli_query($db_link, $sql))
-												{
-												
-													//Delite ECHO Note!!!
-													echo "Zeit und Datum vom benutzer " . $_SESSION["user"] . " wurde erfolgreich aktualisiert.";
-												
-												}
-												
-											else
-													
-												{
-												
-													echo "da war irgendwas falsch " . mysqli_error($db_link);
-												
-												}
-									
-									
-									}
-									
+										}	
+							
 									else
-										
-									{
-
-										echo"Passwort Falsch";
+				
+										{
+					
+											echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+					
+										}
 											
-									}
+									// readuserdata Variable frei stellen 
+									mysqli_free_result($readuserdata);
+											
+									// BenutzerDaten von Angemeldeter Benutzer Aktuallisieren
+											
+									// Set Time
+									$anmeldezeit = date ("H:i:s");
+											
+									// Set Date
+									$anmeldedatum = date ("d.m.Y");
+											
+									$sql = "UPDATE benutzer SET Login_Date='" . $anmeldedatum . "', Login_Uhrzeit='" . $anmeldezeit . "' WHERE ID='" . $_SESSION["ID"] . "'";
+									
+									if (mysqli_query($db_link, $sql))
+									
+										{
+												
+											echo "Willkommen: " . $_SESSION["user"] . ", was möchten Sie nun tun?";
+												
+										}
+												
+									else
+													
+										{
+												
+											echo "da war irgendwas falsch " . mysqli_error($db_link);
+												
+										}
+									
+									
+								}
+									
+							else
+										
+								{
+
+									echo"Passwort Falsch";
+											
+								}
 							
 					}
 					
@@ -523,20 +512,10 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 					
 					{
 						
-						echo "<br> Bitte haben Sie noch etwas gedult. Meist wird ihr Account in 1-2 Werktagen freigeschaltet.";
+						echo "<br> Bitte haben Sie noch etwas Gedult. Meist wird ihr Account in 1-2 Werktagen freigeschaltet.";
 						
 					}
 					
-					else
-					
-					{
-					
-					echo "Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!";
-					
-					}
-				
-			
-		
 			}
 		
 			else
@@ -592,9 +571,9 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				Benutzer:<br> <input type="text" name="Benutzer" placeholder="Benutzer" maxlength="50" size="50" autofocus required><br>
 				Passwort:<br> <input type="password" name="Passwort" maxlength="256" size="50" required><br>
 				Passwort2:<br> <input type="password" name="Passwort2" maxlength="256" size="50" required><br>
-				E-Mail:<br> <input type="text" name="email" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
-				E-Mail2:<br> <input type="text" name="email2" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
-				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT" size="2" maxlength="2" required>.<input type="text" name="gmon" placeholder="MM" size="2" maxlength="2" required>.<input type="text" name="gjahr" placeholder="JJJJ" size="4" maxlength="4" required><br><br>
+				E-Mail:<br> <input type="email" name="email" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
+				E-Mail2:<br> <input type="email" name="email2" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
+				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT" size="2" min="01" max="31" maxlength="2" required>.<input type="text" name="gmon" placeholder="MM" size="2" min="01" max="12" maxlength="2" required>.<input type="text" name="gjahr" placeholder="JJJJ" size="4" min= "1900" maxlength="4" required><br><br>
 				
 				<p>* Sie haben gewissenhaft unsere <a class="navi navi1" title="Datenschutzerklaerung" target="_blank" href="nbedingung.php">Datenschutzerklärung</a> und <a class="navi navi1" title="Nutzungsbedingung" target="_blank" href="nbeding.php">Nutzungsbedingungen</a> gelesen und sind über 14 Jahre alt.</p> 
 				
@@ -611,19 +590,11 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				}
 				
 				
-				// Eingabe ueberpruefen und anpassen...
-				function eingabe_testen($satz) {
-				$satz = trim($satz);
-				$satz = stripslashes($satz);
-				$satz = htmlspecialchars($satz);
-				return $satz;
-}
-				
 			if (isset($_POST["Benutzer"]))
 				
 				{
 				
-					if ($_POST["Benutzer"] == "")
+					if ($_POST["Benutzer"] == "" OR $_POST["Passwort"] == "" OR $_POST["Passwort2"] == "" OR $_POST["email"] == "" OR $_POST["email2"] == "")
 						
 						{
 							
@@ -635,8 +606,12 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 						$Benutzer = "";
 						$Benutzer = eingabe_testen($_POST["Benutzer"]);
 						
+						$email = "";
+						$email = eingabe_testen($_POST["email"]);
+					
+						
 						//Inhalt aus der DB von benutzer ausgeben
-						$sql = "SELECT user FROM benutzer WHERE user = '" . $Benutzer . "' ";
+						$sql = "SELECT user, email FROM benutzer WHERE user = '" . $Benutzer . "' OR email='" . $email . "' ";
 						$abfrage = mysqli_query($db_link, $sql);
 	
 						if (mysqli_num_rows($abfrage) > 0) 
@@ -645,15 +620,32 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 							while($row = mysqli_fetch_assoc($abfrage)) 
 								{
         
-								if ($Benutzer == $row["user"])
+								if ($Benutzer == $row["user"] OR $email == $row["email"])
 				
 									{
 					
-						
-									echo "Benutzer: " . $row["user"] . " wurde bereits vergeben!<br>Bitte wählen Sie einen anderen Benutzernamen!";
+										if ($Benutzer == $row["user"])
+											
+											{
+												
+												echo "Benutzer: " . $row["user"] . " wurde bereits vergeben!<br>Bitte wählen Sie einen anderen Benutzernamen.";
+												$Benutzer = NULL;
+												
+											}
+										
+										if ($email == $row["email"])
+											
+										
+											{
+											
+												echo "<br>";
+												echo "E-Mail: " . $row["email"] . " wird bereits verwendet!<br>Bitte wählen Sie eine neue E-Mail aus.";
+												$email = NULL;
+											
+											}
 					
 									}
-								
+							
 								}
 								
 							}
@@ -708,13 +700,67 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 															
 									}
 									
-								/*if ()
+								if (!is_numeric($_POST["gtag"]) OR !is_numeric($_POST["gmon"]) OR !is_numeric($_POST["gjahr"]))
 									
 									{
 										
-										echo "";
+										echo "<br>";
+										echo "Bitte geben Sie ein Gültiges Datum ein!";
 										
-									}*/
+									}
+								
+								$Jahr = date("Y");
+								
+								$klJahr = $Jahr - 14;
+								
+								$grJahr = $Jahr + 100;
+
+								
+								
+								if ($_POST["gtag"] < "1" OR $_POST["gtag"] > "31" OR $_POST["gmon"] > "12" OR $_POST["gmon"] < "1" OR $_POST["gjahr"] > $grJahr OR $klJahr < $_POST["gjahr"])
+									
+									{
+										
+										if ($klJahr < $_POST["gjahr"])
+											
+											{
+												
+												echo "<br>";
+												echo "Du bist zu jung! Eingang ist erst ab 14 Jahren gestattet!";
+												
+											}
+										
+										if ($_POST["gjahr"] > $grJahr)
+											
+											{
+												
+												echo "<br>";
+												echo "Sie sind Alt, ein bisschen zu Alt oder?";
+												
+											}
+										
+										else
+											
+											{
+												
+												
+												echo "<br>";
+												echo "Bitte geben Sie ein Gültiges Datum ein!";
+												
+											}
+																				
+									}
+								
+								else 
+									
+								//Wenn alles mit dem Datum Stimmt das Datum als String in die gtag Variable einspeichern
+								{
+									
+									$gtag = "";
+									$gtag = "" . $_POST["gtag"] . "." . $_POST["gmon"] . "." . $_POST["gjahr"] . "";																		
+									
+								}
+								
 								
 								if 	(!isset($_POST["AllesGelesen"]))
 															
@@ -734,7 +780,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									{
 								
 										echo "<br>";
-										echo "Danke für ihre Zustimmung der Nutzungs- und Datenschutzbestimmungen";
+										echo "Danke für ihre Zustimmung der Nutzungs- und Datenschutzbestimmungen.";
 								
 									}
 										
@@ -745,9 +791,13 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										//passwort VARIABLE setzen und zuordnen
 										$passwort = "";
 										$passwort = eingabe_testen($_POST["Passwort"]);
-										//passwort2 VARIABLE setzen und zuordnen
+										
+										//Passwort nun Hashen.
+										$hash = password_hash($passwort, PASSWORD_DEFAULT);
+										
+										//passwort2 VARIABLE setzen zuordnen und hashen.
 										$passwort2 = "";
-										$passwort2 = eingabe_testen($_POST["Passwort2"]);
+										$passwort2 = $hash;
 								
 									}
 										
@@ -763,7 +813,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										$email2 = "";
 										$email2 = eingabe_testen($_POST["email2"]);
 								
-										//Wenn was mit der E-Mail eingabe seltsam ist. Die eingabe Variablen zurück setzen!
+										//Wenn was mit der E-Mail Eingabe seltsam ist. Die Eingabe Variablen zurück setzen!
 											
 										if 	(!filter_var($email, FILTER_VALIDATE_EMAIL) OR !filter_var($email2, FILTER_VALIDATE_EMAIL)) 
 										
@@ -772,12 +822,41 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 												echo "<br>";
 												echo "Falsches E-Mail Format!";
 													
-												$email = "";
-												$email2 = "";
+												$email = NULL;
+												$email2 = NULL;
 												
 											}
+											
+										else
+										
+											{
+											
+												$registerdatum = date("d.m.Y");
+												$registerzeit = date("H:i:s");
 												
+												$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, Rang, login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo) VALUES ('" . $Benutzer . "', '" . $hash . "', '" . $passwort2 . "', '" . $email . "', '" . $gtag . "', '3', '" . $registerdatum . "', '" . $registerzeit . "', '" . $registerzeit . "', '" . $registerdatum . "', '0', '0', '0', 'Internal_Info')";
+												
+												
+												if (mysqli_query($db_link, $sql)) 
+													
+													{
+														
+														echo "Willkommen zu den <b>Eisernen Legenden</b>. <br>Sie müssen noch von einem Administrator frei geschaltet werden.<br>Bitte haben Sie daher noch etwas Gedult bis zu ihrer Freischaltung.";
+														
+													}
+													
+												else
+														
+													{
+													
+														echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
+													
+													}
+												
+											}
 									}
+									
+									
 										
 							}
 									
