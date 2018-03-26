@@ -87,6 +87,124 @@ if ($_SESSION["rang"] <= "1" AND isset($_SESSION["rang"]))
 
 <?php
 
+if ($_GET['page'] == "main")
+	
+	{
+		
+		echo "<h4>Hauptseite</h4>";
+				
+		echo "<b>Übersicht</b><br><br>";
+		
+		echo "<div>";
+		
+		//Spalte Links
+		echo "Left";
+		$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
+		$spl = mysqli_query($db_link, $sql);
+		
+		if (mysqli_num_rows($spl) > 0) 
+			
+			{
+			// output data of each row
+			while($row = mysqli_fetch_assoc($spl)) 
+				
+				{
+				
+					$ID = $row["ID"];
+					
+				
+				echo "ID: " . $ID . "";
+				
+				}
+			
+			}			 
+		
+		else
+		
+			{
+				
+				echo "Keine Einträge.";
+			
+			}
+	
+		mysqli_free_result($spl);
+		
+		//Spalte Mitte
+		echo "Middle ";
+		
+		$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main";
+		$spm = mysqli_query($db_link, $sql);
+		
+		if (mysqli_num_rows($spm) > 0) 
+			
+			{
+			// output data of each row
+			while($row = mysqli_fetch_assoc($spm)) 
+				
+				{
+				
+					$ID = $row["ID"];
+					$Author = $row["Author"];
+					$Uhrzeit = $row["Uhrzeit"];
+					$Datum = $row["Datum"];
+					$Titel = $row["Titel"];
+					$Inhalt = $row["inhalt"];
+					$Tags = $row["Tags"];
+					$Sticky = $row["Sticky"];
+				
+				echo "ID: " . $ID . " A: " . $Author . " Uhrzeit: " . $Uhrzeit . " Datum: " . $Datum . "<br>Titel: " . $Titel . "<br><br>" . $Inhalt . "<br><br> Tags: " . $Tags . " Sticky: " . $Sticky . "";
+				
+				}
+			
+			}			 
+		
+		else
+		
+			{
+				
+				echo "Keine Einträge.";
+			
+			}
+	
+		mysqli_free_result($spm);
+		
+		//Spalte rechts
+		echo "right ";
+		
+		$sql = "SELECT ID, Werbung, Voicechat, Twitchstreamer FROM spalte_rechts";
+		$spr = mysqli_query($db_link, $sql);
+		
+		if (mysqli_num_rows($spr) > 0) 
+			
+			{
+			// output data of each row
+			while($row = mysqli_fetch_assoc($spr)) 
+				
+				{
+				
+					$ID = $row["ID"];
+					
+				
+				echo "ID: " . $ID . "";
+				
+				}
+			
+			}			 
+		
+		else
+		
+			{
+				
+				echo "Keine Einträge.";
+			
+			}
+	
+		mysqli_free_result($spr);
+		
+		echo "</div>";
+		
+	}
+
 if ($_GET['page'] == "overview")
 	
 	{
@@ -137,6 +255,7 @@ if ($_GET['page'] == "overview")
 	
 	}
 
+	// Liste Alle benutzer auf.
 if ($_GET['page'] == "user")
 	
 	{
@@ -156,6 +275,8 @@ if ($_GET['page'] == "user")
 				
 				{
 					
+					$ID = $user = $Rang = $Banned = $setfree = NULL;
+					
 					$ID = $row["ID"];
 					$user = eingabe_wandeln($row["user"]);
 					$Rang = $row["Rang"];
@@ -168,35 +289,35 @@ if ($_GET['page'] == "user")
 				echo "<br>";
 				
 				
-				if ($_SESSION["rang"] > "0" AND $Banned == "0" AND $setfree == "0" AND $Rang != "0")
+				if ($_SESSION["rang"] > "0" AND $Banned == "0" AND $setfree == "0" AND $Rang != "0" AND $Rang != "1")
 					
 					{
 						
-						echo " Freischlaten | Bannen <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischlaten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a><br><br>";
 												
 					}
 					
-				if ($_SESSION["rang"] > "0" AND $Banned == "0" AND $setfree == "1" AND $Rang != "0")
+				if ($_SESSION["rang"] > "0" AND $Banned == "0" AND $setfree == "1" AND $Rang != "0" AND $Rang != "1")
 					
 					{
 						
-						echo " Bannen <br><br>";
-												
-					}
-				
-				if ($_SESSION["rang"] > "0" AND $Banned == "1" AND $setfree == "1" AND $Rang != "0")
-					
-					{
-						
-						echo " EntBannen <br><br>";
+						echo "<a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a><br><br>";
 												
 					}
 				
-				if ($_SESSION["rang"] > "0" AND $Banned == "1" AND $setfree == "0" AND $Rang != "0")
+				if ($_SESSION["rang"] > "0" AND $Banned == "1" AND $setfree == "1" AND $Rang != "0" AND $Rang != "1")
 					
 					{
 						
-						echo " Freischalten | EntBannen <br><br>";
+						echo " <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> <br><br>";
+												
+					}
+				
+				if ($_SESSION["rang"] > "0" AND $Banned == "1" AND $setfree == "0" AND $Rang != "0" AND $Rang != "1")
+					
+					{
+						
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer EntBannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> <br><br>";
 												
 					}
 				
@@ -204,7 +325,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " Freischalten | Bannen | Löschen <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
 												
 					}
 				
@@ -212,7 +333,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " Freischalten | EntBannen | Löschen <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
 												
 					}
 				
@@ -220,7 +341,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " Sperren | EntBannen | Löschen <br><br>";
+						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "\">Sperren</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
 												
 					}
 					
@@ -228,7 +349,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " Sperren | Bannen | Löschen <br><br>";
+						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "\">Sperren</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
 												
 					}
 					
@@ -248,7 +369,8 @@ if ($_GET['page'] == "user")
 		mysqli_free_result($benutzerliste);
 		
 	}
-	
+
+// Benutzer freischalten	
 if ($_GET['page'] == "freischalten")
 	
 	{
@@ -273,7 +395,112 @@ if ($_GET['page'] == "freischalten")
 		$user = NULL;
 	}
 	
+// Benutzer Sperren
+
+if ($_GET['page'] == "sperren")
 	
+	{
+		
+					$user = $_GET['benutzer'];
+			
+			$sql = "UPDATE benutzer SET setfree='0' WHERE user='" . $user . "'";
+	
+		if (mysqli_query($db_link, $sql))
+			
+			{
+				
+				echo "Benutzer: " . $user . " erfolgreich wieder gesperrt.";
+				
+			}
+		else
+			{
+			
+				echo "Benutzer: " .  $user . " konnte nicht wieder gesperrt werden" . mysqli_error($db_link);
+			
+			}
+		$user = NULL;
+		
+	}
+	
+//Benutzer Bannen
+
+if ($_GET['page'] == "bannen")
+	
+	{
+		
+		$user = $_GET['benutzer'];
+		
+		$sql = "UPDATE benutzer SET Banned ='1' WHERE user='" . $user . "'";
+		
+	if (mysqli_query($db_link, $sql))
+		
+		{
+			
+			echo "Benutzer: " . $user . " wurde nun gebannt!";
+			
+		}
+	else
+		{
+			
+			echo "Benutzer: " . $user . " kann oder konnte nicht gebannt werden!";
+			
+		}
+		
+	}
+	
+//Benutzer EntBannen
+
+if ($_GET['page'] == "entbannen")
+	
+	{
+		
+		$user = $_GET['benutzer'];
+		
+		$sql = "UPDATE benutzer SET Banned ='0' WHERE user='" . $user . "'";
+		
+	if (mysqli_query($db_link, $sql))
+		
+		{
+			
+			echo "Benutzer: " . $user . " wurde nun entbannt!";
+			
+		}
+	else
+		{
+			
+			echo "Benutzer: " . $user . " kann oder konnte nicht entbannt werden!";
+			
+		}
+		
+	}
+	
+//Benutzer Löschen
+
+if ($_GET['page'] == "loeschen")
+	
+	{
+		
+		$user = $_GET['benutzer'];
+		
+		$sql = "DELETE FROM benutzer WHERE user='" . $user . "'";
+		
+	if (mysqli_query($db_link, $sql))
+		
+		{
+			
+			echo "Benutzer: " . $user . " wurde nun gelöscht!";
+			
+		}
+	else
+		{
+			
+			echo "Benutzer: " . $user . " kann oder konnte nicht gelöscht!";
+			
+		}
+		
+	}
+	
+// BenutzerInfos ermitteln und ausgeben
 if ($_GET ['page'] == "benutzerinfo")
 	
 	{
