@@ -82,10 +82,48 @@ main {
 
 }
 
-div {
+/* Drei Felder erstellen */
+.spalte {
+         margin: auto;
+         float: left;
+         padding: 15px;
+}
+
+/* Linke und rechte Spalte */
+.spalte.side {
+    width: 200px;
+    background-color: #bfbfbf;
+	color: white;
+    font-style: normal;
+    font-family: "Arial Verdana", Arial, Sans-serif;
+    font-size: 16px;
+}
+
+/* mittlere Spalte */
+.spalte.mitte {
+         width: 930px;
+         background-color: #f2f2f2;
+
+         font-style: normal;
+         font-family: "Arial Verdana", Arial, Sans-serif;
+}
+
+/* Float nach den Spalten beenden */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.titel {
 	
-	padding: 5px;
-	background-color: #f2f2f2;
+	    background-color: #a6a6a6;
+	
+}
+
+.ende {
+	
+	background-color: #d9d9d9;
 	
 }
 

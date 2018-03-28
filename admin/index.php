@@ -95,8 +95,8 @@ if ($_GET['page'] == "main")
 				
 		echo "<b>Übersicht</b><br><br>";
 		
-		echo "<div>";
-		
+		echo "<div class=\"row\">";
+		echo "<div class=\"spalte side\">";
 		//Spalte Links
 		echo "Left";
 		$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
@@ -129,8 +129,12 @@ if ($_GET['page'] == "main")
 	
 		mysqli_free_result($spl);
 		
+		echo "</div>";
 		//Spalte Mitte
-		echo "Middle ";
+		
+		echo "<div class=\"spalte mitte\">";
+		
+		echo "<a title=\"Neuen Eintrag erstellen\" href=\"index.php?page=createnewcontent\">Neuer Eintrag erstellen?</a><br>";
 		
 		$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main";
 		$spm = mysqli_query($db_link, $sql);
@@ -152,7 +156,15 @@ if ($_GET['page'] == "main")
 					$Tags = $row["Tags"];
 					$Sticky = $row["Sticky"];
 				
-				echo "ID: " . $ID . " A: " . $Author . " Uhrzeit: " . $Uhrzeit . " Datum: " . $Datum . "<br>Titel: " . $Titel . "<br><br>" . $Inhalt . "<br><br> Tags: " . $Tags . " Sticky: " . $Sticky . "";
+					if ($_SESSION["rang"] < "1")
+
+						{
+						
+							$contentid = $ID;
+						
+						}
+				
+				echo "<div class=\"titel\"> ID: " . $ID . " A: " . $Author . " Uhrzeit: " . $Uhrzeit . " Datum: " . $Datum . "<br>Titel: " . $Titel . "</div><br><br>" . $Inhalt . "<br><br><div class=\"ende\"> Tags: " . $Tags . " Sticky: " . $Sticky . "</div><a title=\"Editieren\" href=\"index.php?page=contentedit&contentid=" . $contentid . "\">Editieren</a> | <a title=\"löschen\" href=\"index.php?page=contentdelite&contentid=" . $contentid . "\">Löschen</a> <br><br>";
 				
 				}
 			
@@ -168,7 +180,10 @@ if ($_GET['page'] == "main")
 	
 		mysqli_free_result($spm);
 		
+		echo "</div>";
 		//Spalte rechts
+		
+		echo "<div class=\"spalte side\">";
 		echo "right ";
 		
 		$sql = "SELECT ID, Werbung, Voicechat, Twitchstreamer FROM spalte_rechts";
@@ -200,10 +215,204 @@ if ($_GET['page'] == "main")
 			}
 	
 		mysqli_free_result($spr);
-		
 		echo "</div>";
+		echo "</div>";		
+	}
+
+	//Neuer Eintrag in die Hauptseitenspalte
+
+if ($_GET['page'] == "createnewcontent")
+
+	{
+		
+		if (!isset($_POST["titel"]))
+			{
+				
+				echo "<form action=\"index.php?page=createnewcontent\" method=\"post\">";
+				echo "<fieldset>";
+				echo "<legend>Neuer Hauptseiten Eintrag</legend>";
+		
+				echo "Titel:<br><input type=\"text\" name=\"titel\" size=\"100\" placeholder=\"Titel\">";
+				echo "<br>Inhalt:<br><textarea type=\"text\" name=\"inhalt\" placeholder=\"Inhalt\" style=\"width:800px; height:600px;\"></textarea>";
+				echo "<br>Tagging:<br><input type=\"text\" name=\"tags\" size=\"100\" placeholder=\"tags N/A\">";
+				//Eintrag als Ersteintrag markieren lassen.
+				echo "<br>Sticky: N/A <input type=\"checkbox\" name=\"sticky\" value=\"stickit\">";
+		
+				echo "</fieldset>";
+		
+				echo "<br><input type=\"submit\" value=\"Eintragen\">";
+				echo "</form>";
+				
+			}
+		
+		if (isset($_POST["titel"]))
+			{
+				
+				$datum = date("d.m.Y");
+				$uhrzeit = date ("H:i:s");
+				$author = $_SESSION["user"];
+				$tags = "news";
+				$sticky = "0";
+				
+				$titel = $_POST["titel"];
+				$inhalt = $_POST["inhalt"];
+				
+				$titel = eingabe_wandeln($titel);
+				//Aphostroph unschädlich machen
+				$titel = str_replace("'", "&apos;", $titel);
+				$inhalt = eingabe_wandeln($inhalt);
+				//Aphostroph unschädlich machen
+				$inhalt = str_replace("'", "&apos;", $inhalt);
+				
+				$sql = "INSERT INTO main (Author, Uhrzeit, Datum, Titel, Inhalt, Tags, Sticky) VALUES ('" . $author . "', '" . $uhrzeit . "', '" . $datum . "', '" . $titel . "', '" . $inhalt . "', '" . $tags . "', '". $sticky .  "')";
+				
+				if (mysqli_query($db_link, $sql))
+					
+					{
+						
+						echo "Eintrag erfolgreich!";
+						
+					}
+				else 
+					{
+						
+						echo "Konnte Eintrag nicht setzen" . mysqli_error($db_link);
+						
+					}
+				
+			}
 		
 	}
+		
+	//Eintrag Editieren von der Hauptseitespalte
+if ($_GET['page'] == "contentedit")
+			
+		
+			{
+				
+				if (isset($_GET['contentid']))
+					{
+						
+					$contentid = $_GET['contentid'];
+					
+					/* SQL Muss später noch angepasst werden */
+					$sql = "SELECT Titel, Inhalt FROM main WHERE ID='" . $contentid . "'";
+				
+						$result = mysqli_query($db_link, $sql);
+						
+							if (mysqli_num_rows($result) > 0)
+					
+							{
+								while($row = mysqli_fetch_assoc($result))
+									
+									{
+										
+										$titel = $row["Titel"];
+										$inhalt = $row["Inhalt"];
+										
+									}
+									
+							}
+						else 
+							{
+						
+								echo "Nichts da zum editieren." . mysqli_error($db_link);
+						
+							}
+							
+					$titel = trim($titel);
+					//Aphostroph unschädlich machen
+					$titel = str_replace("'", "&apos;", $titel);
+					
+			
+					$inhalt = trim($inhalt);
+					//Aphostroph unschädlich machen
+					$inhalt = str_replace("'", "&apos;", $inhalt);
+					
+					
+					echo "<form action=\"index.php?page=contentedit&editid=" . $contentid . "\" method=\"post\">";
+					echo "<fieldset>";
+					echo "<legend>Eintrag editieren</legend>";
+		
+					echo "Titel:<br><input type=\"text\" name=\"titel\" size=\"100\" value=\"" . $titel . "\" placeholder=\"Titel\">";
+					echo "<br>Inhalt:<br><textarea type=\"text\" name=\"inhalt\" placeholder=\"Inhalt\" style=\"width:800px; height:600px;\">" . $inhalt . "</textarea>";
+					echo "<br>Tagging:<br><input type=\"text\" name=\"tags\" size=\"100\" placeholder=\"tags N/A\">";
+					//Eintrag als Ersteintrag markieren lassen.
+					echo "<br>Sticky: N/A <input type=\"checkbox\" name=\"sticky\" value=\"stickit\">";
+		
+					echo "</fieldset>";
+			
+					echo "<br><input type=\"submit\" value=\"Editieren\">";
+					echo "</form>";
+				
+					}
+				
+				if (isset($_GET['editid']))
+					
+					{
+						
+						$datum = date("d.m.Y");
+						$uhrzeit = date ("H:i:s");
+						$author = $_SESSION["user"];
+						$tags = "news";
+						$sticky = "0";
+				
+						$titel = $_POST["titel"];
+						$inhalt = $_POST["inhalt"];
+				
+						$titel = eingabe_wandeln($titel);
+						//Aphostroph unschädlich machen
+						$titel = str_replace("'", "&apos;", $titel);
+						$inhalt = eingabe_wandeln($inhalt);
+						//Aphostroph unschädlich machen
+						$inhalt = str_replace("'", "&apos;", $inhalt);
+						$contentid = $_GET['editid'];
+						
+						$sql = "UPDATE main SET Author='" . $author . "', Uhrzeit='" . $uhrzeit . "', Datum='" . $datum . "', Titel='" . $titel . "', Inhalt='" . $inhalt . "', Tags='" . $tags . "', Sticky='". $sticky .  "'";
+				
+						if (mysqli_query($db_link, $sql))
+					
+							{
+						
+								echo "Eintrag erfolgreich editiert!";
+						
+							}
+						else 
+							{
+						
+								echo "Konnte Eintrag nicht editieren." . mysqli_error($db_link);
+						
+							}
+						
+					}
+				
+			}
+			
+	//Eintrag Löschen von der Hauptseitenspalte
+if ($_GET['page'] == "contentdelite")
+			
+		
+			{
+				$contentid = $_GET['contentid'];
+				
+				$sql = "DELETE FROM main WHERE id='" . $contentid . "'";
+				
+				if (mysqli_query($db_link, $sql) AND $_SESSION["rang"] <= "1")
+					
+					{
+						
+						echo "Seiten Eintrag erfolgreich gelöscht.";
+						
+					}
+				else
+					
+					{
+						
+						echo "Seiten Eintrag konnte nicht gelöscht werden: " . mysqli_error($db_link);
+						
+					}
+				
+			}
 
 if ($_GET['page'] == "overview")
 	
@@ -652,9 +861,6 @@ if ($_GET ['page'] == "benutzerinfo")
 <footer>Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>
 &copy;2013 - <?php echo date("Y");?></footer>
-<?php
-echo "Version d5d9cf8";
-?>
 
 </body>
 </html>

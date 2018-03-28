@@ -323,6 +323,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			
 			$benutzer = "";
 			$benutzer = eingabe_testen($_POST["Benutzer"]);
+			$benutzer = str_replace("'", "&apos;", $benutzer);
 		
 		//Inhalt aus der DB von benutzer ausgeben
 			$sql = "SELECT user, Banned, setfree FROM benutzer WHERE user = '" . $benutzer . "' ";
@@ -605,9 +606,13 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 						
 						$Benutzer = "";
 						$Benutzer = eingabe_testen($_POST["Benutzer"]);
+						// apostroph unschädlich machen
+						$Benutzer = str_replace("'", "&apos;", $Benutzer);
 						
 						$email = "";
 						$email = eingabe_testen($_POST["email"]);
+						// apostroph unschädlich machen
+						$email = str_replace("'", "&apos;", $email);
 					
 						
 						//Inhalt aus der DB von benutzer ausgeben
@@ -791,6 +796,8 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										//passwort VARIABLE setzen und zuordnen
 										$passwort = "";
 										$passwort = eingabe_testen($_POST["Passwort"]);
+										// apostroph unschädlich machen
+										$passwort = str_replace("'", "&apos;", $passwort);
 										
 										//Passwort nun Hashen.
 										$hash = password_hash($passwort, PASSWORD_DEFAULT);
