@@ -29,9 +29,10 @@ if ($_SESSION["rang"] > "1")
 				
 				// Eingabe ueberpruefen und anpassen...
 				function eingabe_wandeln($satz) 	{
-				$satz = trim($satz);
 				$satz = stripslashes($satz);
-				$satz = htmlspecialchars($satz);
+				$satz = strip_tags($satz);
+				$satz = nl2br($satz);
+				$satz = trim($satz);
 				return $satz;
 												}
 
@@ -98,22 +99,23 @@ if ($_GET['page'] == "main")
 		echo "<div class=\"row\">";
 		echo "<div class=\"spalte side\">";
 		//Spalte Links
-		echo "Left";
+		
 		$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
 		$spl = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($spl) > 0) 
 			
 			{
-			// output data of each row
+			// ausgabe der zeilen
 			while($row = mysqli_fetch_assoc($spl)) 
 				
 				{
 				
 					$ID = $row["ID"];
-					
-				
-				echo "ID: " . $ID . "";
+					$kurzinfos = $row["kurzinfos"];
+					$events = $row["events"];
+					$_SESSION["events"] = $events;
+					$_SESSION["kurzinfos"] = $kurzinfos;
 				
 				}
 			
@@ -123,11 +125,24 @@ if ($_GET['page'] == "main")
 		
 			{
 				
-				echo "Keine Einträge.";
+				echo "Keine Infos oder Events.";
 			
 			}
-	
+		
 		mysqli_free_result($spl);
+		
+		
+		echo "<a title=\"Spalte Bearbeiten?\" href=\"index.php?page=spaltelinks\">Spalte bearbeiten?</a><br>";
+		
+		echo "KurzInfos: <br><br>";
+		
+		echo $kurzinfos;
+		
+		echo "<br><br>";
+		
+		echo "Events: <br><br>";
+		
+		echo $events;
 		
 		echo "</div>";
 		//Spalte Mitte
@@ -136,7 +151,7 @@ if ($_GET['page'] == "main")
 		
 		echo "<a title=\"Neuen Eintrag erstellen\" href=\"index.php?page=createnewcontent\">Neuer Eintrag erstellen?</a><br>";
 		
-		$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main";
+		$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main ORDER BY ID DESC";
 		$spm = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($spm) > 0) 
@@ -192,7 +207,7 @@ if ($_GET['page'] == "main")
 		if (mysqli_num_rows($spr) > 0) 
 			
 			{
-			// output data of each row
+			// put it out the rows jaja
 			while($row = mysqli_fetch_assoc($spr)) 
 				
 				{
@@ -219,6 +234,66 @@ if ($_GET['page'] == "main")
 		echo "</div>";		
 	}
 
+	//Neuer Eintrag in die LinkeSpalte
+
+	
+	if ($_GET['page'] == "spaltelinks")
+		
+		{
+			if (!isset($_POST["KurzInfos"]))
+				{
+					
+					$events = $_SESSION["events"];
+					$kurzinfos = $_SESSION["kurzinfos"];
+					echo "<form action=\"index.php?page=spaltelinks\" method=\"post\">";
+					echo "<fieldset style=\"width:300px;\">";
+					echo "<legend>Inhalt der Linken Spalte</legend>";
+		
+
+					echo "<br>Kurzinfos: (Maximal 256 zeichen!)<br><textarea type=\"text\" name=\"KurzInfos\" placeholder=\"KurzInfos\" maxlength=\"256\" style=\"width:150px; height:250px;\">" . $kurzinfos . "</textarea>";
+					echo "<br>Events:<br><textarea type=\"text\" name=\"Events\" placeholder=\"Events\" style=\"width:150px; height:400px;\">" . $events . "</textarea>";
+					echo "</fieldset>";
+		
+					echo "<br><input type=\"submit\" value=\"Update\">";
+					echo "</form>";
+				
+				}
+			
+			if (isset($_POST["KurzInfos"]))
+				
+				{
+				
+					$events = "";
+					$kurzinfos = "";
+					
+					$kurzinfos = $_POST['KurzInfos'];
+					$events = $_POST['Events'];
+					
+					eingabe_wandeln($kurzinfos);
+					//Aphostroph unschädlich machen
+					$inhalt = str_replace("'", "&apos;", $kurzinfos);
+					
+					eingabe_wandeln($events);
+					//Aphostroph unschädlich machen
+					$inhalt = str_replace("'", "&apos;", $events);
+					
+					$sql = "";
+					$sql = "UPDATE spalte_links SET events='" . $events . "', kurzinfos='" . $kurzinfos . "' WHERE ID=1";
+
+					if (mysqli_query($db_link, $sql)) 
+						{
+							echo "KurzInfos und Events wurden aktuallisiert.";
+						} 
+					else 
+						{
+							echo "Fehler mit der Aktuallisierung : " . mysqli_error($db_link);
+						}
+
+					
+				}
+			
+		}
+	
 	//Neuer Eintrag in die Hauptseitenspalte
 
 if ($_GET['page'] == "createnewcontent")

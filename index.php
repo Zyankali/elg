@@ -46,9 +46,10 @@ $_SESSION["rang"] = "4";
 				
 				// Eingabe ueberpruefen und anpassen...
 				function eingabe_testen($satz) 	{
-				$satz = trim($satz);
 				$satz = stripslashes($satz);
-				$satz = htmlspecialchars($satz);
+				$satz = strip_tags($satz);
+				$satz = nl2br($satz);
+				$satz = trim($satz);
 				return $satz;
 												}
 	
@@ -93,7 +94,7 @@ if ($_SESSION["rang"] == "4")
 	<?php
 	}
 
-else
+if ($_SESSION["rang"] < "4")
 		
 	{
 		?>
@@ -131,29 +132,40 @@ else
 		echo "</nav>";
 			
 	}
+
+$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
+$ergebnis = mysqli_query($db_link, $sql);
+
+if (mysqli_num_rows($ergebnis) > 0) {
+	
+	while ($row = mysqli_fetch_assoc($ergebnis)) {
+		
+		$kurzinfos = $row["kurzinfos"];
+		$events = $row["events"];
+		
+	}
+}
+else 
+	
+	{
+		
+		echo "";
+		
+	}
+
+mysqli_free_result($ergebnis);
+	
 ?>
 
 
 <div class="row">
   <div class="spalte side"> <!--Linke Spalte-->
-         <div class="sidespacer"><h2>KurzInfo</h2>
-         <p>Kurz Infos zu allem Möglichem. Wie GT Größ, Neuzugänge, etc.</p>
-         <h2>Events</h2>
-         <p>Rust</p>
-         <p align="center">N/A</p>
-         <p>Overwatch</p>
-         <p align="center">N/A</p>
-         <p>CsGo</p>
-         <p align="center">N/A</p>
-         <p>PuBG</p>
-         <p align="center">N/A</p>
-         <p>Fortnite</p>
-         <p align="center">N/A</p>
-         <p>LoL</p>
-         <p align="center">N/A</p>
-         <p>WoW</p>
-         <p align="center">N/A</p>
-         </div>
+        <div class="sidespacer">
+		<h2>KurzInfo</h2>
+        <p><?php echo $kurzinfos; ?></p>
+        <h2>Events</h2>
+		<p><?php echo $events; ?></p>
+        </div>
     </div>
   <div class="spalte mitte"> <!-- Mittlere Spalte -->
 
@@ -224,14 +236,9 @@ if (!isset($page))
 
    ?>
   Server<br>
-  <br>
-  <img class="server_images" src="img/rust_server.png" alt="RUST_SERVER" border="0" width="728" height="90"><br>
-
-         <a class="server_link" href="steam://connect/5.1.81.53:28154">steam://connect/5.1.81.53:28154</a>
-         <br>
-         <a class="server_link" href="steam://connect/5.1.81.47:28022">steam://connect/5.1.81.47:28022</a>
-
   <!--<br>
+  <img class="server_images" src="img/rust_server.png" alt="RUST_SERVER" border="0" width="728" height="90"><br>
+  <br>
   <img class="server_images" src="img/overwatch_server.png" alt="Overwatch_SERVER" border="0" width="728" height="90">
   <br>
   <img class="server_images" src="img/csgo_server.png" alt="CsGo_SERVER" border="0" width="728" height="90">
@@ -351,6 +358,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 								{
 					
 									echo "Sie wurden noch nicht von einem Admin freigeschaltet!";
+									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 											
 								}
 					
@@ -385,6 +393,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 								{
 					
 									echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 					
 								}
 							
@@ -463,6 +472,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										{
 					
 											echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
+											echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 					
 										}
 											
@@ -483,7 +493,8 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									
 										{
 												
-											echo "Willkommen: " . $_SESSION["user"] . ", was möchten Sie nun tun?";
+											echo "Willkommen: " . $_SESSION["user"] . ", mit einem click auf \"Weiter\" offenbart sich ihnen ihr Potenzial... eventuell.";
+											echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 												
 										}
 												
@@ -503,6 +514,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 								{
 
 									echo"Passwort Falsch";
+									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 											
 								}
 							
@@ -514,6 +526,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 					{
 						
 						echo "<br> Bitte haben Sie noch etwas Gedult. Meist wird ihr Account in 1-2 Werktagen freigeschaltet.";
+						echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 						
 					}
 					
@@ -524,6 +537,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			{
 				
 					echo "Unbekannter Benutzer. Bitte Loggen Sie sich neu ein oder Registrieren Sie sich.";
+					echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 				
 			}
 		
@@ -544,7 +558,8 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 
 			// toete die session an sich
 			session_destroy();
-				
+			
+			echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 			
 		}
 
@@ -732,6 +747,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 												
 												echo "<br>";
 												echo "Du bist zu jung! Eingang ist erst ab 14 Jahren gestattet!";
+												echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 												
 											}
 										
@@ -741,6 +757,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 												
 												echo "<br>";
 												echo "Sie sind Alt, ein bisschen zu Alt oder?";
+												echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 												
 											}
 										
@@ -841,7 +858,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 												$registerdatum = date("d.m.Y");
 												$registerzeit = date("H:i:s");
 												
-												$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, Rang, login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo) VALUES ('" . $Benutzer . "', '" . $hash . "', '" . $passwort2 . "', '" . $email . "', '" . $gtag . "', '3', '" . $registerdatum . "', '" . $registerzeit . "', '" . $registerzeit . "', '" . $registerdatum . "', '0', '0', '0', 'Internal_Info')";
+												$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, profile_image, Rang, login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo) VALUES ('" . $Benutzer . "', '" . $hash . "', '" . $passwort2 . "', '" . $email . "', '" . $gtag . "','http://www.tntwestsoccer.com/wp-content/uploads/2016/05/NO-IMAGE-AVAILABLE-300x300.jpg' ,'3', '" . $registerdatum . "', '" . $registerzeit . "', '" . $registerzeit . "', '" . $registerdatum . "', '0', '0', '0', 'Internal_Info')";
 												
 												
 												if (mysqli_query($db_link, $sql)) 
@@ -849,6 +866,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 													{
 														
 														echo "Willkommen zu den <b>Eisernen Legenden</b>. <br>Sie müssen noch von einem Administrator frei geschaltet werden.<br>Bitte haben Sie daher noch etwas Gedult bis zu ihrer Freischaltung.";
+														echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
 														
 													}
 													
@@ -932,7 +950,7 @@ kontakt
   <div class="spalte side"> <!--Rechte Spalte-->
     <div class="sidespacer"><br>
     <h2>Werbung</h2>
-    <p>Werbung!?</p>
+    <p><img src="ads/st_add.png"></p>
     <h2>TS3/Discord</h2>
     <p>TS3_DISCORD_API</p>
     <h2>TwitchStream</h2>
