@@ -44,14 +44,34 @@ $_SESSION["rang"] = "4";
 
 				//functionenliste
 				
-				// Eingabe ueberpruefen und anpassen...
-				function eingabe_testen($satz) 	{
-				$satz = stripslashes($satz);
-				$satz = strip_tags($satz);
-				$satz = nl2br($satz);
-				$satz = trim($satz);
-				return $satz;
-												}
+				// Eingabe ueberpruefen, anpassen und schreiben...
+				function schreiben($speichern) 		{
+				$speichern = stripslashes($speichern);
+				$speichern = strip_tags($speichern);
+				$speichern = nl2br($speichern);
+				$speichern = str_replace("'", "&apos;", $speichern);
+				$speichern = trim($speichern);
+				return $speichern;						}
+				
+				//Ausgabe zum editieren bereit stellen
+				function editieren($edit) 				{
+				$edit = str_replace("<br />", "", $edit);
+				$edit = trim($edit);
+				return $edit;							}
+				
+				//Ausgabe einlesen
+				function lesen($einlesen) 				{
+				$einlesen = trim($einlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
+				$einlesen = preg_replace($linksuche, $ersetzenlink, $einlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$einlesen = preg_replace($bildsuche, $ersetzenbild, $einlesen);
+				return $einlesen;						}					
 	
 	
 ?>
@@ -187,9 +207,9 @@ if (!isset($page))
 
 		{
   
-
+		$sql = "";
 			//Inhalt aus der DB von Main ausgeben
-			$sql = "SELECT * FROM main ORDER BY ID DESC";
+		$sql = "SELECT * FROM main ORDER BY ID DESC";
 		$result = mysqli_query($db_link, $sql);
 	
 		if (mysqli_num_rows($result) > 0) 
@@ -198,6 +218,11 @@ if (!isset($page))
 				while($row = mysqli_fetch_assoc($result)) 
 				
 					{
+					
+					$Inhalt = $row["Inhalt"];
+					
+					$Inhalt = lesen($Inhalt);
+						
 						echo "<article>
 						<div class=\"titel\"> #:" . $row["ID"]. 
 						" <img src=\"img/author.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Author"]. 
@@ -205,7 +230,7 @@ if (!isset($page))
 						" <img src=\"img/calendar.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Datum"]. 
 						" <br> <b id=\"titel\"> " . $row["Titel"]. 
 						" </b></div>
-						<div class=\"inhalt\"> " . $row["Inhalt"]. 
+						<div class=\"inhalt\"> " . $Inhalt . 
 						"<br>" . $row["Tags"]. 
 						"<br>" . $row["Sticky"]. 
 						"<br>
@@ -329,7 +354,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			$banned = "";
 			
 			$benutzer = "";
-			$benutzer = eingabe_testen($_POST["Benutzer"]);
+			$benutzer = schreiben($_POST["Benutzer"]);
 			$benutzer = str_replace("'", "&apos;", $benutzer);
 		
 		//Inhalt aus der DB von benutzer ausgeben
@@ -620,15 +645,12 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 						}
 						
 						$Benutzer = "";
-						$Benutzer = eingabe_testen($_POST["Benutzer"]);
-						// apostroph unschädlich machen
-						$Benutzer = str_replace("'", "&apos;", $Benutzer);
+						$Benutzer = schreiben($_POST["Benutzer"]);
+						
 						
 						$email = "";
-						$email = eingabe_testen($_POST["email"]);
-						// apostroph unschädlich machen
-						$email = str_replace("'", "&apos;", $email);
-					
+						$email = schreiben($_POST["email"]);
+						
 						
 						//Inhalt aus der DB von benutzer ausgeben
 						$sql = "SELECT user, email FROM benutzer WHERE user = '" . $Benutzer . "' OR email='" . $email . "' ";
@@ -812,9 +834,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 											
 										//passwort VARIABLE setzen und zuordnen
 										$passwort = "";
-										$passwort = eingabe_testen($_POST["Passwort"]);
-										// apostroph unschädlich machen
-										$passwort = str_replace("'", "&apos;", $passwort);
+										$passwort = schreiben($_POST["Passwort"]);
 										
 										//Passwort nun Hashen.
 										$hash = password_hash($passwort, PASSWORD_DEFAULT);
@@ -831,11 +851,11 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									
 										//Email VARIABLE setzen,ordnen und zuordnen.
 										$email = "";
-										$email = eingabe_testen($_POST["email"]);
+										$email = schreiben($_POST["email"]);
 											
 										//Email2 VARIABLE setzen und zuordnen.
 										$email2 = "";
-										$email2 = eingabe_testen($_POST["email2"]);
+										$email2 = schreiben($_POST["email2"]);
 								
 										//Wenn was mit der E-Mail Eingabe seltsam ist. Die Eingabe Variablen zurück setzen!
 											
@@ -942,6 +962,18 @@ kontakt
    <?php
 
 }
+
+	$sql= "SELECT ID, Werbung, Voicechat, Twitchstreamer FROM spalte_rechts WHERE ID=1";
+	$ergebnis = mysqli_query($db_link, $sql);
+	
+		if (mysqli_num_rows($ergebnis) > 0)
+		
+		//Datensatz ausgeben der Rechten Spalte für jede Zeile
+		{
+			
+			while($row = mysqli_fetch_assoc($ergebnis))	{
+			
+		
   
   ?>
 
@@ -950,12 +982,27 @@ kontakt
   <div class="spalte side"> <!--Rechte Spalte-->
     <div class="sidespacer"><br>
     <h2>Werbung</h2>
-    <p><img src="ads/st_add.png"></p>
-    <h2>TS3/Discord</h2>
-    <p>TS3_DISCORD_API</p>
-    <h2>TwitchStream</h2>
-    <p>TWITCH STREAM_ER/S</p>
-    <p align="center">Silentsands</p>
+    <p><?php echo "<img src=\"" . $row["Werbung"] . "\" alt=\"Werbung\">"; ?></p>
+    <h2>Discord</h2>
+    <p><?php echo $row["Voicechat"]; ?></p>
+    <h2>TwitchStreamer</h2>
+    <p></p>
+    <p align="center"><?php echo $row["Twitchstreamer"]; ?></p>
+	
+		<?php
+														}
+		}
+		
+		else
+		
+		{
+			
+			echo "";
+			
+		}
+		
+		
+		?>
     </div>
     </div>
 </div>
@@ -963,7 +1010,7 @@ kontakt
 <wbr></wbr>
 
 <footer>
-© 2005  - <?php echo date("Y");?> by  D.Giera, M.Gellfart, M.Mitterbacher, S.Buch (EISERNE LEGENDEN). <br><br>
+© 2018  - <?php echo date("Y");?> by  Eiserne Legenden. <br><br>
 Webhosting + webpage developed and created by<br>
 Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>

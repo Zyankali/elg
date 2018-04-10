@@ -27,14 +27,37 @@ if ($_SESSION["rang"] > "1")
 
 				//functionenliste
 				
-				// Eingabe ueberpruefen und anpassen...
-				function eingabe_wandeln($satz) 	{
-				$satz = stripslashes($satz);
-				$satz = strip_tags($satz);
-				$satz = nl2br($satz);
-				$satz = trim($satz);
-				return $satz;
-												}
+				// Eingabe ueberpruefen, anpassen und schreiben...
+				function schreiben($speichern) 		{
+				$speichern = stripslashes($speichern);
+				$speichern = strip_tags($speichern);
+				$speichern = nl2br($speichern);
+				$speichern = str_replace("'", "&apos;", $speichern);
+				$speichern = trim($speichern);
+				return $speichern;						}
+				
+				//Ausgabe zum editieren bereit stellen
+				function editieren($edit) 				{
+				$edit = str_replace("<br />", "", $edit);
+				$edit = trim($edit);
+				return $edit;							}
+				
+				//Ausgabe einlesen
+				function lesen($einlesen) 				{
+				$einlesen = trim($einlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a href="$1" target="_blank">$1</a> ';
+				$einlesen = preg_replace($linksuche, $ersetzenlink, $einlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$einlesen = preg_replace($bildsuche, $ersetzenbild, $einlesen);
+				return $einlesen;						}
+				
+				
+												
 
 if ($_SESSION["rang"] <= "1" AND isset($_SESSION["rang"]))
 	
@@ -168,9 +191,14 @@ if ($_GET['page'] == "main")
 					$Datum = $row["Datum"];
 					$Titel = $row["Titel"];
 					$Inhalt = $row["inhalt"];
+					
 					$Tags = $row["Tags"];
 					$Sticky = $row["Sticky"];
-				
+					
+					$Titel = lesen($Titel);
+					
+					$Inhalt = lesen($Inhalt);
+					
 					if ($_SESSION["rang"] < "1")
 
 						{
@@ -199,8 +227,7 @@ if ($_GET['page'] == "main")
 		//Spalte rechts
 		
 		echo "<div class=\"spalte side\">";
-		echo "right ";
-		
+				
 		$sql = "SELECT ID, Werbung, Voicechat, Twitchstreamer FROM spalte_rechts";
 		$spr = mysqli_query($db_link, $sql);
 		
@@ -213,10 +240,14 @@ if ($_GET['page'] == "main")
 				{
 				
 					$ID = $row["ID"];
+					$Werbung = $row["Werbung"];
+					$Voicechat = $row["Voicechat"];
+					$Twitchstreamer = $row["Twitchstreamer"];
 					
-				
-				echo "ID: " . $ID . "";
-				
+					$_SESSION["Werbung"] = $Werbung;
+					$_SESSION["Voicechat"] = $Voicechat;
+					$_SESSION["Twitchstreamer"] = $Twitchstreamer;
+					
 				}
 			
 			}			 
@@ -226,14 +257,98 @@ if ($_GET['page'] == "main")
 			{
 				
 				echo "Keine Einträge.";
+				
+				$_SESSION["Werbung"] = "";
+				$_SESSION["Voicechat"] = "";
+				$_SESSION["Twitchstreamer"] = "";
 			
 			}
 	
 		mysqli_free_result($spr);
+			
+			echo "<a title=\"Spalte Bearbeiten?\" href=\"index.php?page=spalterechts\">Spalte bearbeiten?</a><br>";
+			
+			echo "Werbung<br><br>";
+
+			$Werbung = $_SESSION["Werbung"];
+			echo "<img src=\"" . $Werbung . "\" alt=\"Werbung\">";	
+			
+			echo "<br><br>Voicechat<br><br>";
+			
+			$Voicechat = $_SESSION["Voicechat"];	
+			echo $Voicechat;
+			
+			echo "<br><br>Twitchstreamer<br><br>";
+			
+			$Twitchstreamer = $_SESSION["Twitchstreamer"];	
+			echo $Twitchstreamer;
+		
 		echo "</div>";
 		echo "</div>";		
 	}
+	
+	if ($_GET['page'] == "spalterechts")
+		
+		{
+			
+					if (!isset($_POST["Werbung"]))
+				{
+					
+					$Werbung = $_SESSION["Werbung"];
+					$Voicechat = $_SESSION["Voicechat"];
+					$Twitchstreamer = $_SESSION["Twitchstreamer"];
+						
+					echo "<form action=\"index.php?page=spalterechts\" method=\"post\">";
+					echo "<fieldset style=\"width:600px;\">";
+					echo "<legend>Inhalt der Rechten Spalte</legend>";
+		
+					//Werbung wird eventuell noch weiter angepasst werden 
+					echo "<br>Werbung: <br><img src=\"" . $Werbung . "\" alt=\"Werbung\"><br><textarea type=\"text\" name=\"Werbung\" placeholder=\"Werbung\" style=\"width:300px; height:100px;\">" . $Werbung . "</textarea>";
+					echo "<br>Voicechat: <br><textarea type=\"text\" name=\"Voicechat\" placeholder=\"Voicechat\" style=\"width:300px; height:400px;\">" . $Voicechat . "</textarea>";
+					echo "<br>Twitchstreamer: <br><textarea type=\"text\" name=\"Twitchstreamer\" placeholder=\"Twitchstreamer\" style=\"width:300px; height:400px;\">" . $Twitchstreamer . "</textarea>";
+					echo "</fieldset>";
+		
+					echo "<br><input type=\"submit\" value=\"Update\">";
+					echo "</form>";
+				
+				}
+			
+			if (isset($_POST["Werbung"]))
+				
+				{
+				
+					$Werbung = "";
+					$Voicechat = "";
+					$Twitchstreamer = "";
+					
+					$Werbung = $_POST['Werbung'];
+					$Voicechat = $_POST['Voicechat'];
+					$Twitchstreamer = $_POST['Twitchstreamer'];
+					
+					//Werbung ggf anpassen
+					$Werbung = schreiben($Werbung);
+					
+					$Voicechat = schreiben($Voicechat);
 
+					$Twitchstreamer = schreiben($Twitchstreamer);
+					
+					$sql = "";
+					$sql = "UPDATE spalte_rechts SET Werbung='" . $Werbung . "', Voicechat='" . $Voicechat . "', Twitchstreamer='" . $Twitchstreamer . "' WHERE ID=1";
+
+					if (mysqli_query($db_link, $sql)) 
+						{
+							echo "Rechte Spalte wurde aktuallisiert.";
+						} 
+					else 
+						{
+							echo "Fehler mit der Aktuallisierung : " . mysqli_error($db_link);
+						}
+
+					
+				}	
+			
+		}
+	
 	//Neuer Eintrag in die LinkeSpalte
 
 	
@@ -269,13 +384,9 @@ if ($_GET['page'] == "main")
 					$kurzinfos = $_POST['KurzInfos'];
 					$events = $_POST['Events'];
 					
-					eingabe_wandeln($kurzinfos);
-					//Aphostroph unschädlich machen
-					$inhalt = str_replace("'", "&apos;", $kurzinfos);
+					$kurzinfos = schreiben($kurzinfos);
 					
-					eingabe_wandeln($events);
-					//Aphostroph unschädlich machen
-					$inhalt = str_replace("'", "&apos;", $events);
+					$events = schreiben($events);
 					
 					$sql = "";
 					$sql = "UPDATE spalte_links SET events='" . $events . "', kurzinfos='" . $kurzinfos . "' WHERE ID=1";
@@ -332,12 +443,9 @@ if ($_GET['page'] == "createnewcontent")
 				$titel = $_POST["titel"];
 				$inhalt = $_POST["inhalt"];
 				
-				$titel = eingabe_wandeln($titel);
-				//Aphostroph unschädlich machen
-				$titel = str_replace("'", "&apos;", $titel);
-				$inhalt = eingabe_wandeln($inhalt);
-				//Aphostroph unschädlich machen
-				$inhalt = str_replace("'", "&apos;", $inhalt);
+				$titel = schreiben($titel);
+				
+				$inhalt = schreiben($inhalt);
 				
 				$sql = "INSERT INTO main (Author, Uhrzeit, Datum, Titel, Inhalt, Tags, Sticky) VALUES ('" . $author . "', '" . $uhrzeit . "', '" . $datum . "', '" . $titel . "', '" . $inhalt . "', '" . $tags . "', '". $sticky .  "')";
 				
@@ -367,7 +475,8 @@ if ($_GET['page'] == "contentedit")
 				
 				if (isset($_GET['contentid']))
 					{
-						
+					
+					$contentid = "";
 					$contentid = $_GET['contentid'];
 					
 					/* SQL Muss später noch angepasst werden */
@@ -395,14 +504,9 @@ if ($_GET['page'] == "contentedit")
 						
 							}
 							
-					$titel = trim($titel);
-					//Aphostroph unschädlich machen
-					$titel = str_replace("'", "&apos;", $titel);
-					
+					$titel = editieren($titel);
 			
-					$inhalt = trim($inhalt);
-					//Aphostroph unschädlich machen
-					$inhalt = str_replace("'", "&apos;", $inhalt);
+					$inhalt = editieren($inhalt);
 					
 					
 					echo "<form action=\"index.php?page=contentedit&editid=" . $contentid . "\" method=\"post\">";
@@ -435,15 +539,13 @@ if ($_GET['page'] == "contentedit")
 						$titel = $_POST["titel"];
 						$inhalt = $_POST["inhalt"];
 				
-						$titel = eingabe_wandeln($titel);
-						//Aphostroph unschädlich machen
-						$titel = str_replace("'", "&apos;", $titel);
-						$inhalt = eingabe_wandeln($inhalt);
-						//Aphostroph unschädlich machen
-						$inhalt = str_replace("'", "&apos;", $inhalt);
+						$titel = schreiben($titel);
+
+						$inhalt = schreiben($inhalt);
+						
 						$contentid = $_GET['editid'];
 						
-						$sql = "UPDATE main SET Author='" . $author . "', Uhrzeit='" . $uhrzeit . "', Datum='" . $datum . "', Titel='" . $titel . "', Inhalt='" . $inhalt . "', Tags='" . $tags . "', Sticky='". $sticky .  "'";
+						$sql = "UPDATE main SET Author='" . $author . "', Uhrzeit='" . $uhrzeit . "', Datum='" . $datum . "', Titel='" . $titel . "', Inhalt='" . $inhalt . "', Tags='" . $tags . "', Sticky='". $sticky .  "' WHERE ID='" . $contentid . "'";
 				
 						if (mysqli_query($db_link, $sql))
 					
@@ -509,7 +611,7 @@ if ($_GET['page'] == "overview")
 				{
 				
 					$ID = $row["ID"];
-					$user = eingabe_wandeln($row["user"]);
+					$user = lesen($row["user"]);
 					$setfree = $row["setfree"];
 					
 					if ($setfree == "0")
@@ -562,7 +664,7 @@ if ($_GET['page'] == "user")
 					$ID = $user = $Rang = $Banned = $setfree = NULL;
 					
 					$ID = $row["ID"];
-					$user = eingabe_wandeln($row["user"]);
+					$user = lesen($row["user"]);
 					$Rang = $row["Rang"];
 					$Banned = $row["Banned"];
 					$setfree = $row["setfree"];
@@ -804,8 +906,8 @@ if ($_GET ['page'] == "benutzerinfo")
 				{
 				
 					$ID = $row["ID"];
-					$user = eingabe_wandeln($row["user"]);
-					$email = eingabe_wandeln($row["email"]);
+					$user = lesen($row["user"]);
+					$email = lesen($row["email"]);
 					$gtag = $row["gtag"];
 					$profile_image = $row["profile_image"];
 					$Rang = $row["Rang"];
