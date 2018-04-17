@@ -71,9 +71,41 @@ $_SESSION["rang"] = "4";
 				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
 				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
 				$einlesen = preg_replace($bildsuche, $ersetzenbild, $einlesen);
-				return $einlesen;						}					
+				return $einlesen;						}		
+	
+
+//Die Seiteneinstellungen abgreifen
+	
+$settings = "SELECT ID, spalte_links, spalte_main, spalte_rechts, eintrags_anzahl FROM settings WHERE ID=1";
+
+$ergebniSS = mysqli_query($db_link, $settings);
+
+if (mysqli_num_rows($ergebniSS) > 0) 
+	
+	{
+		
+		while($row =  mysqli_fetch_assoc($ergebniSS)) {
+			
+			$spalteLinks = $row["spalte_links"];
+			$spalteMain = $row["spalte_main"];
+			$spalteRechts = $row["spalte_rechts"];
+			//Zu zeigende einträge definieren
+			$eintragsAnzahl = $row["eintrags_anzahl"];
+			
+													}
+		
+	}
+else
+	{
+		
+		echo "Settings? Wo?";
+		
+	}
 	
 	
+	echo "" . $spalteLinks . "" . $spalteMain . "" . $spalteRechts . "" . $eintragsAnzahl . "";
+	
+mysqli_free_result($ergebniSS);
 ?>
 <!DOCTYPE html>
 <html>
@@ -103,7 +135,7 @@ $_SESSION["rang"] = "4";
 
 <!--//Dynamische LinknavLeiste -->
 
-<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=info">Info</a> | 
+<nav> <a class="navi navi1" title="Hauptseite" href="index.php?page=index&seite=1">START</a> | <a class="navi navi1" title="Server" href="index.php?page=server">Server</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum">Forum</a> | <a class="navi navi1" title="Forum" href="index.php?page=info">Info</a> | 
 <?php
 
 if ($_SESSION["rang"] == "4")
@@ -153,44 +185,65 @@ else
 			
 	}
 
-$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
-$ergebnis = mysqli_query($db_link, $sql);
-
-if (mysqli_num_rows($ergebnis) > 0) {
 	
-	while ($row = mysqli_fetch_assoc($ergebnis)) {
-		
-		$kurzinfos = $row["kurzinfos"];
-		$events = $row["events"];
-		
-	}
-}
-else 
+	$sql = "SELECT ID, kurzinfos, events FROM spalte_links";
+	$ergebnis = mysqli_query($db_link, $sql);
+
+	if (mysqli_num_rows($ergebnis) > 0) 
 	
-	{
-		
-		echo "";
-		
-	}
-
-mysqli_free_result($ergebnis);
+		{
 	
-?>
+		while ($row = mysqli_fetch_assoc($ergebnis)) {
+		
+			$kurzinfos = $row["kurzinfos"];
+			$events = $row["events"];
+		
+													}
+		}
+	else 
+	
+		{
+		
+			echo "";
+		
+		}
+
+	mysqli_free_result($ergebnis);
+	
+	?>
 
 
-<div class="row">
-  <div class="spalte side"> <!--Linke Spalte-->
-        <div class="sidespacer">
-		<h2>KurzInfo</h2>
-        <p><?php echo $kurzinfos; ?></p>
-        <h2>Events</h2>
-		<p><?php echo $events; ?></p>
-        </div>
-    </div>
-  <div class="spalte mitte"> <!-- Mittlere Spalte -->
+	<div class="row">
+		<div class="spalte side"> <!--Linke Spalte-->
+			<div class="sidespacer" >
+			
+						<?php
+				//Linke Spalte anzeigen lassen, ja, nein
+				if (is_numeric($spalteLinks) and $spalteLinks == "1")
+				{
+		
+			?>
+			
+			<h2>KurzInfo</h2>
+			<p><?php echo $kurzinfos; ?></p>
+			<h2>Events</h2>
+			<p><?php echo $events; ?></p>
+				<?php
+				}
+				?>
+			</div>
+		</div>
+	<div class="spalte mitte"> <!-- Mittlere Spalte -->
 
 
 <?php
+
+
+			//Mittlere Spalte anzeigen lassen, ja, nein
+			if (is_numeric($spalteMain) and $spalteMain == "1")
+	
+				{
+	
 
 if (!isset($_GET['page']) or empty ($_GET['page']))
         {
@@ -206,13 +259,154 @@ if (!isset($page))
 	if ($_GET['page'] == "index")
 
 		{
-  
+		
+		//einträge zählen
+		$postcounter = "SELECT COUNT(ID) FROM main";
+		$postanzahl = mysqli_query($db_link, $postcounter);
+		$anzahl = mysqli_fetch_assoc($postanzahl);
+		
+		$posts = $anzahl["COUNT(ID)"];
+		
 		$sql = "";
-			//Inhalt aus der DB von Main ausgeben
-		$sql = "SELECT * FROM main ORDER BY ID DESC";
+		
+		mysqli_free_result($postanzahl);
+		
+		if (!isset($_GET['seite']))
+		
+		{
+			
+			$_GET['seite'] = "1";
+		
+		}
+		
+		$seite = $_GET['seite'];
+		
+		$seiten = $posts / $eintragsAnzahl;
+		
+		
+	//Seiten und gezeigte seite anzeigen	
+	if ($seiten > 1 AND $seiten != 1)
+
+		{
+		
+		echo '<div class="pageplacer">';
+		
+		//errechnen der maximalen Seiten ohne komma stellen
+		for ($y = 0; $y <= $seiten; $y++ ) {
+			
+			$maxseiten = $y;
+				
+			}
+		
+		//wenn ermittelte Seiten vom errechnetem seitenwert abweichen dann addiere +1 zur maxseiten variable dazu
+	if ($seiten > $maxseiten)
+		{
+			
+			$maxseiten = $maxseiten + 1;
+			
+		}
+		
+		
+		//Wenn mehr seiten in die URL eingegeben werden als tatsaechlich vorhanden sind wird die eingegebene URL seitenanzahl korrigiert und der erechnete maximalwert an seiten stattdessen in die seite variable eingetragen. Verhindert einen ungewollten overflow.
+		if ($maxseiten < $seite)
+			
+			{
+				
+				$seite = $maxseiten;
+				
+			}
+	
+		
+		//Setzt neue variablen mit negativer und positiver seitennummer 
+		$minusseiten = $seite - 1;
+		$positivseiten = $seite + 1;
+		
+		if ($minusseiten > 3)
+			
+			{
+				
+				$mindreier = $seite - 3;
+				
+				echo '<a class="pager" href="index.php?page=index&seite=1">&laquo;...</a> ';
+				
+				for ($mindreier; $mindreier <= $minusseiten; $mindreier++) {
+					
+					echo '<a class="pager" href="index.php?page=index&seite=' . $mindreier . '">' . $mindreier . '</a> ';
+					
+				}
+				
+				
+				
+			}
+		else
+			{
+
+				for ($m = 1; $m <= $minusseiten; $m++) {
+			
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $m . '">' . $m . '</a>';
+			
+				}
+		
+			}	
+		
+		echo ' <div class="page">' . $seite . '</div>';
+		
+		$posidreier = $positivseiten + 2;
+		
+		if ($posidreier < $maxseiten)
+			
+			{
+				$posiseite = $positivseiten;
+				
+				for ($posiseite; $posiseite <= $posidreier; $posiseite++) {
+					
+					echo ' <a class="pager" href="index.php?page=index&seite=' . $posiseite . '">' . $posiseite . '</a>';
+					
+				}
+				
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $maxseiten . '">...&raquo;</a>';
+				
+			}
+		else
+			{
+				
+				for ($positivseiten; $positivseiten <= $maxseiten; $positivseiten++) {
+			
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $positivseiten . '">' . $positivseiten . '</a>';
+			
+				}
+				
+			}
+	
+		echo '</div>';
+	
+	}
+	
+	if ($posts > $eintragsAnzahl)
+									
+		{
+				
+			$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
+			$limmit = $eintragsAnzahl;
+				
+			$sql = "SELECT * FROM main ORDER BY ID DESC LIMIT " . $limmit . " OFFSET " . $offset . "";
+
+		}
+	else
+				
+		{
+					
+			$sql = "SELECT * FROM main ORDER BY ID DESC";
+					
+		}
+	
+	
+		
+		//Inhalt aus der DB von Main ausgeben
+		
 		$result = mysqli_query($db_link, $sql);
 	
-		if (mysqli_num_rows($result) > 0) 
+		if ($posts > 0) 
 			{
 				// output data of each row
 				while($row = mysqli_fetch_assoc($result)) 
@@ -249,7 +443,104 @@ if (!isset($page))
 			mysqli_free_result($result);
 
 
+		//Seiten und gezeigte seite anzeigen	
+	if ($seiten > 1 AND $seiten != 1)
+
+		{
+		
+		echo '<div class="pageplacer">';
+		
+		//errechnen der maximalen Seiten ohne komma stellen
+		for ($y = 0; $y <= $seiten; $y++ ) {
+			
+			$maxseiten = $y;
+				
+			}
+		
+		//wenn ermittelte Seiten vom errechnetem seitenwert abweichen dann addiere +1 zur maxseiten variable dazu
+	if ($seiten > $maxseiten)
+		{
+			
+			$maxseiten = $maxseiten + 1;
+			
+		}
+		
+		
+		//Wenn mehr seiten in die URL eingegeben werden als tatsaechlich vorhanden sind wird die eingegebene URL seitenanzahl korrigiert und der erechnete maximalwert an seiten stattdessen in die seite variable eingetragen. Verhindert einen ungewollten overflow.
+		if ($maxseiten < $seite)
+			
+			{
+				
+				$seite = $maxseiten;
+				
+			}
 	
+		
+		//Setzt neue variablen mit negativer und positiver seitennummer 
+		$minusseiten = $seite - 1;
+		$positivseiten = $seite + 1;
+		
+		if ($minusseiten > 3)
+			
+			{
+				
+				$mindreier = $seite - 3;
+				
+				echo '<a class="pager" href="index.php?page=index&seite=1">&laquo;...</a> ';
+				
+				for ($mindreier; $mindreier <= $minusseiten; $mindreier++) {
+					
+					echo '<a class="pager" href="index.php?page=index&seite=' . $mindreier . '">' . $mindreier . '</a> ';
+					
+				}
+				
+				
+				
+			}
+		else
+			{
+
+				for ($m = 1; $m <= $minusseiten; $m++) {
+			
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $m . '">' . $m . '</a>';
+			
+				}
+		
+			}	
+		
+		echo ' <div class="page">' . $seite . '</div>';
+		
+		$posidreier = $positivseiten + 2;
+		
+		if ($posidreier < $maxseiten)
+			
+			{
+				$posiseite = $positivseiten;
+				
+				for ($posiseite; $posiseite <= $posidreier; $posiseite++) {
+					
+					echo ' <a class="pager" href="index.php?page=index&seite=' . $posiseite . '">' . $posiseite . '</a>';
+					
+				}
+				
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $maxseiten . '">...&raquo;</a>';
+				
+			}
+		else
+			{
+				
+				for ($positivseiten; $positivseiten <= $maxseiten; $positivseiten++) {
+			
+				echo ' <a class="pager" href="index.php?page=index&seite=' . $positivseiten . '">' . $positivseiten . '</a>';
+			
+				}
+				
+			}
+	
+		echo '</div>';
+	
+	}
+		
 
 		}
 
@@ -960,8 +1251,9 @@ kontakt
    
    
    <?php
-
-}
+		}
+	}
+//Ende der MAIN Spalte oder Mittlere Spalte
 
 	$sql= "SELECT ID, Werbung, Voicechat, Twitchstreamer FROM spalte_rechts WHERE ID=1";
 	$ergebnis = mysqli_query($db_link, $sql);
@@ -980,16 +1272,38 @@ kontakt
 
   </div>
   <div class="spalte side"> <!--Rechte Spalte-->
-    <div class="sidespacer"><br>
-    <h2>Werbung</h2>
+    <div class="sidespacer">
+    
+	<?php
+	
+			//Rechte Spalte anzeigen lassen, ja, nein
+			if (is_numeric($spalteRechts) and $spalteRechts == "1")
+	
+				{
+	
+	?>
+	
+	<h2>Werbung</h2>
     <p><?php echo "<img src=\"" . $row["Werbung"] . "\" alt=\"Werbung\">"; ?></p>
     <h2>Discord</h2>
-    <p><?php echo $row["Voicechat"]; ?></p>
+    <p><?php 
+	$Voicechat = $row["Voicechat"];
+	$Voicechat = lesen($Voicechat);
+	
+	echo $Voicechat; ?></p>
     <h2>TwitchStreamer</h2>
     <p></p>
-    <p align="center"><?php echo $row["Twitchstreamer"]; ?></p>
+    <p align="center"><?php
+
+	
+	$Twitchstreamer = $row["Twitchstreamer"];
+	$Twitchstreamer = lesen($Twitchstreamer);
+	
+	echo $Twitchstreamer; ?></p>
 	
 		<?php
+				}
+
 														}
 		}
 		
@@ -1000,6 +1314,8 @@ kontakt
 			echo "";
 			
 		}
+		
+	
 		
 		
 		?>
