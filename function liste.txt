@@ -1,0 +1,15 @@
+//benutzen wenn inhalt gespeichert werden soll
+
+schreiben($speichern)
+
+//benutzen wenn inhalt editiert werden soll
+
+editieren($edit)
+
+//benutzen wenn inhalt gelesen werden soll
+
+lesen($einlesen)
+
+DISCORD LINK
+
+https://discord.gg/sGhwn

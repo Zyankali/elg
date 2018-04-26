@@ -437,7 +437,17 @@ if (!isset($page))
 			} 
 		else 
 			{
-				echo "Keine Ausgabe, da Datenbank leer ist";
+			
+				echo '<article>
+						<div class="titel"><b id="titel">Das Nichts...</b></div>
+						<div class="inhalt">
+						
+						...bietet nichts.
+						
+						</div>
+						<wbr></wbr><br>
+						</article>';
+				
 			}
 
 			mysqli_free_result($result);
@@ -539,10 +549,10 @@ if (!isset($page))
 	
 		echo '</div>';
 	
-	}
+		}
 		
 
-		}
+	}
 
 
   // Server Section
@@ -572,68 +582,67 @@ if (!isset($page))
 
     if ($_GET['page'] == "forum")
 
-  {
+	{
 
-   ?>
-  Forum<br>
-  <br>
-ForumSeite
-   <?php
+		?>
+		Forum<br>
+		<br>
+		ForumSeite
+		<?php
 
-  }
+	}
 
   if ($_GET['page'] == "info")
 
-  {
+	{
 
-   ?>
-  ClanInfo<br>
-  <br>
-ClanInfoPage.
-   <?php
+		?>
+		ClanInfo<br>
+		<br>
+		ClanInfoPage.
+		<?php
 
-  }
+	}
   
   
     if ($_GET['page'] == "login")
-		
-
-
+	
 	{
 
    
    
-    // LoginForm //
+		// LoginForm //
 		if (!isset($_POST["Benutzer"]))
 			
 		{
   
-		?>
-		<!-- actionlink Needs to be set properly-->
-<form action="index.php?page=login" method="post">
- <fieldset>
-    <legend>Login</legend><br>
+		echo '<article>
+		<div class="titel"><b id="titel">Login</b></div>
+		<div class="inhalt">
+		
+		
+		<form action="index.php?page=login" method="post">
+		
 
-Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
-Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
+		Benutzer: <input type="text" name="Benutzer" placeholder="Benutzer" autofocus><br>
+		Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 
 
-<input class="button button1" type="submit" value="Login" > 
-
-
-</form>
-<a class="button button1" title="Registrieren" href="index.php?page=register">Registrieren</a>
-</fieldset>
-
+		<input class="button button1" type="submit" value="Login" > <a class="button button1" title="Registrieren" href="index.php?page=register">Registrieren</a>
+		</form>
+		
+		</div>
+		<wbr></wbr><br>
+		</article>';
      
-	 
-	 <?php
-	 
+		}
 	 
 	 
-}	 
+	 
+	 
+		 
 
-
+				
 	// Benutzer und Passwort Prüfen YEEHARRR CHECK IT!
 	if (isset($_POST["Benutzer"]))
 	
@@ -661,9 +670,19 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 							if ($row["Banned"] == "1")
 				
 								{
-					
-									echo "Sie wurden gebannt! <br><br>Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!";
-					
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Gebannt!</b></div>
+									<div class="inhalt">
+						
+									Sie wurden gebannt! <br><br>Sie könnten versuchen ihren Bann bei den Admins an zu fechten, eventuell...!
+									<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+									<br><br>
+									</div>
+									<wbr></wbr><br>
+									</article>';
+													
 								}	
 				
 							$banned = $row["Banned"];
@@ -673,8 +692,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				
 								{
 					
-									echo "Sie wurden noch nicht von einem Admin freigeschaltet!";
-									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+									/*echo '<article>
+									<div class="titel"><b id="titel">Noch nicht Freigeschaltet!</b></div>
+									<div class="inhalt">
+						
+									Sie wurden noch nicht von einem Admin freigeschaltet!
+									<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+									<br><br>
+									</div>
+									<wbr></wbr><br>
+									</article>';*/
 											
 								}
 					
@@ -708,8 +736,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				
 								{
 					
-									echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
-									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+									echo '<article>
+									<div class="titel"><b id="titel">Benutzer oder Passwort falsch!</b></div>
+									<div class="inhalt">
+						
+									Melden Sie sich neu an oder Registrieren Sie sich.
+									<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+									<br><br>
+									</div>
+									<wbr></wbr><br>
+									</article>';
 					
 								}
 							
@@ -737,9 +774,19 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 												else
 														
 													{
-															
-														echo "Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: " . mysqli_error($db_link);
-															
+														
+														echo '<article>
+														<div class="titel"><b id="titel">Fehler:</b></div>
+														<div class="inhalt">
+						
+														Passwort konnte NICHT erfolgreich neu Abgesichert werden. Grund: ' . mysqli_error($db_link) . '
+														<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+														<br><br>
+														</div>
+														<wbr></wbr><br>
+														</article>';
+														
 													}
 												
 														
@@ -786,9 +833,18 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									else
 				
 										{
-					
-											echo "Benutzer oder Passwort falsch. Melden Sie sich neu an oder Registrieren Sie sich.";
-											echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+											
+											echo '<article>
+											<div class="titel"><b id="titel">Benutzer oder Passwort falsch!</b></div>
+											<div class="inhalt">
+						
+											Melden Sie sich neu an oder Registrieren Sie sich.
+											<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+											<br><br>
+											</div>
+											<wbr></wbr><br>
+											</article>';
 					
 										}
 											
@@ -808,17 +864,35 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 									if (mysqli_query($db_link, $sql))
 									
 										{
-												
-											echo "Willkommen: " . $_SESSION["user"] . ", mit einem click auf \"Weiter\" offenbart sich ihnen ihr Potenzial... eventuell.";
-											echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+											
+											echo '<article>
+											<div class="titel"><b id="titel">Willkommen: ' . $_SESSION["user"] . '</b></div>
+											<div class="inhalt">
+						
+											Mit einem click auf "Weiter" offenbart sich ihnen ihr Potenzial... eventuell.
+											<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+											<br><br>
+											</div>
+											<wbr></wbr><br>
+											</article>';
 												
 										}
 												
 									else
 													
 										{
-												
-											echo "da war irgendwas falsch " . mysqli_error($db_link);
+											
+											echo '<article>
+											<div class="titel"><b id="titel">Fehler:</b></div>
+											<div class="inhalt">
+						
+											Da war irgendwas falsch ' . mysqli_error($db_link) . '
+						
+											<br><br>
+											</div>
+											<wbr></wbr><br>
+											</article>';
 												
 										}
 									
@@ -829,8 +903,16 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 										
 								{
 
-									echo"Passwort Falsch";
-									echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+									echo '<article>
+											<div class="titel"><b id="titel">Passwort falsch!</b></div>
+											<div class="inhalt">
+						
+											<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+											<br><br>
+											</div>
+											<wbr></wbr><br>
+											</article>';
 											
 								}
 							
@@ -841,8 +923,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 					
 					{
 						
-						echo "<br> Bitte haben Sie noch etwas Gedult. Meist wird ihr Account in 1-2 Werktagen freigeschaltet.";
-						echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+						echo '<article>
+						<div class="titel"><b id="titel">Noch nicht Freigeschaltet!</b></div>
+						<div class="inhalt">
+						
+						Bitte haben Sie noch etwas Gedult. Meist wird ihr Account in 1-3 Werktagen freigeschaltet.
+						<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+						<br><br>
+						</div>
+						<wbr></wbr><br>
+						</article>';
 						
 					}
 					
@@ -852,9 +943,18 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			
 			{
 				
-					echo "Unbekannter Benutzer. Bitte Loggen Sie sich neu ein oder Registrieren Sie sich.";
-					echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
-				
+					echo '<article>
+					<div class="titel"><b id="titel">Unbekannter Benutzer.</b></div>
+					<div class="inhalt">
+						
+					Bitte Loggen Sie sich neu ein oder Registrieren Sie sich.
+					<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+					<br><br>
+					</div>
+					<wbr></wbr><br>
+					</article>';
+					
 			}
 		
 			mysqli_free_result($abfrage);
@@ -867,7 +967,19 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 		 
 		{
 			
-			echo "" . $_SESSION["user"] . " - Du wurdest erfolgreich abgemeldet!";
+			
+			echo '<article>
+			<div class="titel"><b id="titel">LogOUT</b></div>
+			<div class="inhalt">
+						
+			' . $_SESSION["user"] . ' - Du wurdest erfolgreich abgemeldet!
+			<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
+						
+			<br><br>
+			</div>
+			<wbr></wbr><br>
+			</article>';
+
 			
 			// vernichte alle session variablen
 			session_unset();
@@ -875,7 +987,7 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			// toete die session an sich
 			session_destroy();
 			
-			echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
+
 			
 		}
 
@@ -890,11 +1002,15 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 					
 				
 			
-				?>
+				
+				
+				echo '<article>
+				<div class="titel"><b id="titel">Registrieren</b></div>
+				<div class="inhalt">
+						
 				<!-- RegisterForm -->
 				<form action="index.php?page=register" method="post">
-				<fieldset>
-				<legend>Registrieren</legend>
+
 				
 				<p>Bitte füllen Sie alle Felder aus.</p>
 				
@@ -913,11 +1029,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 				
 				<br><br>
 				<input class="button button1" type="submit" value="Registrieren" >
-				</fieldset>
+				
 				</form>
+				
+				<br><br>
+				</div>
+				<wbr></wbr><br>
+				</article>';
+				
+				
 
 
-     <?php
 	 
 				}
 				
@@ -925,279 +1047,311 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 			if (isset($_POST["Benutzer"]))
 				
 				{
-				
-					if ($_POST["Benutzer"] == "" OR $_POST["Passwort"] == "" OR $_POST["Passwort2"] == "" OR $_POST["email"] == "" OR $_POST["email2"] == "")
-						
-						{
-							
-							echo "<br>";
-							echo "Bitte füllen Sie ALLE felder aus!";
-							
-						}
-						
-						$Benutzer = "";
-						$Benutzer = schreiben($_POST["Benutzer"]);
-						
-						
-						$email = "";
-						$email = schreiben($_POST["email"]);
-						
-						
-						//Inhalt aus der DB von benutzer ausgeben
-						$sql = "SELECT user, email FROM benutzer WHERE user = '" . $Benutzer . "' OR email='" . $email . "' ";
-						$abfrage = mysqli_query($db_link, $sql);
-	
-						if (mysqli_num_rows($abfrage) > 0) 
-							{
-							// output data of each row
-							while($row = mysqli_fetch_assoc($abfrage)) 
-								{
-        
-								if ($Benutzer == $row["user"] OR $email == $row["email"])
-				
-									{
-					
-										if ($Benutzer == $row["user"])
-											
-											{
-												
-												echo "Benutzer: " . $row["user"] . " wurde bereits vergeben!<br>Bitte wählen Sie einen anderen Benutzernamen.";
-												$Benutzer = NULL;
-												
-											}
-										
-										if ($email == $row["email"])
-											
-										
-											{
-											
-												echo "<br>";
-												echo "E-Mail: " . $row["email"] . " wird bereits verwendet!<br>Bitte wählen Sie eine neue E-Mail aus.";
-												$email = NULL;
-											
-											}
-					
-									}
-							
-								}
-								
-							}
-							
-						else
-								
-							{
-				
-								if (!isset($_POST["Passwort"]) OR empty($_POST["Passwort"]) OR $_POST["Passwort"] == "")
-						
-									{
-							
-										echo "<br>";
-										echo "Bitte füllen sie ALLE felder aus!";
-							
-									}
-						
-								if (!isset($_POST["Passwort2"]) OR empty($_POST["Passwort2"]) OR $_POST["Passwort2"] == "")
-								
-									{
-								
-								
-										echo "<br>";
-										echo "Bitte füllen sie ALLE felder aus!";
-									
-									}
-								
-								if ($_POST["Passwort"] != $_POST["Passwort2"] OR $_POST["Passwort2"] != $_POST["Passwort"])
-									
-									{
-									
-										echo "<br>";
-										echo "Passwort Eingaben sind NICHT identisch! Bitte Korrigieren SIE diesen Fehler!";
-										
-									}
-														
-								if ($_POST["email"] != $_POST["email2"])
-															
-									{
-										
-										echo "<br>";
-										echo "E-Mail Felder Stimmen nicht überein, sind nicht identisch!";
-															
-									}
-														
-								if ($_POST["email"] == "" OR $_POST["email2"] == "")
-															
-									{
-								
-										echo "<br>";
-										echo "E-Mail Felder sind Leer! Bitte eine gültige E-mail Adresse eintragen.";
-															
-									}
-									
-								if (!is_numeric($_POST["gtag"]) OR !is_numeric($_POST["gmon"]) OR !is_numeric($_POST["gjahr"]))
-									
-									{
-										
-										echo "<br>";
-										echo "Bitte geben Sie ein Gültiges Datum ein!";
-										
-									}
-								
-								$Jahr = date("Y");
-								
-								$klJahr = $Jahr - 14;
-								
-								$grJahr = $Jahr + 100;
 
+				$errorhandler = 0;
+				$errMSG1 = $errMSG2 = $errMSG3 = $errMSG4 = $errMSG5 = $errMSG6 = $errMSG7 = $errMSG8 = $errMSG9 = ""; 
+				
+				if ($_POST["Passwort"] != $_POST["Passwort2"])
+					
+					{
+						
+						$errMSG5 = "Passwörter stimmen nicht überein!<br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+					
+				if ($_POST["Passwort"] == $_POST["Passwort2"])
+					
+					{
+						
+						$passwort = $_POST["Passwort"];
+						$passwort2 = $_POST["Passwort2"];
+
+					}
+					
+				if ($_POST["email"] != $_POST["email2"])
+					
+					{
+						
+						$errMSG3 = "Email Adressen stimmen nicht überein! <br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["email"] == $_POST["email2"])
+					
+					{
+						
+						
+						if (filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) 
+							{
 								
+								$pmail = $_POST["email"];
 								
-								if ($_POST["gtag"] < "1" OR $_POST["gtag"] > "31" OR $_POST["gmon"] > "12" OR $_POST["gmon"] < "1" OR $_POST["gjahr"] > $grJahr OR $klJahr < $_POST["gjahr"])
-									
-									{
-										
-										if ($klJahr < $_POST["gjahr"])
-											
-											{
-												
-												echo "<br>";
-												echo "Du bist zu jung! Eingang ist erst ab 14 Jahren gestattet!";
-												echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
-												
-											}
-										
-										if ($_POST["gjahr"] > $grJahr)
-											
-											{
-												
-												echo "<br>";
-												echo "Sie sind Alt, ein bisschen zu Alt oder?";
-												echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
-												
-											}
-										
-										else
-											
-											{
-												
-												
-												echo "<br>";
-												echo "Bitte geben Sie ein Gültiges Datum ein!";
-												
-											}
-																				
-									}
-								
-								else 
-									
-								//Wenn alles mit dem Datum Stimmt das Datum als String in die gtag Variable einspeichern
-								{
-									
-									$gtag = "";
-									$gtag = "" . $_POST["gtag"] . "." . $_POST["gmon"] . "." . $_POST["gjahr"] . "";																		
-									
-								}
-								
-								
-								if 	(!isset($_POST["AllesGelesen"]))
-															
-									{
-									
-									
-										$_POST["AllesGelesen"] = FALSE;
-									
-										echo "<br>";
-										echo "Bitte Stimmen Sie unseren Datenschutz- und Nutzungsbestimmungen zu!";
-								
-									}
-									
-										
-								if 	(isset($_POST["AllesGelesen"]) AND $_POST["AllesGelesen"] == "read")				
-							
-									{
-								
-										echo "<br>";
-										echo "Danke für ihre Zustimmung der Nutzungs- und Datenschutzbestimmungen.";
-								
-									}
-										
-								if (isset($_POST["Passwort"]) AND isset($_POST["Passwort2"]) AND $_POST["Passwort"] == $_POST["Passwort2"] AND !empty($_POST["Passwort"]) AND !empty($_POST["Passwort2"]))
-										
-									{
-											
-										//passwort VARIABLE setzen und zuordnen
-										$passwort = "";
-										$passwort = schreiben($_POST["Passwort"]);
-										
-										//Passwort nun Hashen.
-										$hash = password_hash($passwort, PASSWORD_DEFAULT);
-										
-										//passwort2 VARIABLE setzen zuordnen und hashen.
-										$passwort2 = "";
-										$passwort2 = $hash;
-								
-									}
-										
-								if (isset($_POST["email"]) AND isset($_POST["email2"]) AND $_POST["email"] == $_POST["email2"] AND !empty($_POST["email"]) AND !empty($_POST["email2"]))
-													
-									{
-									
-										//Email VARIABLE setzen,ordnen und zuordnen.
-										$email = "";
-										$email = schreiben($_POST["email"]);
-											
-										//Email2 VARIABLE setzen und zuordnen.
-										$email2 = "";
-										$email2 = schreiben($_POST["email2"]);
-								
-										//Wenn was mit der E-Mail Eingabe seltsam ist. Die Eingabe Variablen zurück setzen!
-											
-										if 	(!filter_var($email, FILTER_VALIDATE_EMAIL) OR !filter_var($email2, FILTER_VALIDATE_EMAIL)) 
-										
-											{
-												
-												echo "<br>";
-												echo "Falsches E-Mail Format!";
-													
-												$email = NULL;
-												$email2 = NULL;
-												
-											}
-											
-										else
-										
-											{
-											
-												$registerdatum = date("d.m.Y");
-												$registerzeit = date("H:i:s");
-												
-												$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, profile_image, Rang, login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo) VALUES ('" . $Benutzer . "', '" . $hash . "', '" . $passwort2 . "', '" . $email . "', '" . $gtag . "','http://www.tntwestsoccer.com/wp-content/uploads/2016/05/NO-IMAGE-AVAILABLE-300x300.jpg' ,'3', '" . $registerdatum . "', '" . $registerzeit . "', '" . $registerzeit . "', '" . $registerdatum . "', '0', '0', '0', 'Internal_Info')";
-												
-												
-												if (mysqli_query($db_link, $sql)) 
-													
-													{
-														
-														echo "Willkommen zu den <b>Eisernen Legenden</b>. <br>Sie müssen noch von einem Administrator frei geschaltet werden.<br>Bitte haben Sie daher noch etwas Gedult bis zu ihrer Freischaltung.";
-														echo "<br><a class=\"navi navi1\" title=\"Hauptseite\" href=\"index.php?page=index\">Weiter</a>";
-														
-													}
-													
-												else
-														
-													{
-													
-														echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
-													
-													}
-												
-											}
-									}
-									
-									
-										
 							}
-									
-								mysqli_free_result($abfrage);
 							
+						if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) 
+							{
+															
+								$errMSG4 = "E-Mail Eingabe scheint fehlerhaft zu sein, bitte korrektes E-Mail Format verwenden.<br>";
+								$errorhandler = $errorhandler + 1;
+								
+							
+							}
+						
+					}
+					
+				if ($_POST["gtag"] < 1 OR $_POST["gtag"] > 31)
+					
+					{
+						
+						$errMSG6 = "Ungültiger Tag!<br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["gtag"] >= 1 AND $_POST["gtag"] <= 31)
+					
+					{
+						
+						$gtag = $_POST["gtag"];
+						
+					}
+				
+				if ($_POST["gmon"] < 1 OR $_POST["gmon"] > 12)
+					
+					{
+						
+						$errMSG7 = "Ungültiger Monat!<br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["gmon"] >= 1 AND $_POST["gmon"] <= 12)
+					
+					{
+						
+						$gmon = $_POST["gmon"];
+
+						}
+					
+					
+				$heutigesjahr = date ("Y");
+				$minderjahr = $heutigesjahr - 14;
+				
+				$maxjahr = $heutigesjahr - 100; 
+				
+				
+				if ($_POST["gjahr"] > $minderjahr)
+					
+					{
+						
+						$errMSG8 = "Zugang für unter 14 Jährige kann NICHT gestattet werden! Geh raus, Spielen!<br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["gjahr"] < $maxjahr)
+					
+					{
+						
+						$errMSG8 = "über 100 Jahre Alt? Sicher?<br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["gjahr"] < $minderjahr AND $_POST["gjahr"] >= $maxjahr)
+					
+					{
+						
+						$gjahr = $_POST["gjahr"];
+						
+					}
+				
+				if (!isset($_POST["AllesGelesen"]))
+						
+					{
+							
+						$_POST["AllesGelesen"] = "";
+						$errMSG9 = "Bitte stimmen Sie unserer Datenschutzerklärung und den Nutzungsbedingungen zu! <br>";
+						$errorhandler = $errorhandler + 1;
+							
+					}
+
+				if ($_POST["AllesGelesen"] == "read")
+						
+					{
+							
+						$read = "TRUE";
+						
+					}
+						
+					//benutzeranzahl zählen
+					$usercounter = "SELECT COUNT(ID) FROM benutzer";
+					$useranzahl = mysqli_query($db_link, $usercounter);
+					$anzahl = mysqli_fetch_assoc($useranzahl);
+		
+					$nutzeranzahl = $anzahl["COUNT(ID)"];
+					
+					mysqli_free_result($useranzahl);
+					
+					$sql = "SELECT id, user, email FROM benutzer";
+					
+					$ausgabe = mysqli_query($db_link, $sql);
+				
+				if ($nutzeranzahl > 0) 
+					{
+					// ausgabe der benutzer einträge
+						
+						while($row = mysqli_fetch_assoc($ausgabe)) 
+							{
+								
+								$user = $row["user"];
+								$mail = $row["email"];
+
+							}
+					} 
+				else 
+					{
+						
+						echo "Nichts vorhanden! Sollte nicht so sein! MasterAdmin Eintrag vergessen? <br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+				mysqli_free_result($ausgabe);
+				
+				if ($_POST["Benutzer"] == $user)
+					
+					{
+						
+						$errMSG1 = "Benutzername " . $_POST["Benutzer"] . " wird bereits schon verwendet! Bitte verwenden Sie einen anderen Benutzernamen. <br>";
+						$errorhandler = $errorhandler + 1;
+						
+					}
+					
+				if ($_POST["Benutzer"] != $user)
+					
+					{
+						
+						$benutzer = $_POST["Benutzer"];
+						
+					}
+				
+				if ($_POST["email"] == $mail)
+					
+					{
+						
+						 $errMSG2 = "E-Mail Adresse " . $_POST["email"] . " bereits in verwendung! Bitte verwenden Sie eine andere E-Mail Adresse. <br>";
+						 $errorhandler = $errorhandler + 1;
+						
+					}
+				
+				if ($_POST["email"] != $mail)
+					
+					{
+						
+						 $pmail = $_POST["email"];
+					
+					}
+					
+				if ($errorhandler > 0)
+					
+					{
+						
+						echo '<article>
+						<div class="titel"><b id="titel"> Folgende Fehlermeldungen wurden gemeldet: </b></div>
+						<div class="inhalt">
+						
+						' . $errMSG1 . '' . $errMSG2 . '' . $errMSG3 . '' . $errMSG4 . '' . $errMSG5 . '' . $errMSG6 . '' . $errMSG7 . '' . $errMSG8 . '' . $errMSG9 . '
+						
+						<br><br>Bitte überprüfen Sie die aufgelisteten Meldungen und korrigieren Sie ggf. ihre Eingaben.<br><br>
+						<a class="navi navi1" title="Registrieren" href="index.php?page=register">Registrieren</a>
+						<br><br>
+						</div>
+						<wbr></wbr><br>
+						</article>';
+						
+					}
+				
+				if ($errorhandler == 0)
+					
+					{
+						
+						$benutzer = str_replace("'", "&apos;", $benutzer);
+						$passwort = str_replace("'", "&apos;", $passwort);
+						$passwort2 = str_replace("'", "&apos;", $passwort2);
+						$pmail = str_replace("'", "&apos;", $pmail);
+						
+						$hash = password_hash($passwort, PASSWORD_DEFAULT);
+						$hash2 = $hash;
+						
+						$Jahr = date("Y");
+						$Monat = date("m");
+						$Tag = date("d");
+						
+						$Login_Date = "" . $Tag . "." . $Monat . "." . $Jahr . "";
+						
+						$Stunde = date("H");
+						$Minute = date("i");
+						$Secunde = date("s"); 
+						
+						$Login_Uhrzeit = "" . $Stunde . ":" . $Minute . ":" . $Secunde . "";
+						
+						$standartprofilimg = "../img/profile_img.png";
+						
+						$rang = "3";
+						$clanmitglied = "0";
+						$banned = "0";
+						$setfree = "0";
+						$intinfo = "putputput";
+						
+						
+						$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo)
+						VALUES ('" . $benutzer . "', '" . $hash . "', '" . $hash2 . "', '" . $pmail . "', '" . $gtag . "', '" . $gmon . "', '" . $gjahr . "', '" . $standartprofilimg . "', '" . $rang . "', '" . $Login_Date . "', '" . $Login_Uhrzeit . "', '" . $Login_Uhrzeit . "', '" . $Login_Date . "', '" . $clanmitglied . "', '" . $banned . "', '" . $setfree . "', '" . $intinfo . "')";
+
+						if (mysqli_query($db_link, $sql))
+							{
+							
+								echo '<article>
+								<div class="titel"><b id="titel">Willkommen ' . $benutzer . '!</b></div>
+								<div class="inhalt">
+								
+								Sie wurden erfolgreich registriert. <br>  
+								Sie müssen noch von einem Adminsitrator Freigeschaltet werden.<br>
+								Dies kann bis zu 1-3 Werktage dauern.
+								
+								<br>
+								<br>
+								
+								Bis es endlich soweit ist, können Sie sich, ja derweil einfach weiter hier auf der Seite, umsehen.<br>
+								Ihr <b>Eiserne Legenden</b> Admin Team.
+					
+								<br><br>
+								</div>
+								<wbr></wbr><br>
+								</article>';
+								
+							} 
+						else
+							{
+							
+								echo '<article>
+								<div class="titel"><b id="titel">Fehler!</b></div>
+								<div class="inhalt">
+								
+								' . $sql . '<br>' . mysqli_error($db_link) . '
+					
+								<br><br>
+								</div>
+								<wbr></wbr><br>
+								</article>';
+							
+								
+							}
+						
+						
+					}
+				
 				}
 						
 					
@@ -1210,16 +1364,17 @@ Passwort: <input type="password" name="Passwort" placeholder="Passwort"><br><br>
 
   {
 
-   ?>
+   //LANG LEBE IMPERATOR IMPRESSUM!
    
-   <!-- LANG LEBE IMPERATOR IMPRESSUM! -->
-<div class='impressum'><h1>Impressum</h1>
-
-<p>Aus Selbstschutzgründen wird lediglich eine E-Mail zur Verfügung gestellt,<br>
+   								echo '<article>
+								<div class="titel"><b id="titel">Impressum</b></div>
+								<div class="inhalt">
+								
+								<p>Aus Selbstschutzgründen wird lediglich eine E-Mail zur Verfügung gestellt,<br>
 die für Private und Geschäftliche belänge verwendet werden darf, sofehrn diese KEINE Werbung oder Spam beinhalten!</p>
 
 <p><strong>Kontakt:</strong> <br>
-E-Mail: <a href='mailto:sonictechnologic@gmail.com'>sonictechnologic@gmail.com</a><br></p>
+E-Mail: <a href="mailto:sonictechnologic@gmail.com">sonictechnologic@gmail.com</a><br></p>
 
 <p><strong>Haftungsausschluss: </strong><br><br><strong>Haftung für Inhalte</strong><br><br>
 Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.<br><br><strong>Haftung für Links</strong><br><br>
@@ -1229,19 +1384,20 @@ Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Date
 Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
 Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.<br>
 <br><br><strong>Google Analytics</strong><br><br>
-Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. (''Google''). Google Analytics verwendet sog. ''Cookies'', Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) wird an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Sie können die Installation der Cookies durch eine entsprechende Einstellung Ihrer Browser Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.<br><br><strong>Google AdSense</strong><br><br>
-Diese Website benutzt Google Adsense, einen Webanzeigendienst der Google Inc., USA (''Google''). Google Adsense verwendet sog. ''Cookies'' (Textdateien), die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Google Adsense verwendet auch sog. ''Web Beacons'' (kleine unsichtbare Grafiken) zur Sammlung von Informationen. Durch die Verwendung des Web Beacons können einfache Aktionen wie der Besucherverkehr auf der Webseite aufgezeichnet und gesammelt werden. Die durch den Cookie und/oder Web Beacon erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) werden an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website im Hinblick auf die Anzeigen auszuwerten, um Reports über die Websiteaktivitäten und Anzeigen für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Das Speichern von Cookies auf Ihrer Festplatte und die Anzeige von Web Beacons können Sie verhindern, indem Sie in Ihren Browser-Einstellungen ''keine Cookies akzeptieren'' wählen (Im MS Internet-Explorer unter ''Extras > Internetoptionen > Datenschutz > Einstellung''; im Firefox unter ''Extras > Einstellungen > Datenschutz > Cookies''); wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.</p>
- </div>
- 
- 
-   <?php
+Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. ("Google"). Google Analytics verwendet sog. "Cookies", Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) wird an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Sie können die Installation der Cookies durch eine entsprechende Einstellung Ihrer Browser Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.<br><br><strong>Google AdSense</strong><br><br>
+Diese Website benutzt Google Adsense, einen Webanzeigendienst der Google Inc., USA ("Google"). Google Adsense verwendet sog. "Cookies" (Textdateien), die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Google Adsense verwendet auch sog. "Web Beacons" (kleine unsichtbare Grafiken) zur Sammlung von Informationen. Durch die Verwendung des Web Beacons können einfache Aktionen wie der Besucherverkehr auf der Webseite aufgezeichnet und gesammelt werden. Die durch den Cookie und/oder Web Beacon erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) werden an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website im Hinblick auf die Anzeigen auszuwerten, um Reports über die Websiteaktivitäten und Anzeigen für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Das Speichern von Cookies auf Ihrer Festplatte und die Anzeige von Web Beacons können Sie verhindern, indem Sie in Ihren Browser-Einstellungen "keine Cookies akzeptieren" wählen (Im MS Internet-Explorer unter "Extras > Internetoptionen > Datenschutz > Einstellung"; im Firefox unter "Extras > Einstellungen > Datenschutz > Cookies"); wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.</p>
+
+								</div>
+								<wbr></wbr><br>
+								</article>';
+   
 
 }
 
   
   if ($_GET['page'] == "kontakt")
 
-{
+	{
 
    ?>
    

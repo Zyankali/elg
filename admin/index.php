@@ -1165,7 +1165,7 @@ if ($_GET ['page'] == "benutzerinfo")
 		echo "<b>BenutzerInfo</b><br><br>";
 		$userGET = $_GET['benutzer']; 
 		
-		$sql = "SELECT ID, user, email, gtag, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "'";
+		$sql = "SELECT ID, user, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "'";
 		$benutzerliste = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($benutzerliste) > 0) 
@@ -1180,6 +1180,8 @@ if ($_GET ['page'] == "benutzerinfo")
 					$user = lesen($row["user"]);
 					$email = lesen($row["email"]);
 					$gtag = $row["gtag"];
+					$gmon = $row["gmon"];
+					$gjahr = $row["gjahr"];
 					$profile_image = $row["profile_image"];
 					$Rang = $row["Rang"];
 					$Login_Date = $row["Login_Date"];
@@ -1239,8 +1241,8 @@ if ($_GET ['page'] == "benutzerinfo")
 					
 					echo "ID: " . $ID . " Benutzer: " . $user . "<br>";
 					echo "E-Mail: " . $email . "<br>";
-					echo "Geburtstag: " . $gtag . "<br>";
-					echo "Profilbild: WIRD NOCH IMPLIMENTIERT!<br>";
+					echo "Geburtstag: " . $gtag . "." . $gmon . "." . $gjahr . "<br>";
+					echo "Profilbild:  <img src=\"" . $profile_image . "\" alt=\"Profilbild\" width=\"128\" height=\"128\"><br>";
 					
 					if ($Rang == "0")
 
@@ -1302,6 +1304,13 @@ if ($_GET ['page'] == "benutzerinfo")
 		
 	}
 	
+if ($_GET['page'] == "forum")
+	
+	{
+		
+		echo "Forum?";
+		
+	}
 	
 if ($_GET['page'] == "settings")
 	
