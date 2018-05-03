@@ -476,7 +476,7 @@ if (!isset($page))
 		}
 		
 		
-		//Wenn mehr seiten in die URL eingegeben werden als tatsaechlich vorhanden sind wird die eingegebene URL seitenanzahl korrigiert und der erechnete maximalwert an seiten stattdessen in die seite variable eingetragen. Verhindert einen ungewollten overflow.
+		//Wenn mehr Seiten in die URL eingegeben werden als tatsaechlich vorhanden sind wird die eingegebene URL seitenanzahl korrigiert und der erechnete maximalwert an seiten stattdessen in die seite variable eingetragen. Verhindert einen ungewollten overflow.
 		if ($maxseiten < $seite)
 			
 			{
@@ -583,13 +583,66 @@ if (!isset($page))
     if ($_GET['page'] == "forum")
 
 	{
-
-		?>
-		Forum<br>
-		<br>
-		ForumSeite
-		<?php
-
+		
+		
+		//einträge zählen
+		$fcounter = "SELECT COUNT(ID), COUNT(subfid) FROM forum";
+		$fpostanzahl = mysqli_query($db_link, $fcounter);
+		$fanzahl = mysqli_fetch_assoc($fpostanzahl);
+		
+		$FINDEX = $fanzahl["COUNT(ID)"];
+		$SUBFINDEX = $fanzahl["COUNT(subfid)"];
+		
+		$sql = "";
+		
+		mysqli_free_result($fpostanzahl);
+		
+		$sql = "SELECT ID, subfid FROM Forum";
+		$result = mysqli_query($db_link, $sql);
+		
+		echo '<article>
+			<div class="titel"><b id="titel">Forum</b></div>
+			<div class="inhalt">
+						
+			Unterforen: ' . $SUBFINDEX . '
+						
+			</div>
+			<wbr></wbr><br>
+			</article>';
+		
+		if ($SUBFINDEX > 0) 
+			{
+			// ForumIndex einlesen
+			while($row = mysqli_fetch_assoc($result)) {
+			
+			echo "ID: " . $row["ID"]. " - Foren: " . $row["subfid"]. "<br>";
+				echo '<article>
+				<div class="titel"><b id="titel"></b></div>
+				<div class="inhalt">
+						
+				...wo?
+				
+				</div>
+				<wbr></wbr><br>
+				</article>';
+				
+				
+				}
+			} 
+		else 
+			{
+				echo '<article>
+				<div class="titel"><b id="titel"></b></div>
+				<div class="inhalt">
+						
+				...wo?
+				
+				</div>
+				<wbr></wbr><br>
+				</article>';
+			}
+		
+		
 	}
 
   if ($_GET['page'] == "info")

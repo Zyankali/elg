@@ -1308,7 +1308,344 @@ if ($_GET['page'] == "forum")
 	
 	{
 		
-		echo "Forum?";
+		if (!isset($_GET['faction']))
+			{
+				//einträge zählen
+				$fcounter = "SELECT COUNT(ID), COUNT(subfid) FROM forum";
+				$fpostanzahl = mysqli_query($db_link, $fcounter);
+				$fanzahl = mysqli_fetch_assoc($fpostanzahl);
+		
+				$FINDEX = $fanzahl["COUNT(ID)"];
+				$SUBFINDEX = $fanzahl["COUNT(subfid)"];
+		
+				$sql = "";
+		
+				mysqli_free_result($fpostanzahl);
+		
+				$sql = "SELECT ID, subfid, subfname, kategorie FROM Forum";
+				$result = mysqli_query($db_link, $sql);
+		
+				echo '<article>
+					<div class="titel"><b id="titel">Forum</b></div>
+					<div class="inhalt">
+						
+					Unterforen: ' . $SUBFINDEX . '
+						
+					</div>
+					<wbr></wbr><br>
+					</article>';
+		
+				if ($SUBFINDEX > 0) 
+					{
+						// ForumIndex einlesen
+						while($row = mysqli_fetch_assoc($result)) {
+						
+						$subfid = $row["ID"];
+						$subfid++;
+						
+						echo '<a href="index.php?page=subforum&subfid=' . $row["subfid"] . '"><article>
+						<div class="titel"><b id="titel">' . $row["ID"] . ' ' . $row["subfname"] . '</b></div>
+						<div class="inhalt">
+						
+						' . $row["kategorie"] . '
+				
+						</div></a>
+						<wbr></wbr><br>
+						
+						<a href="index.php?page=forum&faction=editsf&sfid=' . $row["subfid"] . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=forum&faction=delitesf&sfid=' . $row["subfid"] . '">Löschen!</a>
+						</article>';
+				
+						
+						
+					
+					}
+					
+					echo '<br>
+					<form action ="index.php?page=forum&faction=createsf" method="post">
+						SF Name:<br>
+					<input type="text" name="subfname"  size="256"><br>
+					SF Beschreibung:<br>
+					<input type="text" name="kategorie" size="256"><br>
+					Neues SF wird mit der subid:<br>
+					' . $subfid . '<br> erstellt. 
+					<br><br>
+					<input type="hidden" name="subfid" value="' . $subfid . '">
+					<input type="submit" value="Erstellen">
+					</form>';
+					
+				} 
+			else 
+				{
+					
+					$subfid = NULL;
+					$subfid++;
+					
+					echo '<article>
+					<div class="titel"><b id="titel">Unterforum? Wo?</b></div>
+					<div class="inhalt">
+						
+					Keine Unterforen gefunden, neues Unterforum erstellen?
+					
+					<br><br>
+				
+					<form action ="index.php?page=forum&faction=createsf" method="post">
+					SF Name:<br>
+					<input type="text" name="subfname"  size="256"><br>
+					SF Beschreibung:<br>
+					<input type="text" name="kategorie" size="256"><br>
+					Neues SF wird mit der subid:<br>
+					' . $subfid . '<br> erstellt. 
+					<br><br>
+					<input type="hidden" name="subfid" value="' . $subfid . '">
+					<input type="submit" value="Erstellen">
+					</form>
+				
+					</div>
+					<wbr></wbr><br>
+					</article>';
+				}
+			}
+		
+		if (isset($_GET['faction']))
+		
+			{
+				
+				// Neues SF erstellen
+				if ($_GET['faction'] == "createsf" )
+					
+					{
+						
+						
+						$subfname = editieren($_POST["subfname"]);
+						
+						$kategorie = editieren($_POST["kategorie"]);
+						
+						$subfid = editieren($_POST["subfid"]);
+						
+						if ($subfname == NULL OR $subfname == "" OR $kategorie == NULL OR $kategorie == "")
+							
+							{
+								
+								echo 'Bitte alle Eingabefelder ausfüllen. <br><br> <a href="index.php?page=forum">Forum</a>';
+								
+							}
+						
+						else
+							
+							{
+					
+								$sql = "INSERT INTO forum (subfid, subfname, kategorie) VALUES ('" . $subfid . "', '" . $subfname . "', '" . $kategorie . "')"; 
+								
+								if (mysqli_query($db_link, $sql)) 
+								
+									{
+										
+										echo "Eintrag erfolgreich erstellt.<br>";
+									
+									} 
+								
+								else
+
+									{
+    
+										echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
+									
+									}
+								
+								// Neues SF erstellen
+								$sql = "CREATE TABLE sf_" . $subfid . " (ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+								subtitle TEXT NOT NULL,
+								subbeschreibung TEXT NOT NULL,
+								ersteller TEXT NOT NULL, 
+								subfid TEXT NOT NULL)";
+									if (mysqli_query($db_link, $sql))
+										{
+											echo "<br>SF Tabelle sf_" . $subfid . " wurde erstellt.";
+										}
+									else 
+										{
+							
+											echo "<br>Fehler: " . mysqli_error($db_link);
+
+										}
+							}
+						
+					}
+					
+				// SF löschen	
+				if ($_GET['faction'] == "delitesf" )
+
+					{
+						
+						$sf = $_GET['sfid'];
+						echo 'Delite SF';
+						$sql = "DROP TABLE sf_" . $sf . "";
+						
+						if (mysqli_query($db_link, $sql)) 
+								
+							{
+										
+								echo "<br>SF tabelle sf_" . $sf . " erfolgreich gelöscht.<br>";
+									
+							} 
+								
+						else
+
+							{
+    
+								echo "<br>Fehler: konnte SF Tabelle sf_" . $sf . " nicht löschen: " . $sql . "<br>" . mysqli_error($db_link);
+									
+							}
+						
+						$sql = "DELETE FROM forum WHERE subfid=" . $sf . "";
+						
+						if (mysqli_query($db_link, $sql)) 
+								
+							{
+										
+								echo "<br>SF Eintrag aus Forum Index erfolgreich gelöscht.";
+									
+							} 
+								
+						else
+
+							{
+    
+								echo "<br>Fehler, konnte Forum Index " . $sf . " nicht löschen: " . $sql . "<br>" . mysqli_error($db_link);
+									
+							}
+					
+					}
+				
+				// SF editieren
+				if ($_GET['faction'] == "editsf" )
+				
+					{
+						
+					if (!isset($_POST["subfname"]))
+						
+						{
+							
+								
+							$sf = $_GET['sfid'];
+					
+							$sql = "SELECT subfname, kategorie FROM forum WHERE subfid=" . $sf . "";
+							$result = mysqli_query($db_link, $sql);
+						
+							if (mysqli_num_rows($result) > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$subfname = $row["subfname"];
+											$kategorie = $row["kategorie"];
+										
+										}
+									
+								}
+							else 
+								{
+						
+									echo "Nichts da zum editieren." . mysqli_error($db_link);
+						
+								}
+						
+							echo 'Edit SF';
+						
+							echo '
+				
+							<form action ="index.php?page=forum&faction=editsf" method="post">
+							SF Name:<br>
+							<input type="text" name="subfname" value="' . $subfname . '" size="256"><br>
+							SF Beschreibung:<br>
+							<input type="text" name="kategorie" value="' . $kategorie . '" size="256">
+							<br><br>
+							<input type="hidden" name="subfid" value="' . $sf . '">
+							<input type="submit" value="editieren">
+							</form>';
+						}
+						
+						
+					if (isset($_POST["subfname"]))						
+							
+						{
+								
+							$subfname = editieren($_POST["subfname"]);
+								
+							$kategorie = editieren($_POST["kategorie"]);
+								
+							$sf = editieren($_POST["subfid"]);
+								
+							$sql = "UPDATE forum SET subfname='" . $subfname . "', kategorie='" . $kategorie . "' WHERE subfid=" . $sf . "";
+
+							if (mysqli_query($db_link, $sql))
+					
+								{
+								
+									echo "<br>Foren Index Eintrag erfolgreich editiert.";
+								
+								}
+								
+							else
+							
+								{
+    
+									echo "<br>Fehler, konnte Forenindex nicht editieren: " . mysqli_error($db_link);
+								
+								}
+								
+						}
+					}
+					
+			}
+		
+		
+	}
+	
+	
+// ?page=subforum&subfid=' . $row["subfid"] . '
+if ($_GET['page'] == "subforum")
+	
+	{
+		
+		$subfid = $_GET['subfid'];
+		
+		$sql = "SELECT ID, subfid, subfname, kategorie FROM forum WHERE subfid=" . $subfid . "";
+							$result = mysqli_query($db_link, $sql);
+						
+							if (mysqli_num_rows($result) > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$subfname = $row["subfname"];
+											$kategorie = $row["kategorie"];
+										
+										}
+									
+								}
+							else 
+								{
+						
+									echo "Nichts da." . mysqli_error($db_link);
+						
+								}
+		echo '<article>
+		<div class="titel"><b id="titel">' . $subfname . '</b></div>
+		<div class="inhalt">
+						
+		' . $kategorie . '
+						
+		</div>
+		<wbr></wbr><br>
+		</article>';
+
+
+		echo "<br>Threats";
 		
 	}
 	
