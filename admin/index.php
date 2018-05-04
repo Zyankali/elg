@@ -1304,6 +1304,7 @@ if ($_GET ['page'] == "benutzerinfo")
 		
 	}
 	
+//Forum
 if ($_GET['page'] == "forum")
 	
 	{
@@ -1322,7 +1323,7 @@ if ($_GET['page'] == "forum")
 		
 				mysqli_free_result($fpostanzahl);
 		
-				$sql = "SELECT ID, subfid, subfname, kategorie FROM Forum";
+				$sql = "SELECT ID, subfid, subfname, kategorie, intern, ersteller FROM Forum";
 				$result = mysqli_query($db_link, $sql);
 		
 				echo '<article>
@@ -1347,13 +1348,16 @@ if ($_GET['page'] == "forum")
 						<div class="titel"><b id="titel">' . $row["ID"] . ' ' . $row["subfname"] . '</b></div>
 						<div class="inhalt">
 						
-						' . $row["kategorie"] . '
+						' . $row["kategorie"] . '<br>
+						
+						
 				
-						</div></a>
+						</div></a><br>Ersteller: ' . $row["ersteller"] . ' | 
+						Intern? ' . $row["intern"] . '
 						<wbr></wbr><br>
 						
-						<a href="index.php?page=forum&faction=editsf&sfid=' . $row["subfid"] . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=forum&faction=delitesf&sfid=' . $row["subfid"] . '">Löschen!</a>
-						</article>';
+						<a href="index.php?page=forum&faction=editsf&sfid=' . $row["subfid"] . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=forum&faction=deletesf&sfid=' . $row["subfid"] . '">Löschen!</a>
+						</article><br>';
 				
 						
 						
@@ -1366,6 +1370,13 @@ if ($_GET['page'] == "forum")
 					<input type="text" name="subfname"  size="256"><br>
 					SF Beschreibung:<br>
 					<input type="text" name="kategorie" size="256"><br>
+					Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+					<select name="intern">
+						<option value="0" selected>Nein</option>
+						<option value="1">Clanmitglieder</option>
+						<option value="2">Staff</option>
+						<option value="3">Admins</option>
+					</select><br><br>
 					Neues SF wird mit der subid:<br>
 					' . $subfid . '<br> erstellt. 
 					<br><br>
@@ -1393,6 +1404,13 @@ if ($_GET['page'] == "forum")
 					<input type="text" name="subfname"  size="256"><br>
 					SF Beschreibung:<br>
 					<input type="text" name="kategorie" size="256"><br>
+					Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+					 <select name="intern">
+						<option value="0" selected>Nein</option>
+						<option value="1">Clanmitglieder</option>
+						<option value="2">Staff</option>
+						<option value="3">Admins</option>
+					</select><br><br>
 					Neues SF wird mit der subid:<br>
 					' . $subfid . '<br> erstellt. 
 					<br><br>
@@ -1422,6 +1440,10 @@ if ($_GET['page'] == "forum")
 						
 						$subfid = editieren($_POST["subfid"]);
 						
+						$intern = $_POST["intern"];
+						
+						$ersteller = $_SESSION["user"];
+						
 						if ($subfname == NULL OR $subfname == "" OR $kategorie == NULL OR $kategorie == "")
 							
 							{
@@ -1434,7 +1456,7 @@ if ($_GET['page'] == "forum")
 							
 							{
 					
-								$sql = "INSERT INTO forum (subfid, subfname, kategorie) VALUES ('" . $subfid . "', '" . $subfname . "', '" . $kategorie . "')"; 
+								$sql = "INSERT INTO forum (subfid, subfname, kategorie, intern, ersteller) VALUES ('" . $subfid . "', '" . $subfname . "', '" . $kategorie . "', '" . $intern . "', '" . $ersteller . "')"; 
 								
 								if (mysqli_query($db_link, $sql)) 
 								
@@ -1456,7 +1478,8 @@ if ($_GET['page'] == "forum")
 								$sql = "CREATE TABLE sf_" . $subfid . " (ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 								subtitle TEXT NOT NULL,
 								subbeschreibung TEXT NOT NULL,
-								ersteller TEXT NOT NULL, 
+								ersteller TEXT NOT NULL,
+								intern VARCHAR(1) NOT NULL,
 								subfid TEXT NOT NULL)";
 									if (mysqli_query($db_link, $sql))
 										{
@@ -1473,7 +1496,7 @@ if ($_GET['page'] == "forum")
 					}
 					
 				// SF löschen	
-				if ($_GET['faction'] == "delitesf" )
+				if ($_GET['faction'] == "deletesf" )
 
 					{
 						
@@ -1529,7 +1552,7 @@ if ($_GET['page'] == "forum")
 								
 							$sf = $_GET['sfid'];
 					
-							$sql = "SELECT subfname, kategorie FROM forum WHERE subfid=" . $sf . "";
+							$sql = "SELECT subfname, kategorie, intern FROM forum WHERE subfid=" . $sf . "";
 							$result = mysqli_query($db_link, $sql);
 						
 							if (mysqli_num_rows($result) > 0)
@@ -1541,6 +1564,7 @@ if ($_GET['page'] == "forum")
 										
 											$subfname = $row["subfname"];
 											$kategorie = $row["kategorie"];
+											$intern = $row["intern"];
 										
 										}
 									
@@ -1560,7 +1584,14 @@ if ($_GET['page'] == "forum")
 							SF Name:<br>
 							<input type="text" name="subfname" value="' . $subfname . '" size="256"><br>
 							SF Beschreibung:<br>
-							<input type="text" name="kategorie" value="' . $kategorie . '" size="256">
+							<input type="text" name="kategorie" value="' . $kategorie . '" size="256"><br>
+							Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+							<select name="intern">
+								<option value="0" selected>Nein</option>
+								<option value="1">Clanmitglieder</option>
+								<option value="2">Staff</option>
+								<option value="3">Admins</option>
+							</select>
 							<br><br>
 							<input type="hidden" name="subfid" value="' . $sf . '">
 							<input type="submit" value="editieren">
@@ -1575,10 +1606,14 @@ if ($_GET['page'] == "forum")
 							$subfname = editieren($_POST["subfname"]);
 								
 							$kategorie = editieren($_POST["kategorie"]);
+							
+							$intern = $_POST["intern"];
 								
 							$sf = editieren($_POST["subfid"]);
+							
+							$ersteller = $_SESSION["user"];
 								
-							$sql = "UPDATE forum SET subfname='" . $subfname . "', kategorie='" . $kategorie . "' WHERE subfid=" . $sf . "";
+							$sql = "UPDATE forum SET subfname='" . $subfname . "', kategorie='" . $kategorie . "', kategorie='" . $kategorie . "', intern='" . $intern . "', ersteller='" . $ersteller . "' WHERE subfid=" . $sf . "";
 
 							if (mysqli_query($db_link, $sql))
 					
@@ -1605,14 +1640,36 @@ if ($_GET['page'] == "forum")
 	}
 	
 	
-// ?page=subforum&subfid=' . $row["subfid"] . '
+// Subforum
 if ($_GET['page'] == "subforum")
 	
 	{
 		
-		$subfid = $_GET['subfid'];
+		if (isset($_GET['subfid']))
+			
+			{
+				$subfid = $_GET['subfid'];
+				
+			}
 		
-		$sql = "SELECT ID, subfid, subfname, kategorie FROM forum WHERE subfid=" . $subfid . "";
+		
+		if (!isset($_GET['subfaction']))
+			
+			{
+				//einträge zählen
+				$stcounter = "SELECT COUNT(ID), COUNT(subfid) FROM sf_" . $subfid . " WHERE subfid=" . $subfid . "";
+				$stpostanzahl = mysqli_query($db_link, $stcounter);
+				$stanzahl = mysqli_fetch_assoc($stpostanzahl);
+		
+				$FINDEX = $stanzahl["COUNT(ID)"];
+				$SUBFINDEX = $stanzahl["COUNT(subfid)"];
+		
+				$sql = "";
+		
+				mysqli_free_result($stpostanzahl);
+				
+				//subforum titelausgabe
+				$sql = "SELECT ID, subfid, subfname, kategorie, intern, ersteller FROM forum WHERE subfid=" . $subfid . "";
 							$result = mysqli_query($db_link, $sql);
 						
 							if (mysqli_num_rows($result) > 0)
@@ -1624,7 +1681,20 @@ if ($_GET['page'] == "subforum")
 										
 											$subfname = $row["subfname"];
 											$kategorie = $row["kategorie"];
+											$ersteller = $row["ersteller"];
+											$intern = $row["intern"];
 										
+											echo '<article>
+											<div class="titel"><b id="titel">' . $subfname . '</b></div>
+											<div class="inhalt">
+											
+											' . $kategorie . '
+											<br>Threats: ' . $SUBFINDEX . ' | Intern? ' .  $intern . '
+						
+											</div>
+											<wbr></wbr><br>
+											</article>';
+											
 										}
 									
 								}
@@ -1634,20 +1704,503 @@ if ($_GET['page'] == "subforum")
 									echo "Nichts da." . mysqli_error($db_link);
 						
 								}
-		echo '<article>
-		<div class="titel"><b id="titel">' . $subfname . '</b></div>
-		<div class="inhalt">
+				
+							//Threats auslesen ggf. mit lösch- und editierfunktion 
+							$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $subfid . " WHERE subfid=" . $subfid . "";
+							$result = mysqli_query($db_link, $sql);
+							
+									
+							if ($SUBFINDEX > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$subtitle = $row["subtitle"];
+											$subbeschreibung = $row["subbeschreibung"];
+											$ersteller = $row["ersteller"];
+											$intern = $row["intern"];
+											
+											$subtid = $row["ID"];
+											$subtid++;
+											
+											echo '<a href="index.php?page=subthreat&subfid=' . $subfid . '&subthreatid=' . $row["ID"] . '"><article>
+											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
+											<div class="inhalt">
 						
-		' . $kategorie . '
+											' . $subbeschreibung . '<br>
+											
+											</div>
+											<wbr></wbr>
+											</article></a>Ersteller: ' . $ersteller . ' | Intern? ' . $intern . '<br>
+											
+											<a href="index.php?page=subforum&subfaction=editst&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=subforum&subfaction=deletest&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Löschen!</a>
+											</article><br><br>';
+										
+										}
+					
+								
+					
+								echo '<br>
+								<form action ="index.php?page=subforum&subfaction=createst&subfid=' . $subfid . '" method="post">
+								Threat Name:<br>
+								<input type="text" name="subtname"  size="256"><br>
+								Threat Beschreibung:<br>
+								<input type="text" name="subbeschreibung" size="256"><br>
+								Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+								<select name="intern">
+									<option value="0" selected>Nein</option>
+									<option value="1">Clanmitglieder</option>
+									<option value="2">Staff</option>
+								<option value="3">Admins</option>
+								</select><br><br>
+								Neuer Threat wird mit der subtid:<br>
+								' . $subtid . '<br> erstellt. 
+								<br><br>
+								<input type="hidden" name="subtid" value="' . $subtid . '">
+								<input type="submit" value="Erstellen">
+								</form>';
+					
+								} 
+			
+							else 
+			
+								{
+									
+									$subtid = NULL	;
+									$subtid++;
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Threats? Wo?</b></div>
+									<div class="inhalt">
 						
-		</div>
-		<wbr></wbr><br>
-		</article>';
+									Keine Threats gefunden, neuen Threat erstellen?
+					
+									<br><br>
+				
+									<form action ="index.php?page=subforum&subfaction=createst&subfid=' . $subfid . '" method="post">
+									Threat Name:<br>
+									<input type="text" name="subtname"  size="256"><br>
+									Threat Beschreibung:<br>
+									<input type="text" name="subbeschreibung" size="256"><br>
+									Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+									<select name="intern">
+										<option value="0" selected>Nein</option>
+										<option value="1">Clanmitglieder</option>
+										<option value="2">Staff</option>
+										<option value="3">Admins</option>
+									</select><br><br>
+									Neuer Threat wird mit der subtid:<br>
+									' . $subtid . '<br> erstellt. 
+									<br><br>
+									<input type="hidden" name="subtid" value="' . $subtid . '">
+									<input type="submit" value="Erstellen">
+									</form>
+				
+									</div>
+									<wbr></wbr><br>
+									</article>';
+								}
+			
+								
+									
+			}
+		
+		if (isset($_GET['subfaction']))
+			
+			{
+				
+				if ($_GET['subfaction'] == "createst")
+			
+					{
+				
+						$subtname = editieren($_POST["subtname"]);
+						
+						$subbeschreibung = editieren($_POST["subbeschreibung"]);
+						
+						$subtid = editieren($_POST["subtid"]);
+						
+						$intern = $_POST["intern"];
+						
+						$subfid = $_GET['subfid'];
+						
+						$ersteller = $_SESSION["user"];
+						
+						if ($subtname == NULL OR $subtname == "" OR $subbeschreibung == NULL OR $subbeschreibung == "")
+							
+							{
+								
+								echo 'Bitte alle Eingabefelder ausfüllen. <br><br> <a href="index.php?page=subforum&subfid=' . $subfid . '">Subforum</a>';
+								
+							}
+						
+						else
+							
+							{
+					
+								$sql = "INSERT sf_" . $subfid . " (subtitle, subbeschreibung, ersteller, intern, subfid) VALUES ('" . $subtname . "', '" . $subbeschreibung . "', '" . $ersteller . "', '" . $intern . "', '" . $subfid . "')"; 
+								
+								if (mysqli_query($db_link, $sql)) 
+								
+									{
+										
+										echo "Eintrag erfolgreich erstellt.<br>";
+									
+									} 
+								
+								else
 
+									{
+    
+										echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
+									
+									}
+								
+																
+								// Neuen Threat erstellen
+								$sql = "CREATE TABLE t_" . $subfid . "_" . $subtid . " (ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+								threattitle TEXT NOT NULL,
+								threatbeschreibung TEXT NOT NULL,
+								ersteller TEXT NOT NULL,
+								djahr VARCHAR(4) NOT NULL,
+								dmonat VARCHAR(2) NOT NULL,
+								dtag VARCHAR(2) NOT NULL,
+								zstunde VARCHAR(2) NOT NULL,
+								zminute VARCHAR(2) NOT NULL,
+								zsecunde VARCHAR(2) NOT NULL,
+								intern VARCHAR(1) NOT NULL,
+								subfid TEXT NOT NULL)";
+									if (mysqli_query($db_link, $sql))
+										{
+											echo "<br>Threat Tabelle t_" . $subfid . "_" . $subtid . " wurde erstellt.";
+											echo "<br>";
+											echo '<a href="index.php?page=subforum&subfid=' . $subfid . '">' . $subtname . '</a>';
+										}
+									else 
+										{
+							
+											echo "<br>Fehler: " . mysqli_error($db_link);
 
-		echo "<br>Threats";
+										}
+							}
+				
+					}
+		
+				if ($_GET['subfaction'] == "deletest")
+			
+					{
+				
+				
+				
+					}
+			
+				if ($_GET['subfaction'] == "editst")
+			
+					{
+				
+						if (!isset($_POST["subtitle"]))
+						
+						{
+							
+								
+							$sf = $_GET['sfid'];
+							$threatid = $_GET['threatid'];
+					
+							$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $sf . " WHERE ID=" . $threatid . "";
+							$result = mysqli_query($db_link, $sql);
+						
+							if (mysqli_num_rows($result) > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$subtitle = $row["subtitle"];
+											$subbeschreibung = $row["subbeschreibung"];
+											$intern = $row["intern"];
+										
+										}
+									
+								}
+							else 
+								{
+						
+									echo "Nichts da zum editieren." . mysqli_error($db_link);
+						
+								}
+						
+							echo 'Edit SF';
+						
+							echo '
+				
+							<form action ="index.php?page=subforum&subfaction=editst" method="post">
+							SF Name:<br>
+							<input type="text" name="subtitle" value="' . $subtitle . '" size="256"><br>
+							SF Beschreibung:<br>
+							<input type="text" name="subbeschreibung" value="' . $subbeschreibung . '" size="256"><br>
+							Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+							<select name="intern">
+								<option value="0" selected>Nein</option>
+								<option value="1">Clanmitglieder</option>
+								<option value="2">Staff</option>
+								<option value="3">Admins</option>
+							</select>
+							<br><br>
+							<input type="hidden" name="subfid" value="' . $sf . '">
+							<input type="hidden" name="threatid" value="' . $threatid . '">
+							<input type="submit" value="editieren">
+							</form>';
+						}
+						
+						
+					if (isset($_POST["subtitle"]))						
+							
+						{
+								
+							$subtitle = editieren($_POST["subtitle"]);
+								
+							$subbeschreibung = editieren($_POST["subbeschreibung"]);
+							
+							$intern = $_POST["intern"];
+								
+							$sf = editieren($_POST["subfid"]);
+							
+							$threatid = editieren($_POST["threatid"]);
+							
+							$ersteller = $_SESSION["user"];
+								
+							$sql = "UPDATE sf_" . $sf . " SET subtitle='" . $subtitle . "', subbeschreibung='" . $subbeschreibung . "',  ersteller='" . $ersteller . "', intern='" . $intern . "' WHERE ID=" . $threatid . "";
+
+							if (mysqli_query($db_link, $sql))
+					
+								{
+								
+									echo "<br>Subforen Index Eintrag erfolgreich editiert.";
+									echo "<br>";
+									echo '<a href="index.php?page=subforum&subfid=' . $sf . '">' . $subtitle . '</a>';
+								
+								}
+								
+							else
+							
+								{
+    
+									echo "<br>Fehler, konnte Subforen Index nicht editieren: " . mysqli_error($db_link);
+								
+								}
+								
+						}
+				
+					}
+				
+			}
+		
+		
 		
 	}
+	
+// Subthreats
+if ($_GET['page'] == "subthreat")
+	
+	{
+		
+	if (isset($_GET['subfid']))
+			
+		{
+			$subfid = $_GET['subfid'];
+				
+		}
+			
+	if (isset($_GET['subthreatid']))
+		
+		{
+	
+			$subthreatid = $_GET['subthreatid'];
+				
+		}
+	
+		if (!isset($_GET['subtaction']))
+			
+			{
+				//einträge zählen
+				$tcounter = "SELECT COUNT(ID), COUNT(subfid) FROM t_" . $subfid . "_" . $subthreatid . " WHERE subfid=" . $subfid . "";
+				$tpostanzahl = mysqli_query($db_link, $tcounter);
+				$tanzahl = mysqli_fetch_assoc($tpostanzahl);
+		
+				$FINDEX = $tanzahl["COUNT(ID)"];
+				$SUBFINDEX = $tanzahl["COUNT(subfid)"];
+		
+				$sql = "";
+		
+				mysqli_free_result($tpostanzahl);
+				
+				//subthreats titelausgabe
+				$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $subfid . " WHERE ID=" . $subthreatid . "";
+							$result = mysqli_query($db_link, $sql);
+						
+							if (mysqli_num_rows($result) > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$subtitle = $row["subtitle"];
+											$subbeschreibung = $row["subbeschreibung"];
+											$ersteller = $row["ersteller"];
+											$intern = $row["intern"];
+										
+											echo '<article>
+											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
+											<div class="inhalt">
+											
+											' . $subbeschreibung . '
+											<br>Posts: ' . $SUBFINDEX . ' | Intern? ' .  $intern . '
+						
+											</div>
+											<wbr></wbr><br>
+											</article>';
+											
+										}
+									
+								}
+							else 
+								{
+						
+									echo "Nichts da." . mysqli_error($db_link);
+						
+								}
+				
+							//Threats auslesen ggf. mit lösch- und editierfunktion 
+							$sql = "SELECT ID, threattitle, threatbeschreibung, ersteller, djahr, dmonat, dtag, zstunde, zminute, zsecunde, intern, subfid FROM t_" . $subfid . "_" . $subthreatid . " WHERE subfid=" . $subfid . "";
+							$result = mysqli_query($db_link, $sql);
+							
+									
+							if ($SUBFINDEX > 0)
+					
+								{
+									while($row = mysqli_fetch_assoc($result))
+									
+										{
+										
+											$threattitle = $row["threattitle"];
+											$threatbeschreibung = $row["threatbeschreibung"];
+											$ersteller = $row["ersteller"];
+											$intern = $row["intern"];
+											
+											$subpid = $row["ID"];
+											$subpid++;
+											
+											echo '<a href="index.php?page=subthreat&subfid=' . $subfid . '&subthreatid=' . $row["ID"] . '"><article>
+											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
+											<div class="inhalt">
+						
+											' . $subbeschreibung . '<br>
+											
+											</div>
+											<wbr></wbr>
+											</article></a>Ersteller: ' . $ersteller . ' | Intern? ' . $intern . '<br>
+											
+											<a href="index.php?page=subthreat&subtaction=editst&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=subthreat&subtaction=deletest&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Löschen!</a>
+											</article><br><br>';
+										
+										}
+					
+								
+					
+								echo '<br>
+								<form action ="index.php?page=subthreat&subtaction=createsp&subfid=' . $subpid . '" method="post">
+								Post Titel:<br>
+								<input type="text" name="subptitel"  size="256"><br>
+								Post Beschreibung:<br>
+								<input type="text" name="subpkategorie" size="256"><br>
+								Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+								<select name="intern">
+									<option value="0" selected>Nein</option>
+									<option value="1">Clanmitglieder</option>
+									<option value="2">Staff</option>
+								<option value="3">Admins</option>
+								</select><br><br>
+								Neuer Post wird mit der subpid:<br>
+								' . $subpid . '<br> erstellt. 
+								<br><br>
+								<input type="hidden" name="subtid" value="' . $subpid . '">
+								<input type="submit" value="Erstellen">
+								</form>';
+					
+								} 
+			
+							else 
+			
+								{
+									
+									$subpid = NULL	;
+									$subpid++;
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Posts? Wo?</b></div>
+									<div class="inhalt">
+						
+									Keine Posts gefunden, neuen Post erstellen?
+					
+									<br><br>
+				
+									<form action ="index.php?page=subthreat&subtaction=createsp&subfid=' . $subpid . '" method="post">
+									Post Titel:<br>
+									<input type="text" name="subptitel"  size="256"><br>
+									Post Beschreibung:<br>
+									<input type="text" name="subpkategorie" size="256"><br>
+									Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
+									<select name="intern">
+										<option value="0" selected>Nein</option>
+										<option value="1">Clanmitglieder</option>
+										<option value="2">Staff</option>
+										<option value="3">Admins</option>
+									</select><br><br>
+									Neuer Post wird mit der subpid:<br>
+									' . $subpid . '<br> erstellt. 
+									<br><br>
+									<input type="hidden" name="subtid" value="' . $subpid . '">
+									<input type="submit" value="Erstellen">
+									</form>
+				
+									</div>
+									<wbr></wbr><br>
+									</article>';
+								}
+			
+								
+									
+			}
+
+	
+	if (isset($_GET['subtaction']))
+		
+		{
+			
+			if ($_GET['subtaction'] == "createsp")
+				
+				{
+					
+					$subfid = editieren($_GET['subfid']);
+					
+					$subptitel = editieren($_POST["subptitel"]);
+					
+					$subpkategorie = editieren($_POST["subpkategorie"]);
+					
+					$intern = $_POST["intern"];
+					
+					
+					
+					
+				}
+			
+		}
+		
+	}
+
 	
 if ($_GET['page'] == "settings")
 	
