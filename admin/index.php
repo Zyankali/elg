@@ -90,7 +90,7 @@ if ($_SESSION["rang"] <= "1" AND isset($_SESSION["rang"]))
 	
 	//Die Seiteneinstellungen abgreifen
 	
-$settings = "SELECT ID, spalte_links, spalte_main, spalte_rechts, eintrags_anzahl FROM settings WHERE ID=1";
+$settings = "SELECT ID, spalte_links, spalte_main, spalte_rechts, eintrags_anzahl, forum FROM settings WHERE ID=1";
 
 $ergebniSS = mysqli_query($db_link, $settings);
 				
@@ -105,6 +105,7 @@ if (mysqli_num_rows($ergebniSS) > 0)
 			$spalteRechts = $row["spalte_rechts"];
 			//Zu zeigende einträge definieren
 			$eintragsAnzahl = $row["eintrags_anzahl"];
+			$forum = $row["forum"];
 			
 													}
 		
@@ -132,7 +133,7 @@ else
 
 <header>Kontrolling : Hallo <?php echo "" . $_SESSION["user"] . ""; ?></header>
 
-<nav> <a title="&Uuml;bersicht" href="index.php?page=overview">&Uuml;bersicht</a> | <a title="hauptseite" href="index.php?page=main">Hauptseite</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum">Forum</a> | <a title="Info" href="index.php?page=info">Info</a> | <a title="Benutzer" href="index.php?page=user">Benutzer</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> | <a title="Kontakt" href="index.php?page=kontakt">Kontakt</a> | <a title="Einstellungen" href="index.php?page=settings">Einstellungen</a> </nav>
+<nav> <a title="&Uuml;bersicht" href="index.php?page=overview">&Uuml;bersicht</a> | <a title="hauptseite" href="index.php?page=main">Hauptseite</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum&sf=view">Forum</a> | <a title="Info" href="index.php?page=info">Info</a> | <a title="Benutzer" href="index.php?page=user">Benutzer</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> | <a title="Kontakt" href="index.php?page=kontakt">Kontakt</a> | <a title="Einstellungen" href="index.php?page=settings">Einstellungen</a> </nav>
 
 <!--Main-->
 <main>
@@ -367,7 +368,7 @@ if ($_GET['page'] == "main")
 					
 					$Inhalt = lesen($Inhalt);
 					
-					if ($_SESSION["rang"] < "1")
+					if ($_SESSION["rang"] < "2")
 
 						{
 						
@@ -375,7 +376,7 @@ if ($_GET['page'] == "main")
 						
 						}
 				
-				echo "<div class=\"titel\"> ID: " . $ID . " A: " . $Author . " Uhrzeit: " . $Uhrzeit . " Datum: " . $Datum . "<br>Titel: " . $Titel . "</div><br><br>" . $Inhalt . "<br><br><div class=\"ende\"> Tags: " . $Tags . " Sticky: " . $Sticky . "</div><a title=\"Editieren\" href=\"index.php?page=contentedit&contentid=" . $contentid . "\">Editieren</a> | <a title=\"löschen\" href=\"index.php?page=contentdelite&contentid=" . $contentid . "\">Löschen</a> <br><br>";
+				echo "<div class=\"titel\"> ID: " . $ID . " A: " . $Author . " Uhrzeit: " . $Uhrzeit . " Datum: " . $Datum . "<br>Titel: " . $Titel . "</div><br><br>" . $Inhalt . "<br><br><div class=\"ende\"> Tags: " . $Tags . " Sticky: " . $Sticky . "</div><a title=\"Editieren\" href=\"index.php?page=contentedit&contentid=" . $contentid . "\">Editieren</a> | <a title=\"Löschen\" href=\"index.php?page=contentdelite&contentid=" . $contentid . "\">Löschen</a> <br><br>";
 				
 				}
 			
@@ -893,7 +894,7 @@ if ($_GET['page'] == "overview")
 							
 						}
 				
-				echo "ID: " . $ID . " | Benutzer: <a title=\"Benutzer Infos ansehen\" href=\"index.php?page=benutzerinfo&benutzer=" . $user . "\">" . $user . "</a> | Freischaltungsstatus: <a title=\"Benutzer Freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">" . $setfree . "</a>";
+				echo "ID: " . $ID . " | Benutzer: <a title=\"Benutzer Infos ansehen\" href=\"index.php?page=benutzerinfo&benutzer=" . $user . "&userID=" . $ID ."\">" . $user . "</a> | Freischaltungsstatus: <a title=\"Benutzer Freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "&userID=" . $ID ."\">" . $setfree . "</a>";
 				echo "<br>";
 				
 				}
@@ -942,7 +943,7 @@ if ($_GET['page'] == "user")
 					
 					
 				
-				echo "ID: " . $ID . " | Benutzer: <a title=\"Benutzer Infos ansehen\" href=\"index.php?page=benutzerinfo&benutzer=" . $user . "\">" . $user . "</a>";
+				echo "ID: " . $ID . " | Benutzer: <a title=\"Benutzer Infos ansehen\" href=\"index.php?page=benutzerinfo&benutzer=" . $user . "&userID=" . $ID . "\">" . $user . "</a>";
 				echo "<br>";
 				
 				
@@ -950,7 +951,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischlaten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a><br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "&userID=" . $ID . "\">Freischlaten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "&userID=" . $ID . "\">Bannen</a><br><br>";
 												
 					}
 					
@@ -958,7 +959,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo "<a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a><br><br>";
+						echo "<a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "&userID=" . $ID . "\">Bannen</a><br><br>";
 												
 					}
 				
@@ -966,7 +967,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> <br><br>";
+						echo " <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "&userID=" . $ID . "\">EntBannen</a> <br><br>";
 												
 					}
 				
@@ -974,7 +975,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer EntBannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "&userID=" . $ID . "\">Freischalten</a> | <a title=\"Benutzer EntBannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "&userID=" . $ID . "\">EntBannen</a> <br><br>";
 												
 					}
 				
@@ -982,7 +983,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "&userID=" . $ID . "\">Freischalten</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "&userID=" . $ID . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "&userID=" . $ID . "\">Löschen</a> <br><br>";
 												
 					}
 				
@@ -990,7 +991,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
+						echo " <a title=\"Benutzer freischalten\" href=\"index.php?page=freischalten&benutzer=" . $user . "\">Freischalten</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "&userID=" . $ID . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "&userID=" . $ID . "\">Löschen</a> <br><br>";
 												
 					}
 				
@@ -998,7 +999,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "\">Sperren</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
+						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "&userID=" . $ID . "\">Sperren</a> | <a title=\"Benutzer entbannen\" href=\"index.php?page=entbannen&benutzer=" . $user . "&userID=" . $ID . "\">EntBannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "&userID=" . $ID . "\">Löschen</a> <br><br>";
 												
 					}
 					
@@ -1006,7 +1007,7 @@ if ($_GET['page'] == "user")
 					
 					{
 						
-						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "\">Sperren</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "\">Löschen</a> <br><br>";
+						echo " <a title=\"Benutzer sperren\" href=\"index.php?page=sperren&benutzer=" . $user . "&userID=" . $ID . "\">Sperren</a> | <a title=\"Benutzer bannen\" href=\"index.php?page=bannen&benutzer=" . $user . "&userID=" . $ID . "\">Bannen</a> | <a title=\"Benutzer loeschen\" href=\"index.php?page=loeschen&benutzer=" . $user . "&userID=" . $ID . "\">Löschen</a> <br><br>";
 												
 					}
 					
@@ -1034,7 +1035,9 @@ if ($_GET['page'] == "freischalten")
 	
 			$user = $_GET['benutzer'];
 			
-			$sql = "UPDATE benutzer SET setfree='1' WHERE user='" . $user . "'";
+			$ID = $_GET['userID'];
+			
+			$sql = "UPDATE benutzer SET setfree='1' WHERE user='" . $user . "' AND ID='" . $ID . "'";
 	
 		if (mysqli_query($db_link, $sql))
 			
@@ -1059,8 +1062,10 @@ if ($_GET['page'] == "sperren")
 	{
 		
 					$user = $_GET['benutzer'];
+					
+					$ID = $_GET['userID'];
 			
-			$sql = "UPDATE benutzer SET setfree='0' WHERE user='" . $user . "'";
+			$sql = "UPDATE benutzer SET setfree='0' WHERE user='" . $user . "' AND ID='" . $ID . "'";
 	
 		if (mysqli_query($db_link, $sql))
 			
@@ -1087,7 +1092,9 @@ if ($_GET['page'] == "bannen")
 		
 		$user = $_GET['benutzer'];
 		
-		$sql = "UPDATE benutzer SET Banned ='1' WHERE user='" . $user . "'";
+		$ID = $_GET['userID'];
+		
+		$sql = "UPDATE benutzer SET Banned ='1' WHERE user='" . $user . "' AND ID='" . $ID . "'";
 		
 	if (mysqli_query($db_link, $sql))
 		
@@ -1113,7 +1120,9 @@ if ($_GET['page'] == "entbannen")
 		
 		$user = $_GET['benutzer'];
 		
-		$sql = "UPDATE benutzer SET Banned ='0' WHERE user='" . $user . "'";
+		$ID = $_GET['userID'];
+		
+		$sql = "UPDATE benutzer SET Banned ='0' WHERE user='" . $user . "' AND ID='" . $ID . "'";
 		
 	if (mysqli_query($db_link, $sql))
 		
@@ -1139,7 +1148,9 @@ if ($_GET['page'] == "loeschen")
 		
 		$user = $_GET['benutzer'];
 		
-		$sql = "DELETE FROM benutzer WHERE user='" . $user . "'";
+		$ID = $_GET['userID'];
+		
+		$sql = "DELETE FROM benutzer WHERE user='" . $user . "' AND ID='" . $ID . "'";
 		
 	if (mysqli_query($db_link, $sql))
 		
@@ -1163,9 +1174,10 @@ if ($_GET ['page'] == "benutzerinfo")
 	{
 		
 		echo "<b>BenutzerInfo</b><br><br>";
-		$userGET = $_GET['benutzer']; 
+		$userGET = $_GET['benutzer'];
+		$userID = $_GET['userID'];
 		
-		$sql = "SELECT ID, user, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "'";
+		$sql = "SELECT ID, user, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "' OR ID='" . $userID . "'";
 		$benutzerliste = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($benutzerliste) > 0) 
@@ -1303,901 +1315,967 @@ if ($_GET ['page'] == "benutzerinfo")
 		mysqli_free_result($benutzerliste);
 		
 	}
-	
-//Forum
+
+///////////
+//       //
+// Forum //
+//       //
+///////////
+
 if ($_GET['page'] == "forum")
 	
 	{
 		
-		if (!isset($_GET['faction']))
+		/****************/
+		/* Forensetting */
+		/****************/
+						
+		/****************/
+		
+		
+		
+
+			
+		if (isset($_GET['fa']))
+			
 			{
-				//einträge zählen
-				$fcounter = "SELECT COUNT(ID), COUNT(subfid) FROM forum";
-				$fpostanzahl = mysqli_query($db_link, $fcounter);
-				$fanzahl = mysqli_fetch_assoc($fpostanzahl);
-		
-				$FINDEX = $fanzahl["COUNT(ID)"];
-				$SUBFINDEX = $fanzahl["COUNT(subfid)"];
-		
-				$sql = "";
-		
-				mysqli_free_result($fpostanzahl);
-		
-				$sql = "SELECT ID, subfid, subfname, kategorie, intern, ersteller FROM Forum";
-				$result = mysqli_query($db_link, $sql);
-		
-				echo '<article>
-					<div class="titel"><b id="titel">Forum</b></div>
-					<div class="inhalt">
-						
-					Unterforen: ' . $SUBFINDEX . '
-						
-					</div>
-					<wbr></wbr><br>
-					</article>';
-		
-				if ($SUBFINDEX > 0) 
-					{
-						// ForumIndex einlesen
-						while($row = mysqli_fetch_assoc($result)) {
-						
-						$subfid = $row["ID"];
-						$subfid++;
-						
-						echo '<a href="index.php?page=subforum&subfid=' . $row["subfid"] . '"><article>
-						<div class="titel"><b id="titel">' . $row["ID"] . ' ' . $row["subfname"] . '</b></div>
-						<div class="inhalt">
-						
-						' . $row["kategorie"] . '<br>
-						
-						
 				
-						</div></a><br>Ersteller: ' . $row["ersteller"] . ' | 
-						Intern? ' . $row["intern"] . '
-						<wbr></wbr><br>
-						
-						<a href="index.php?page=forum&faction=editsf&sfid=' . $row["subfid"] . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=forum&faction=deletesf&sfid=' . $row["subfid"] . '">Löschen!</a>
-						</article><br>';
-				
-						
-						
+			if ($_GET['fa'] == "cdb")
 					
+				{
+						
+				if (!isset($_GET['fc']))
+					
+					{
+						
+						echo '	
+						<form action="index.php?page=forum&fa=cdb&fc=1" method="post">
+
+							
+						<p>Bitte füllen Sie alle Felder aus.</p>
+								
+						<br>
+
+						Forenname:<br> <input type="text" name="fforum" placeholder="Forenname" maxlength="16" size="16" autofocus required><br>
+								
+						<br><br>
+						<input class="button button1" type="submit" value="Forum erstellen" >
+								
+						</form>
+						';
+						
 					}
 					
-					echo '<br>
-					<form action ="index.php?page=forum&faction=createsf" method="post">
-						SF Name:<br>
-					<input type="text" name="subfname"  size="256"><br>
-					SF Beschreibung:<br>
-					<input type="text" name="kategorie" size="256"><br>
-					Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-					<select name="intern">
-						<option value="0" selected>Nein</option>
-						<option value="1">Clanmitglieder</option>
-						<option value="2">Staff</option>
-						<option value="3">Admins</option>
-					</select><br><br>
-					Neues SF wird mit der subid:<br>
-					' . $subfid . '<br> erstellt. 
-					<br><br>
-					<input type="hidden" name="subfid" value="' . $subfid . '">
-					<input type="submit" value="Erstellen">
-					</form>';
+				if (isset($_GET['fc']) AND $_GET['fc'] == "1")
+						
+					{
+							
+					$fforum = editieren($_POST["fforum"]);
 					
-				} 
-			else 
+					$sql2 = "UPDATE settings SET forum='" . $fforum . "' WHERE ID=1";
+					
+					if (mysqli_query($db_link, $sql2))
+						
+						{
+							
+							echo '<article>
+							<div class="titel"><b id="titel">Einstellungen aktualisiert.</b></div>
+							<div class="inhalt">
+							
+							"forum" Eintrag in der "settings" Tabelle der Datenbank "el" wurde aktualisiert.
+
+							</div>
+							<wbr></wbr><br>
+							</article>';
+							
+						}
+						
+					else 
+						
+						{
+							
+							echo '<article>
+							<div class="titel"><b id="titel">Einstellungen NICHT aktualisiert.</b></div>
+							<div class="inhalt">
+							
+							"forum" Eintrag in der "settings" Tabelle der Datenbank "el" konnte nicht aktualisiert werden.
+							' . mysqli_error($db_link) . '
+							
+							</div>
+							<wbr></wbr><br>
+							</article>';
+							
+						}
+					
+					$sql = "CREATE DATABASE IF NOT EXISTS " . $fforum . " CHARACTER SET utf8 COLLATE utf8_bin";
+				
+					if (mysqli_query($db_forum, $sql))
+							
+						{
+								
+							echo '<article>
+							<div class="titel"><b id="titel">Foren Datenbank "' . $fforum . '" erstellt.</b></div>
+							<div class="inhalt">
+								
+							<br><a class="navi navi1" title="Forum" href="index.php?page=forum&sf=view">Weiter</a>
+								
+							<br><br>
+							</div>
+							<wbr></wbr><br>
+							</article>';
+							
+							$sql = "CREATE TABLE IF NOT EXISTS " . $fforum . " . " . $fforum . "_sf (
+							ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+							sfname TEXT NOT NULL,
+							sfbeschreibung TEXT NOT NULL,
+							ersteller TEXT NOT NULL,
+							erstellerID VARCHAR(10) NOT NULL,
+							intern VARCHAR(1) NOT NULL
+							)";
+							
+							if (mysqli_query($db_forum, $sql)) 
+
+								{
+
+									echo '<article>
+									<div class="titel"><b id="titel">Tabelle "' . $fforum . '_sf" erstellt.</b></div>
+									<div class="inhalt">
+										
+									<br><a class="navi navi1" title="Forum" href="index.php?page=forum&sf=view">Weiter</a>
+										
+									<br><br>
+									</div>
+									<wbr></wbr><br>
+									</article>';
+
+								}
+
+							else
+
+								{
+
+								echo '<article>
+								<div class="titel"><b id="titel">Tabelle "' . $fforum . '_sf" konnte nicht erstellt werden!</b></div>
+								<div class="inhalt">
+
+								Fehler: ' . mysqli_error($db_forum) . '
+								
+								<br><a class="navi navi1" title="Forum" href="index.php?page=forum">Weiter</a>
+									
+								<br><br>
+								</div>
+								<wbr></wbr><br>
+								</article>';
+								
+								}
+								
+						}
+						
+					else 
+							
+						{
+								
+							echo '<article>
+							<div class="titel"><b id="titel">Foren Datenbank "' . $fforum . '" bereits vorhanden!</b></div>
+							<div class="inhalt">
+							
+							Fehler: ' . mysqli_error($db_forum) . '
+							<br><br><a class="navi navi1" title="Forum" href="index.php?page=forum">Weiter</a>
+								
+							<br><br>
+							</div>
+							<wbr></wbr><br>
+							</article>'; 
+								
+						}
+					
+					}
+				}
+			
+			// Forum mit samt Forendatenbank löschen, letzte Frage	
+			if ($_GET['fa'] == "ddb")
+					
 				{
 					
-					$subfid = NULL;
-					$subfid++;
+				if (!isset($_GET['fd']))
+
+					{	
+					echo '<article>
+							<div class="titel"><b id="titel">Forum und Datenbank "' . $forum . '" wirklich Löschen?</b></div>
+							<div class="inhalt">
+							Lang lebe der Super Gau!<br>
+							<br>
+							Wollen Sie wirklich das gesamte Forum unwiederbringlich Löschen? 
+							<br>
+							
+							
+							<br><a class="navi navi1" title="Forum" href="index.php?page=forum&fa=ddb&fd=1">!- Ja -!</a> | <a class="navi navi1" title="Forum" href="index.php?page=forum&sf=view">Nein</a>
+								
+							<br><br>
+							</div>
+							<wbr></wbr><br>
+							</article>'; 
+					}
+				// Forum FINAL komplett Löschen 
+				if (isset($_GET['fd']) AND $_GET['fd'] == "1")
+
+					{
+						
+						$sql = "DROP DATABASE " . $forum . "";
+						
+						if (mysqli_query($db_forum, $sql))
+							
+							{
+								$sql2 = "UPDATE settings SET forum=NULL WHERE ID=1";
+								
+								if (mysqli_query($db_link, $sql2))
+								
+								{
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Einstellungen aktualisiert.</b></div>
+									<div class="inhalt">
+									
+									"forum" Eintrag in der "settings" Tabelle der Datenbank "el" wurde aktualisiert.
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+									
+								}
+								
+							else 
+								
+								{
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Einstellungen NICHT aktualisiert.</b></div>
+									<div class="inhalt">
+									
+									"forum" Eintrag in der "settings" Tabelle der Datenbank "el" konnte nicht aktualisiert werden.
+									' . mysqli_error($db_link) . '
+									
+									</div>
+									<wbr></wbr><br>
+									</article>';
+									
+								}
+								
+								echo '<article>
+								<div class="titel"><b id="titel">Foren Datenbank "' . $forum . '" gelöscht!</b></div>
+								<div class="inhalt">
+								
+								Winke winke Forum...
+								<br>
+								<br><a class="navi navi1" title="Forum" href="index.php?page=forum">Weiter</a>
+									
+								<br><br>
+								</div>
+								<wbr></wbr><br>
+								</article>';
+								
+								
+					
+							
+									
+							}
+							
+						else 
+								
+							{
+									
+								echo '<article>
+								<div class="titel"><b id="titel">Foren Datenbank "' . $forum . '" konnte nicht gelöscht werden!</b></div>
+								<div class="inhalt">
+								
+								Fehler: ' . mysqli_error($db_forum) . '
+								<br><br><a class="navi navi1" title="Forum" href="index.php?page=forum">Weiter</a>
+									
+								<br><br>
+								</div>
+								<wbr></wbr><br>
+								</article>';
+							}
+						
+					}
+				
+				}
+				
+			}
+
+		else 
+			
+			{
+			
+			$forumverbinden = mysqli_select_db($db_forum, $forum);
+			
+			if (!$forumverbinden)
+				
+				{
 					
 					echo '<article>
-					<div class="titel"><b id="titel">Unterforum? Wo?</b></div>
+					<div class="titel"><b id="titel">Foren Datenbank "' . $forum . '" konnte nicht gefunden werden.</b></div>
 					<div class="inhalt">
-						
-					Keine Unterforen gefunden, neues Unterforum erstellen?
+					
+					<br>Neue Foren Datenbank und neues Forum erstellen?
+					<br>
+					<br><a class="navi navi1" title="Forum erstellen" href="index.php?page=forum&fa=cdb">Ja</a> | <a class="navi navi1" title="Forum nicht erstellen" href="index.php?page=overview">Nein</a>
 					
 					<br><br>
-				
-					<form action ="index.php?page=forum&faction=createsf" method="post">
-					SF Name:<br>
-					<input type="text" name="subfname"  size="256"><br>
-					SF Beschreibung:<br>
-					<input type="text" name="kategorie" size="256"><br>
-					Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-					 <select name="intern">
-						<option value="0" selected>Nein</option>
-						<option value="1">Clanmitglieder</option>
-						<option value="2">Staff</option>
-						<option value="3">Admins</option>
-					</select><br><br>
-					Neues SF wird mit der subid:<br>
-					' . $subfid . '<br> erstellt. 
-					<br><br>
-					<input type="hidden" name="subfid" value="' . $subfid . '">
-					<input type="submit" value="Erstellen">
-					</form>
-				
 					</div>
 					<wbr></wbr><br>
 					</article>';
+					
 				}
-			}
-		
-		if (isset($_GET['faction']))
-		
-			{
 				
-				// Neues SF erstellen
-				if ($_GET['faction'] == "createsf" )
-					
-					{
-						
-						
-						$subfname = editieren($_POST["subfname"]);
-						
-						$kategorie = editieren($_POST["kategorie"]);
-						
-						$subfid = editieren($_POST["subfid"]);
-						
-						$intern = $_POST["intern"];
-						
-						$ersteller = $_SESSION["user"];
-						
-						if ($subfname == NULL OR $subfname == "" OR $kategorie == NULL OR $kategorie == "")
-							
-							{
-								
-								echo 'Bitte alle Eingabefelder ausfüllen. <br><br> <a href="index.php?page=forum">Forum</a>';
-								
-							}
-						
-						else
-							
-							{
-					
-								$sql = "INSERT INTO forum (subfid, subfname, kategorie, intern, ersteller) VALUES ('" . $subfid . "', '" . $subfname . "', '" . $kategorie . "', '" . $intern . "', '" . $ersteller . "')"; 
-								
-								if (mysqli_query($db_link, $sql)) 
-								
-									{
-										
-										echo "Eintrag erfolgreich erstellt.<br>";
-									
-									} 
-								
-								else
-
-									{
-    
-										echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
-									
-									}
-								
-								// Neues SF erstellen
-								$sql = "CREATE TABLE sf_" . $subfid . " (ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-								subtitle TEXT NOT NULL,
-								subbeschreibung TEXT NOT NULL,
-								ersteller TEXT NOT NULL,
-								intern VARCHAR(1) NOT NULL,
-								subfid TEXT NOT NULL)";
-									if (mysqli_query($db_link, $sql))
-										{
-											echo "<br>SF Tabelle sf_" . $subfid . " wurde erstellt.";
-										}
-									else 
-										{
-							
-											echo "<br>Fehler: " . mysqli_error($db_link);
-
-										}
-							}
-						
-					}
-					
-				// SF löschen	
-				if ($_GET['faction'] == "deletesf" )
-
-					{
-						
-						$sf = $_GET['sfid'];
-						echo 'Delite SF';
-						$sql = "DROP TABLE sf_" . $sf . "";
-						
-						if (mysqli_query($db_link, $sql)) 
-								
-							{
-										
-								echo "<br>SF tabelle sf_" . $sf . " erfolgreich gelöscht.<br>";
-									
-							} 
-								
-						else
-
-							{
-    
-								echo "<br>Fehler: konnte SF Tabelle sf_" . $sf . " nicht löschen: " . $sql . "<br>" . mysqli_error($db_link);
-									
-							}
-						
-						$sql = "DELETE FROM forum WHERE subfid=" . $sf . "";
-						
-						if (mysqli_query($db_link, $sql)) 
-								
-							{
-										
-								echo "<br>SF Eintrag aus Forum Index erfolgreich gelöscht.";
-									
-							} 
-								
-						else
-
-							{
-    
-								echo "<br>Fehler, konnte Forum Index " . $sf . " nicht löschen: " . $sql . "<br>" . mysqli_error($db_link);
-									
-							}
-					
-					}
-				
-				// SF editieren
-				if ($_GET['faction'] == "editsf" )
-				
-					{
-						
-					if (!isset($_POST["subfname"]))
-						
-						{
-							
-								
-							$sf = $_GET['sfid'];
-					
-							$sql = "SELECT subfname, kategorie, intern FROM forum WHERE subfid=" . $sf . "";
-							$result = mysqli_query($db_link, $sql);
-						
-							if (mysqli_num_rows($result) > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$subfname = $row["subfname"];
-											$kategorie = $row["kategorie"];
-											$intern = $row["intern"];
-										
-										}
-									
-								}
-							else 
-								{
-						
-									echo "Nichts da zum editieren." . mysqli_error($db_link);
-						
-								}
-						
-							echo 'Edit SF';
-						
-							echo '
-				
-							<form action ="index.php?page=forum&faction=editsf" method="post">
-							SF Name:<br>
-							<input type="text" name="subfname" value="' . $subfname . '" size="256"><br>
-							SF Beschreibung:<br>
-							<input type="text" name="kategorie" value="' . $kategorie . '" size="256"><br>
-							Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-							<select name="intern">
-								<option value="0" selected>Nein</option>
-								<option value="1">Clanmitglieder</option>
-								<option value="2">Staff</option>
-								<option value="3">Admins</option>
-							</select>
-							<br><br>
-							<input type="hidden" name="subfid" value="' . $sf . '">
-							<input type="submit" value="editieren">
-							</form>';
-						}
-						
-						
-					if (isset($_POST["subfname"]))						
-							
-						{
-								
-							$subfname = editieren($_POST["subfname"]);
-								
-							$kategorie = editieren($_POST["kategorie"]);
-							
-							$intern = $_POST["intern"];
-								
-							$sf = editieren($_POST["subfid"]);
-							
-							$ersteller = $_SESSION["user"];
-								
-							$sql = "UPDATE forum SET subfname='" . $subfname . "', kategorie='" . $kategorie . "', kategorie='" . $kategorie . "', intern='" . $intern . "', ersteller='" . $ersteller . "' WHERE subfid=" . $sf . "";
-
-							if (mysqli_query($db_link, $sql))
-					
-								{
-								
-									echo "<br>Foren Index Eintrag erfolgreich editiert.";
-								
-								}
-								
-							else
-							
-								{
-    
-									echo "<br>Fehler, konnte Forenindex nicht editieren: " . mysqli_error($db_link);
-								
-								}
-								
-						}
-					}
-					
-			}
-		
-		
-	}
-	
-	
-// Subforum
-if ($_GET['page'] == "subforum")
-	
-	{
-		
-		if (isset($_GET['subfid']))
-			
-			{
-				$subfid = $_GET['subfid'];
-				
-			}
-		
-		
-		if (!isset($_GET['subfaction']))
-			
-			{
-				//einträge zählen
-				$stcounter = "SELECT COUNT(ID), COUNT(subfid) FROM sf_" . $subfid . " WHERE subfid=" . $subfid . "";
-				$stpostanzahl = mysqli_query($db_link, $stcounter);
-				$stanzahl = mysqli_fetch_assoc($stpostanzahl);
-		
-				$FINDEX = $stanzahl["COUNT(ID)"];
-				$SUBFINDEX = $stanzahl["COUNT(subfid)"];
-		
-				$sql = "";
-		
-				mysqli_free_result($stpostanzahl);
-				
-				//subforum titelausgabe
-				$sql = "SELECT ID, subfid, subfname, kategorie, intern, ersteller FROM forum WHERE subfid=" . $subfid . "";
-							$result = mysqli_query($db_link, $sql);
-						
-							if (mysqli_num_rows($result) > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$subfname = $row["subfname"];
-											$kategorie = $row["kategorie"];
-											$ersteller = $row["ersteller"];
-											$intern = $row["intern"];
-										
-											echo '<article>
-											<div class="titel"><b id="titel">' . $subfname . '</b></div>
-											<div class="inhalt">
-											
-											' . $kategorie . '
-											<br>Threats: ' . $SUBFINDEX . ' | Intern? ' .  $intern . '
-						
-											</div>
-											<wbr></wbr><br>
-											</article>';
-											
-										}
-									
-								}
-							else 
-								{
-						
-									echo "Nichts da." . mysqli_error($db_link);
-						
-								}
-				
-							//Threats auslesen ggf. mit lösch- und editierfunktion 
-							$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $subfid . " WHERE subfid=" . $subfid . "";
-							$result = mysqli_query($db_link, $sql);
-							
-									
-							if ($SUBFINDEX > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$subtitle = $row["subtitle"];
-											$subbeschreibung = $row["subbeschreibung"];
-											$ersteller = $row["ersteller"];
-											$intern = $row["intern"];
-											
-											$subtid = $row["ID"];
-											$subtid++;
-											
-											echo '<a href="index.php?page=subthreat&subfid=' . $subfid . '&subthreatid=' . $row["ID"] . '"><article>
-											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
-											<div class="inhalt">
-						
-											' . $subbeschreibung . '<br>
-											
-											</div>
-											<wbr></wbr>
-											</article></a>Ersteller: ' . $ersteller . ' | Intern? ' . $intern . '<br>
-											
-											<a href="index.php?page=subforum&subfaction=editst&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=subforum&subfaction=deletest&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Löschen!</a>
-											</article><br><br>';
-										
-										}
-					
-								
-					
-								echo '<br>
-								<form action ="index.php?page=subforum&subfaction=createst&subfid=' . $subfid . '" method="post">
-								Threat Name:<br>
-								<input type="text" name="subtname"  size="256"><br>
-								Threat Beschreibung:<br>
-								<input type="text" name="subbeschreibung" size="256"><br>
-								Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-								<select name="intern">
-									<option value="0" selected>Nein</option>
-									<option value="1">Clanmitglieder</option>
-									<option value="2">Staff</option>
-								<option value="3">Admins</option>
-								</select><br><br>
-								Neuer Threat wird mit der subtid:<br>
-								' . $subtid . '<br> erstellt. 
-								<br><br>
-								<input type="hidden" name="subtid" value="' . $subtid . '">
-								<input type="submit" value="Erstellen">
-								</form>';
-					
-								} 
-			
-							else 
-			
-								{
-									
-									$subtid = NULL	;
-									$subtid++;
-									
-									echo '<article>
-									<div class="titel"><b id="titel">Threats? Wo?</b></div>
-									<div class="inhalt">
-						
-									Keine Threats gefunden, neuen Threat erstellen?
-					
-									<br><br>
-				
-									<form action ="index.php?page=subforum&subfaction=createst&subfid=' . $subfid . '" method="post">
-									Threat Name:<br>
-									<input type="text" name="subtname"  size="256"><br>
-									Threat Beschreibung:<br>
-									<input type="text" name="subbeschreibung" size="256"><br>
-									Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-									<select name="intern">
-										<option value="0" selected>Nein</option>
-										<option value="1">Clanmitglieder</option>
-										<option value="2">Staff</option>
-										<option value="3">Admins</option>
-									</select><br><br>
-									Neuer Threat wird mit der subtid:<br>
-									' . $subtid . '<br> erstellt. 
-									<br><br>
-									<input type="hidden" name="subtid" value="' . $subtid . '">
-									<input type="submit" value="Erstellen">
-									</form>
-				
-									</div>
-									<wbr></wbr><br>
-									</article>';
-								}
-			
-								
-									
-			}
-		
-		if (isset($_GET['subfaction']))
-			
-			{
-				
-				if ($_GET['subfaction'] == "createst")
-			
-					{
-				
-						$subtname = editieren($_POST["subtname"]);
-						
-						$subbeschreibung = editieren($_POST["subbeschreibung"]);
-						
-						$subtid = editieren($_POST["subtid"]);
-						
-						$intern = $_POST["intern"];
-						
-						$subfid = $_GET['subfid'];
-						
-						$ersteller = $_SESSION["user"];
-						
-						if ($subtname == NULL OR $subtname == "" OR $subbeschreibung == NULL OR $subbeschreibung == "")
-							
-							{
-								
-								echo 'Bitte alle Eingabefelder ausfüllen. <br><br> <a href="index.php?page=subforum&subfid=' . $subfid . '">Subforum</a>';
-								
-							}
-						
-						else
-							
-							{
-					
-								$sql = "INSERT sf_" . $subfid . " (subtitle, subbeschreibung, ersteller, intern, subfid) VALUES ('" . $subtname . "', '" . $subbeschreibung . "', '" . $ersteller . "', '" . $intern . "', '" . $subfid . "')"; 
-								
-								if (mysqli_query($db_link, $sql)) 
-								
-									{
-										
-										echo "Eintrag erfolgreich erstellt.<br>";
-									
-									} 
-								
-								else
-
-									{
-    
-										echo "Fehler: " . $sql . "<br>" . mysqli_error($db_link);
-									
-									}
-								
-																
-								// Neuen Threat erstellen
-								$sql = "CREATE TABLE t_" . $subfid . "_" . $subtid . " (ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-								threattitle TEXT NOT NULL,
-								threatbeschreibung TEXT NOT NULL,
-								ersteller TEXT NOT NULL,
-								djahr VARCHAR(4) NOT NULL,
-								dmonat VARCHAR(2) NOT NULL,
-								dtag VARCHAR(2) NOT NULL,
-								zstunde VARCHAR(2) NOT NULL,
-								zminute VARCHAR(2) NOT NULL,
-								zsecunde VARCHAR(2) NOT NULL,
-								intern VARCHAR(1) NOT NULL,
-								subfid TEXT NOT NULL)";
-									if (mysqli_query($db_link, $sql))
-										{
-											echo "<br>Threat Tabelle t_" . $subfid . "_" . $subtid . " wurde erstellt.";
-											echo "<br>";
-											echo '<a href="index.php?page=subforum&subfid=' . $subfid . '">' . $subtname . '</a>';
-										}
-									else 
-										{
-							
-											echo "<br>Fehler: " . mysqli_error($db_link);
-
-										}
-							}
-				
-					}
-		
-				if ($_GET['subfaction'] == "deletest")
-			
-					{
-				
-				
-				
-					}
-			
-				if ($_GET['subfaction'] == "editst")
-			
-					{
-				
-						if (!isset($_POST["subtitle"]))
-						
-						{
-							
-								
-							$sf = $_GET['sfid'];
-							$threatid = $_GET['threatid'];
-					
-							$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $sf . " WHERE ID=" . $threatid . "";
-							$result = mysqli_query($db_link, $sql);
-						
-							if (mysqli_num_rows($result) > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$subtitle = $row["subtitle"];
-											$subbeschreibung = $row["subbeschreibung"];
-											$intern = $row["intern"];
-										
-										}
-									
-								}
-							else 
-								{
-						
-									echo "Nichts da zum editieren." . mysqli_error($db_link);
-						
-								}
-						
-							echo 'Edit SF';
-						
-							echo '
-				
-							<form action ="index.php?page=subforum&subfaction=editst" method="post">
-							SF Name:<br>
-							<input type="text" name="subtitle" value="' . $subtitle . '" size="256"><br>
-							SF Beschreibung:<br>
-							<input type="text" name="subbeschreibung" value="' . $subbeschreibung . '" size="256"><br>
-							Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-							<select name="intern">
-								<option value="0" selected>Nein</option>
-								<option value="1">Clanmitglieder</option>
-								<option value="2">Staff</option>
-								<option value="3">Admins</option>
-							</select>
-							<br><br>
-							<input type="hidden" name="subfid" value="' . $sf . '">
-							<input type="hidden" name="threatid" value="' . $threatid . '">
-							<input type="submit" value="editieren">
-							</form>';
-						}
-						
-						
-					if (isset($_POST["subtitle"]))						
-							
-						{
-								
-							$subtitle = editieren($_POST["subtitle"]);
-								
-							$subbeschreibung = editieren($_POST["subbeschreibung"]);
-							
-							$intern = $_POST["intern"];
-								
-							$sf = editieren($_POST["subfid"]);
-							
-							$threatid = editieren($_POST["threatid"]);
-							
-							$ersteller = $_SESSION["user"];
-								
-							$sql = "UPDATE sf_" . $sf . " SET subtitle='" . $subtitle . "', subbeschreibung='" . $subbeschreibung . "',  ersteller='" . $ersteller . "', intern='" . $intern . "' WHERE ID=" . $threatid . "";
-
-							if (mysqli_query($db_link, $sql))
-					
-								{
-								
-									echo "<br>Subforen Index Eintrag erfolgreich editiert.";
-									echo "<br>";
-									echo '<a href="index.php?page=subforum&subfid=' . $sf . '">' . $subtitle . '</a>';
-								
-								}
-								
-							else
-							
-								{
-    
-									echo "<br>Fehler, konnte Subforen Index nicht editieren: " . mysqli_error($db_link);
-								
-								}
-								
-						}
-				
-					}
-				
-			}
-		
-		
-		
-	}
-	
-// Subthreats
-if ($_GET['page'] == "subthreat")
-	
-	{
-		
-	if (isset($_GET['subfid']))
-			
-		{
-			$subfid = $_GET['subfid'];
-				
-		}
-			
-	if (isset($_GET['subthreatid']))
-		
-		{
-	
-			$subthreatid = $_GET['subthreatid'];
-				
-		}
-	
-		if (!isset($_GET['subtaction']))
-			
-			{
-				//einträge zählen
-				$tcounter = "SELECT COUNT(ID), COUNT(subfid) FROM t_" . $subfid . "_" . $subthreatid . " WHERE subfid=" . $subfid . "";
-				$tpostanzahl = mysqli_query($db_link, $tcounter);
-				$tanzahl = mysqli_fetch_assoc($tpostanzahl);
-		
-				$FINDEX = $tanzahl["COUNT(ID)"];
-				$SUBFINDEX = $tanzahl["COUNT(subfid)"];
-		
-				$sql = "";
-		
-				mysqli_free_result($tpostanzahl);
-				
-				//subthreats titelausgabe
-				$sql = "SELECT ID, subtitle, subbeschreibung, ersteller, intern, subfid FROM sf_" . $subfid . " WHERE ID=" . $subthreatid . "";
-							$result = mysqli_query($db_link, $sql);
-						
-							if (mysqli_num_rows($result) > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$subtitle = $row["subtitle"];
-											$subbeschreibung = $row["subbeschreibung"];
-											$ersteller = $row["ersteller"];
-											$intern = $row["intern"];
-										
-											echo '<article>
-											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
-											<div class="inhalt">
-											
-											' . $subbeschreibung . '
-											<br>Posts: ' . $SUBFINDEX . ' | Intern? ' .  $intern . '
-						
-											</div>
-											<wbr></wbr><br>
-											</article>';
-											
-										}
-									
-								}
-							else 
-								{
-						
-									echo "Nichts da." . mysqli_error($db_link);
-						
-								}
-				
-							//Threats auslesen ggf. mit lösch- und editierfunktion 
-							$sql = "SELECT ID, threattitle, threatbeschreibung, ersteller, djahr, dmonat, dtag, zstunde, zminute, zsecunde, intern, subfid FROM t_" . $subfid . "_" . $subthreatid . " WHERE subfid=" . $subfid . "";
-							$result = mysqli_query($db_link, $sql);
-							
-									
-							if ($SUBFINDEX > 0)
-					
-								{
-									while($row = mysqli_fetch_assoc($result))
-									
-										{
-										
-											$threattitle = $row["threattitle"];
-											$threatbeschreibung = $row["threatbeschreibung"];
-											$ersteller = $row["ersteller"];
-											$intern = $row["intern"];
-											
-											$subpid = $row["ID"];
-											$subpid++;
-											
-											echo '<a href="index.php?page=subthreat&subfid=' . $subfid . '&subthreatid=' . $row["ID"] . '"><article>
-											<div class="titel"><b id="titel">' . $subtitle . '</b></div>
-											<div class="inhalt">
-						
-											' . $subbeschreibung . '<br>
-											
-											</div>
-											<wbr></wbr>
-											</article></a>Ersteller: ' . $ersteller . ' | Intern? ' . $intern . '<br>
-											
-											<a href="index.php?page=subthreat&subtaction=editst&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Editieren</a> | <a title="ACHTUNG! Löscht auch alle Threats und Posts des jehweiligen Unterforums mit!" href="index.php?page=subthreat&subtaction=deletest&threatid=' . $row["ID"] . '&sfid=' . $subfid . '">Löschen!</a>
-											</article><br><br>';
-										
-										}
-					
-								
-					
-								echo '<br>
-								<form action ="index.php?page=subthreat&subtaction=createsp&subfid=' . $subpid . '" method="post">
-								Post Titel:<br>
-								<input type="text" name="subptitel"  size="256"><br>
-								Post Beschreibung:<br>
-								<input type="text" name="subpkategorie" size="256"><br>
-								Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-								<select name="intern">
-									<option value="0" selected>Nein</option>
-									<option value="1">Clanmitglieder</option>
-									<option value="2">Staff</option>
-								<option value="3">Admins</option>
-								</select><br><br>
-								Neuer Post wird mit der subpid:<br>
-								' . $subpid . '<br> erstellt. 
-								<br><br>
-								<input type="hidden" name="subtid" value="' . $subpid . '">
-								<input type="submit" value="Erstellen">
-								</form>';
-					
-								} 
-			
-							else 
-			
-								{
-									
-									$subpid = NULL	;
-									$subpid++;
-									
-									echo '<article>
-									<div class="titel"><b id="titel">Posts? Wo?</b></div>
-									<div class="inhalt">
-						
-									Keine Posts gefunden, neuen Post erstellen?
-					
-									<br><br>
-				
-									<form action ="index.php?page=subthreat&subtaction=createsp&subfid=' . $subpid . '" method="post">
-									Post Titel:<br>
-									<input type="text" name="subptitel"  size="256"><br>
-									Post Beschreibung:<br>
-									<input type="text" name="subpkategorie" size="256"><br>
-									Intern? Nur für Interne (Admins/Staff/Clanmitglieder) sichtbar?<br>
-									<select name="intern">
-										<option value="0" selected>Nein</option>
-										<option value="1">Clanmitglieder</option>
-										<option value="2">Staff</option>
-										<option value="3">Admins</option>
-									</select><br><br>
-									Neuer Post wird mit der subpid:<br>
-									' . $subpid . '<br> erstellt. 
-									<br><br>
-									<input type="hidden" name="subtid" value="' . $subpid . '">
-									<input type="submit" value="Erstellen">
-									</form>
-				
-									</div>
-									<wbr></wbr><br>
-									</article>';
-								}
-			
-								
-									
-			}
-
-	
-	if (isset($_GET['subtaction']))
-		
-		{
-			
-			if ($_GET['subtaction'] == "createsp")
+			else 
 				
 				{
 					
-					$subfid = editieren($_GET['subfid']);
+					// Forenname und Foreninhalt anzeigen und erstellen/editieren.
+					echo '<article>
+					<div class="titel"><b id="titel">' . $forum . '</b></div>
+					<div class="inhalt">
+										
+					</div>
+					<wbr></wbr><br>
+					</article>';
 					
-					$subptitel = editieren($_POST["subptitel"]);
+					//Subforen anzeigen editieren/erstellen
 					
-					$subpkategorie = editieren($_POST["subpkategorie"]);
+					if (isset($_GET['sf']) AND $_GET['sf'] == "view")
+						
+						{
+							
+						if (!isset($_GET['sfa']))
+							
+							{
+							$sql = "SELECT ID, sfname, sfbeschreibung, ersteller, erstellerID, intern FROM " . $forum . " . ". $forum . "_sf";
+							$ergebnis = mysqli_query($db_forum, $sql);
+							
+							if (mysqli_num_rows($ergebnis) > 0)
+								
+								{
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Neuer subforen eintrag in "' . $forum . '_sf" erstellen?</b></div>
+									<div class="inhalt">
+									Neuer Eintrag in "' . $forum . '_sf" erstellen?<br><br>
+									<a class="navi navi1" title="Neuer Subforum Eintrag erstellen" href="index.php?page=forum&sf=view&sfa=csf">Ja</a>
+									
+									</div>
+									<wbr></wbr><br>
+									</article>';
+									
+									while($row = mysqli_fetch_assoc($ergebnis)) {
+																									
+									echo '<a class="navi navi1" title="Threat öffnen" href="index.php?page=forum&t=view&showID=' . $row["ID"] . '"><article>
+									<div class="titel"><b id="titel">' . $row["sfname"] . '</b></div>
+									<div class="inhalt">
+									' . $row["sfbeschreibung"] . '<br>
+									<br></a>
+									Ersteller: <a class="navi navi1" title="Benutzer" href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '">' . $row["ersteller"] . '</a> Intern: ';
+									
+									if ($row["intern"] == "0")
+
+										{
+																							
+											echo 'Nein!';
+																							
+										}
+									
+									if ($row["intern"] == "1")
+
+										{
+																							
+											echo 'Von Admins, Mods und Clanmitgliedern einsehbar.';
+																							
+										}
+										
+									if ($row["intern"] == "2")
+
+										{
+																							
+											echo 'Von Admins und Mods einsehbar.';
+																							
+										}
+									
+									if ($row["intern"] == "3")
+
+										{
+																							
+											echo 'Nur von Admins einsehbar.';
+																							
+										}
+									
+									echo '</div>
+									<wbr></wbr><br>
+									</article>';
+									
+									}
+									
+								}
+								
+							else 
+								
+								{
+									
+									echo '<article>
+									<div class="titel"><b id="titel">Keine Einträge im Subforum "' . $forum . '_sf" gefunden!</b></div>
+									<div class="inhalt">
+									Neuer Eintrag in "' . $forum . '_sf" erstellen?<br><br>
+									<a class="navi navi1" title="Neuer Subforum Eintrag erstellen?" href="index.php?page=forum&sf=view&sfa=csf">Ja</a>
+									
+									</div>
+									<wbr></wbr><br>
+									</article>';
+									
+								}
+							}
+						
+						// _sf Eintrag erstellen					
+						if (isset($_GET['sfa']) AND $_GET['sfa'] == "csf")
+							
+							{
+								
+								if (!isset($_GET['sfc']))
+									
+									{
+								
+										echo '
+											
+										<article>
+												<div class="titel"><b id="titel">Neuer Eintrag im Subforum "' . $forum . '_sf" erstellen.</b></div>
+												<div class="inhalt">
+												
+										<form action="index.php?page=forum&sf=view&sfa=csf&sfc=1" method="post">
+
+												
+										<p>Bitte füllen Sie alle Felder aus.</p>
+													
+										
+										Subforumname:<br> <input type="text" name="sfname" placeholder="Subforumtitel" maxlength="256" size="256" autofocus required><br>
+										
+										Subforum Beschreibung:<br> <input type="text" name="sfbeschreibung" placeholder="Subforum Beschreibung" maxlength="256" size="256" required><br><br>
+										
+										
+										Intern?<br>
+										<select name="intern"> 
+											<option value="0" selected>Nein</option>
+											<option value="1" >Clanmitglieder</option>
+											<option value="2" >Mods</option>
+											<option value="3" >Admin</option>
+										</select>
+											
+										<br><br>
+										<input class="button button1" type="submit" value="Forum erstellen" > <a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&sf=view">Zurück</a>
+													
+										</form>
+											
+										</div>
+										<wbr></wbr><br>
+										</article>
+													
+										';
+									
+									}
+									
+								if (isset($_GET['sfc']) AND $_GET['sfc'] == "1")
+									
+									{
+										
+										$sfname = editieren($_POST["sfname"]);
+										
+										$sfbeschreibung = editieren($_POST["sfbeschreibung"]);
+										
+										$sfname = editieren($_POST["sfname"]);
+										
+										$erstellerID = $_SESSION["ID"];
+							
+										$ersteller = $_SESSION["user"];
+										
+										$intern = editieren($_POST["intern"]);
+										
+										$sql = "INSERT INTO " . $forum . " . " . $forum . "_sf (sfname, sfbeschreibung, ersteller, erstellerID, intern)
+										VALUES ('" . $sfname . "', '" . $sfbeschreibung . "', '" . $ersteller . "', '" . $erstellerID . "', '" . $intern . "')";
+										
+										if (mysqli_query($db_forum, $sql))
+										
+											{
+											
+												echo '<article>
+												<div class="titel"><b id="titel">Subforum eintrag eingefügt.</b></div>
+												<div class="inhalt">
+												
+												Eintrag in der "' . $forum . '_sf" Tabelle der Datenbank "' . $forum . '" wurde neu eingefügt.
+												
+												<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+
+												</div>
+												<wbr></wbr><br>
+												</article>';
+											
+												//Neuer _t Threats Tabelle erstellen
+												
+												$sql = "CREATE TABLE IF NOT EXISTS " . $forum . " . " . $forum . "_t (
+												ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+												tname TEXT NOT NULL,
+												tbeschreibung TEXT NOT NULL,
+												ersteller TEXT NOT NULL,
+												erstellerID VARCHAR(10) NOT NULL,
+												clantag TEXT NULL,
+												clanID VARCHAR(10) NULL,
+												threatID VARCHAR(10) NOT NULL,
+												intern VARCHAR(1) NOT NULL
+												)";
+											
+												if (mysqli_query($db_forum, $sql)) 
+
+													{
+
+														echo '<article>
+														<div class="titel"><b id="titel">Tabelle "' . $forum . '_t" erstellt.</b></div>
+														<div class="inhalt">
+															
+														<br><a class="navi navi1" title="Forum" href="index.php?page=forum&sf=view">Weiter</a>
+															
+														<br><br>
+														</div>
+														<wbr></wbr><br>
+														</article>';
+
+													}
+
+												else
+
+													{
+
+													echo '<article>
+													<div class="titel"><b id="titel">Tabelle "' . $forum . '_t" konnte nicht erstellt werden!</b></div>
+													<div class="inhalt">
+
+													Fehler: ' . mysqli_error($db_forum) . '
+													
+													<br><a class="navi navi1" title="Forum" href="index.php?page=forum&sf=view">Weiter</a>
+														
+													<br><br>
+													</div>
+													<wbr></wbr><br>
+													</article>';
+													
+													}
+											}
+										
+										else 
+											
+											{
+												
+												echo '<article>
+												<div class="titel"><b id="titel">Subforum eintrag konnte nicht eingefügt werden.</b></div>
+												<div class="inhalt">
+												
+												"subforum" Eintrag in der "' . $forum . '_sf" Tabelle der Datenbank "' . $forum . '" konnte nicht aktualisiert werden!<br>
+												' . mysqli_error($db_forum) . '
+												
+												<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+												
+												</div>
+												<wbr></wbr><br>
+												</article>';
+												
+											}
+										
+									}
+								
+								}
 					
-					$intern = $_POST["intern"];
+						}
 					
+					// Threats anzeigen, erstelen, editieren und anzeigen
+					if (isset($_GET['t']) AND $_GET['t'] == "view")
+						
+						{
+							
+							// Umschlaten wenn $_GET['showID'] nicht bekannt ist
+							if (!isset($_GET['tID']))
+							{
+								
+							$showID = $_GET['showID'];
+							
+							}
+							
+							// Nutzen wenn $_GET['showID'] nicht bekannt ist dann aus urlLink $showID zuordnen.
+							if (isset($_GET['tID']))
+							{
+								
+							$showID = $_GET['tID'];
+							
+							}
+							
+							$sql = "SELECT ID, sfname, sfbeschreibung, ersteller, erstellerID, intern FROM " . $forum . " . ". $forum . "_sf WHERE ID=" . $showID . "";
+							$ergebnis = mysqli_query($db_forum, $sql);
+							
+							//Subforum id ermitteln
+							if (mysqli_num_rows($ergebnis) > 0)
+								
+								{
+								
+									while($row = mysqli_fetch_assoc($ergebnis)) {
+										
+										$tID = $row["ID"];
+										$sfname = $row["sfname"];
+										
+									}
+									
+								}
+
+							
+							$sql2 = "SELECT ID, tname, tbeschreibung, ersteller, erstellerID, clantag, clanID, threatID ,intern FROM " . $forum . " . ". $forum . "_t WHERE threatID=" . $tID . "";
+							$ergebnis2 = mysqli_query($db_forum, $sql2);
+							
+							
+											
+							//Threats anzeigen
+							if (mysqli_num_rows($ergebnis2) > 0)
+									
+								{
+										
+									if ($showID == $showID AND !isset($_GET['ta']))
+										
+										{
+										
+											echo '<article>
+											<div class="titel"><b id="titel">Neuer Threat Eintrag in "' . $forum . '_t", wo die "threatID=' . $tID . '" ist von "'. $sfname . '" , erstellen?</b></div>
+											<div class="inhalt">
+											Neuer Eintrag in "' . $forum . '_t" wo die "threatID=' . $tID . '" ist von "'. $sfname . '" , erstellen oder zum Subforum zurück kehren?<br><br>
+											<a class="navi navi1" title="Neuer Threat Eintrag erstellen" href="index.php?page=forum&t=view&tID=' . $tID . '&ta=ct">Ja</a> | <a class="navi navi1" title="Zurück zum Subforum" href="index.php?page=forum&sf=view">Zurück</a>
+												
+											</div>
+											<wbr></wbr><br>
+											</article>';
+										
+											
+										while($row = mysqli_fetch_assoc($ergebnis2)) {
+																										
+										echo '<a class="navi navi1" title="Threat öffnen" href="index.php?page=forum&t=view"><article>
+										<div class="titel"><b id="titel">' . $row["tname"] . '</b></div>
+										<div class="inhalt">
+										' . $row["tbeschreibung"] . '<br>
+										<br></a>
+										Ersteller: <a class="navi navi1" title="Benutzer" href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '">' . $row["ersteller"] . '</a> Intern: ';
+										
+										if ($row["intern"] == "0")
+
+											{
+																								
+												echo 'Nein!';
+																								
+											}
+										
+										if ($row["intern"] == "1")
+
+											{
+																								
+												echo 'Von Admins, Mods und Clanmitgliedern einsehbar.';
+																								
+											}
+											
+										if ($row["intern"] == "2")
+
+											{
+																								
+												echo 'Von Admins und Mods einsehbar.';
+																								
+											}
+										
+										if ($row["intern"] == "3")
+
+											{
+																								
+												echo 'Nur von Admins einsehbar.';
+																								
+											}
+										
+										echo '</div>
+										<wbr></wbr><br>
+										</article>';
+										
+										}
+										
+									}
+								
+								}
+							
+							//Wenn keine Threats gefunden diese hier anzeigen							
+							else 
+								
+								{
+									
+									if (!isset($_GET['ta']))
+										
+										{
+								
+										echo '<article>
+										<div class="titel"><b id="titel">Keine Threats in "' . $forum . '" . "' . $forum . '_t", wo "threatID=' . $tID . '" ist, gefunden!</b></div>
+										<div class="inhalt">
+										
+										Neuer Eintrag in "' . $forum . '_t" zu "threatID=' . $tID . '" von "'. $sfname . '" erstellen oder zum Subforum zurück kehren?<br><br>
+										<a class="navi navi1" title="Neuer Threat Eintrag erstellen" href="index.php?page=forum&t=view&tID=' . $tID . '&ta=ct">Ja</a> | <a class="navi navi1" title="Zurück zum Subforum" href="index.php?page=forum&sf=view">Zurück</a>
+										
+										</div>
+										<wbr></wbr><br>
+										</article>';
+										
+										}
+									
+									
+								}
+									
+									if (isset($_GET['ta']) AND isset($_GET['tID']) AND $_GET['ta'] == "ct")
+										
+										{
+										
+											$tID = $_GET['tID'];
+											
+											if (!isset($_POST["tname"]))
+												
+												{
+											
+												echo '<article>
+												<div class="titel"><b id="titel">Neuer Threats Eintrag in "' . $forum . '" . "' . $forum . '_t" wo "threatID=' . $tID . '" ist von "'. $sfname . '" erstellen?</b></div>
+												<div class="inhalt">
+												
+												<form action="index.php?page=forum&t=view&ta=ct&tID=' . $tID . '" method="post">
+
+														
+												<p>Felder mit ( * ) sind Pflichtfleder!</p>
+															
+												
+												( * ) Threatname:<br> <input type="text" name="tname" placeholder="Threatname" maxlength="256" size="256" autofocus required><br>
+												
+												( * ) Threat Beschreibung:<br> <input type="text" name="tbeschreibung" placeholder="Threat Beschreibung" maxlength="256" size="256" required><br>
+												
+												ClanTAG:<br> <input type="text" name="clantag" placeholder="-=|Clan|=-" maxlength="256" size="256" ><br>
+												
+												clanID:<br> <input type="text" name="clanID" placeholder="10^9" maxlength="10" size="10" ><br><br>
+												
+												
+												Intern?<br>
+												<select name="intern"> 
+													<option value="0" selected>Nein</option>
+													<option value="1" >Clanmitglieder</option>
+													<option value="2" >Mods</option>
+													<option value="3" >Admin</option>
+												</select>
+													
+												<br><br>
+												<input type="hidden" name="tID" value="' . $tID . '">
+												<input class="button button1" type="submit" value="Threat erstellen" > <a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+															
+												</form>
+												
+												</div>
+												<wbr></wbr><br>
+												</article>';
+												
+												}
+												
+											if (isset($_POST["tname"]))
+												
+												{
+													
+													
+													$erstellerID = $_SESSION["ID"];
+							
+													$ersteller = $_SESSION["user"];
+													
+													$tname = editieren($_POST["tname"]);
+													
+													$tbeschreibung = editieren($_POST["tbeschreibung"]);
+													
+													$clantag = editieren($_POST["clantag"]);
+													
+													$clanID = editieren($_POST["clanID"]);
+													
+													$threatID = editieren($_POST["tID"]);
+													
+													$intern = $_POST["intern"];
+													
+													$ferror1 = $ferror2 = $ferror3 = $ferror4 = $ferror5 = "";
+													$ferrornum = 0; 
+													
+													if ($tname == NULL OR $tname == "" OR $tbeschreibung == NULL OR $tbeschreibung == "")
+														
+														{
+															
+															if ($tname == NULL OR $tname == "")
+																
+																{
+																	
+																	$ferror1 = "Threat Titel darf nicht Leer sein!<br><br>";
+																	$ferrornum++;
+																	
+																}
+																
+															if ($tbeschreibung == NULL OR $tbeschreibung == "")
+																
+																{
+																	
+																	$ferror2 = "Threat Beschreibung darf nicht Leer sein!<br><br>";
+																	$ferrornum++;
+																	
+																}
+															
+														}
+													
+													$sql2 = "SELECT ID, tname, tbeschreibung, ersteller, erstellerID, clantag, clanID, threatID ,intern FROM " . $forum . " . ". $forum . "_t WHERE threatID=" . $threatID . "";
+													$ergebnis2 = mysqli_query($db_forum, $sql2);
+													
+													//Threats anzeigen
+													if (mysqli_num_rows($ergebnis2) > 0)
+														
+														{
+															
+															while($row = mysqli_fetch_assoc($ergebnis2)) {
+																
+																if ($row["tname"] == $tname)
+																	
+																	{
+																		
+																		$ferror3 = "Der gewählte Threat Name, gleicht bereits einem vorhandenem Threat Namen!<br><br>";
+																		$ferrornum++;
+																		
+																	}
+																	
+																
+																
+																if ($row["clantag"] == $clantag AND $row["clantag"] != "")
+																	
+																	{
+																		
+																		$ferror4 = "der gewählte ClanTag ist bereits vergeben!<br><br>";
+																		$ferrornum++;
+																		
+																	}
+																
+																if ($row["clanID"] == $clanID AND $row["clanID"] != "")
+																	
+																	{
+																		
+																		$ferror5 = "Die ClanID ist bereits vergeben!<br><br>";
+																		$ferrornum++;
+																		
+																	}
+																
+															}
+															
+																													
+														}
+																								
+														if ($ferrornum > 0)
+														
+															{
+															
+																echo '<article>
+																<div class="titel"><b id="titel">Folgende Fehler Traten auf!</b></div>
+																<div class="inhalt">
+																<br>
+																
+																' . $ferror1 . $ferror2 . $ferror3 . $ferror4 . $ferror5 . '
+																
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';
+																 
+															}
+															
+														if ($ferrornum == 0)
+														
+															{
+															
+																echo '<article>
+																<div class="titel"><b id="titel">Keine Fehler oder Konfliktübereinstimmungen gefunden!</b></div>
+																<div class="inhalt">
+																<br>
+																
+																Es wird nun versucht in die "' . $forum . ' . ' . $forum . '_t" Tabelle ein neuer Einrag zu erstellen.
+																																
+																</div>
+																<wbr></wbr><br>
+																</article>';
+																
+																$sql = "INSERT INTO " . $forum . " . " . $forum . "_t (tname, tbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, intern)
+																VALUES ('" . $tname . "', '" . $tbeschreibung . "', '" . $ersteller . "', '" . $erstellerID . "', '" . $clantag . "', '" . $clanID . "', '" . $threatID . "', '" . $intern . "')";
+
+																if (mysqli_query($db_forum, $sql)) 
+																
+																	{
+																	
+																		echo '<article>
+																		<div class="titel"><b id="titel">Eintrag in ' . $forum . ' . ' . $forum . '_t mit threatID=' . $threatID . ' erfolgreich!</b></div>
+																		<div class="inhalt">
+																		<br>
+																																
+																		<a class="navi navi1" title="Weiter gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Weiter</a>
+																		
+																		</div>
+																		<wbr></wbr><br>
+																		</article>';
+																	
+																	}
+																	
+																else
+																
+																	{
+																	
+																	echo '<article>
+																		<div class="titel"><b id="titel">Eintrag in ' . $forum . ' . ' . $forum . '_t mit threatID=' . $threatID . ' fehlgeschlagen!</b></div>
+																		<div class="inhalt">
+																		<br>
+																		Fehler: ' . $sql . '<br>' . mysqli_error($db_forum) . '
+																		
+																		<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Zurück</a>
+																		
+																		</div>
+																		<wbr></wbr><br>
+																		</article>';
+																	
+																	}
+															
+															}
+														
+														
+														
+													
+												}
+								
+										}
+									
+								
+							
+									
+									
+						
+					    }
 					
+					//Forum Löschen Frage
 					
+					echo '<article>
+					<div class="titel"><b id="titel">Forum löschen?</b></div>
+					<div class="inhalt">
+					
+					<a class="navi navi1" title="Forum löschen!<-- !!" href="index.php?page=forum&fa=ddb">Ja</a> | <a class="navi navi1" title="Forum nicht löschen" href="index.php?page=forum&sf=view">Nein</a>
+					
+					</div>
+					<wbr></wbr><br>
+					</article>';
 					
 				}
+				
 			
-		}
+			}
 		
 	}
 

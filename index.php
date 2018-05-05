@@ -76,7 +76,7 @@ $_SESSION["rang"] = "4";
 
 //Die Seiteneinstellungen abgreifen
 	
-$settings = "SELECT ID, spalte_links, spalte_main, spalte_rechts, eintrags_anzahl FROM settings WHERE ID=1";
+$settings = "SELECT ID, spalte_links, spalte_main, spalte_rechts, eintrags_anzahl, forum FROM settings WHERE ID=1";
 
 $ergebniSS = mysqli_query($db_link, $settings);
 
@@ -91,6 +91,7 @@ if (mysqli_num_rows($ergebniSS) > 0)
 			$spalteRechts = $row["spalte_rechts"];
 			//Zu zeigende einträge definieren
 			$eintragsAnzahl = $row["eintrags_anzahl"];
+			$forum = $row["forum"];
 			
 													}
 		
