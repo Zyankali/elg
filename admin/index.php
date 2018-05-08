@@ -1429,7 +1429,7 @@ if ($_GET['page'] == "forum")
 							sfname TEXT NOT NULL,
 							sfbeschreibung TEXT NOT NULL,
 							ersteller TEXT NOT NULL,
-							erstellerID VARCHAR(10) NOT NULL,
+							erstellerID INT(10) NOT NULL,
 							intern VARCHAR(1) NOT NULL
 							)";
 							
@@ -1824,7 +1824,7 @@ if ($_GET['page'] == "forum")
 												ersteller TEXT NOT NULL,
 												erstellerID VARCHAR(10) NOT NULL,
 												clantag TEXT NULL,
-												clanID VARCHAR(10) NULL,
+												clanID INT(10) NULL,
 												threatID VARCHAR(10) NOT NULL,
 												intern VARCHAR(1) NOT NULL
 												)";
@@ -1891,7 +1891,7 @@ if ($_GET['page'] == "forum")
 					
 						}
 					
-					// Threats anzeigen, erstelen, editieren und anzeigen
+					// Threats anzeigen, erstelen, editieren und anzeigen ( und ja, threats ist ein joke! Ich weiß, dass es thread heißen sollte, heißt aber aus gründen so ;) )
 					if (isset($_GET['t']) AND $_GET['t'] == "view")
 						
 						{
@@ -1956,49 +1956,61 @@ if ($_GET['page'] == "forum")
 										
 											
 										while($row = mysqli_fetch_assoc($ergebnis2)) {
-																										
-										echo '<a class="navi navi1" title="Threat öffnen" href="index.php?page=forum&t=view"><article>
-										<div class="titel"><b id="titel">' . $row["tname"] . '</b></div>
-										<div class="inhalt">
-										' . $row["tbeschreibung"] . '<br>
-										<br></a>
-										Ersteller: <a class="navi navi1" title="Benutzer" href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '">' . $row["ersteller"] . '</a> Intern: ';
 										
-										if ($row["intern"] == "0")
-
-											{
-																								
-												echo 'Nein!';
-																								
-											}
-										
-										if ($row["intern"] == "1")
-
-											{
-																								
-												echo 'Von Admins, Mods und Clanmitgliedern einsehbar.';
-																								
-											}
+										echo '<article>
+											<form action="index.php?page=forum&p=view" method="post">
 											
-										if ($row["intern"] == "2")
+													<div class="titel"><b id="titel">' . $row["tname"] . '</b></div>
+													<div class="inhalt">
+													' . $row["tbeschreibung"] . '<br>
+													<br></a>
+													Ersteller: <a class="navi navi1" title="Benutzer" href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '">' . $row["ersteller"] . '</a> Intern: ';
+													
+													if ($row["intern"] == "0")
 
-											{
-																								
-												echo 'Von Admins und Mods einsehbar.';
-																								
-											}
-										
-										if ($row["intern"] == "3")
+														{
+																											
+															echo 'Nein!';
+																											
+														}
+													
+													if ($row["intern"] == "1")
 
-											{
-																								
-												echo 'Nur von Admins einsehbar.';
-																								
-											}
-										
-										echo '</div>
-										<wbr></wbr><br>
-										</article>';
+														{
+																											
+															echo 'Von Admins, Mods und Clanmitgliedern einsehbar.';
+																											
+														}
+														
+													if ($row["intern"] == "2")
+
+														{
+																											
+															echo 'Von Admins und Mods einsehbar.';
+																											
+														}
+													
+													if ($row["intern"] == "3")
+
+														{
+																											
+															echo 'Nur von Admins einsehbar.';
+																											
+														}
+													
+													echo '	
+												<br><br>
+												<input type="hidden" name="pID" value="' . $row["ID"] . '">
+												<input type="hidden" name="tID" value="' . $tID . '">
+												<input class="button button1" type="submit" value="Zu Posts von ' . $row["tname"] . '" > 
+												</form>
+												
+												<a class="navi navi1" title="Threat editieren" href="index.php?page=forum&t=view&tID=' . $tID . '&ta=et&trow=' . $row["ID"] . '">Editieren</a> | <a class="navi navi1" title="Threat löschen" href="index.php?page=forum&t=view&tID=' . $tID . '&ta=dt&trow=' . $row["ID"] . '">Löschen</a>
+
+												
+													</div>
+													<wbr></wbr><br>
+													</article>';
 										
 										}
 										
@@ -2006,7 +2018,7 @@ if ($_GET['page'] == "forum")
 								
 								}
 							
-							//Wenn keine Threats gefunden diese hier anzeigen							
+							//Wenn keine Threats gefunden dieses hier anzeigen							
 							else 
 								
 								{
@@ -2252,25 +2264,490 @@ if ($_GET['page'] == "forum")
 												}
 								
 										}
-									
-								
+									//Threat editieren
+									if (isset($_GET['ta']) AND isset($_GET['tID']) AND isset($_GET['trow']) AND $_GET['ta'] == "et")
+										
+										{
+										
+											$tID = $_GET['tID'];
+											
+											$trow = $_GET['trow'];
+											
+											$sql = "SELECT ID, tname, tbeschreibung, clantag, clanID, threatID, intern FROM ". $forum . "_t WHERE ID=" . $trow . " AND threatID=" . $tID ."";
+											
+											$result = mysqli_query($db_forum, $sql);
+
+											if (mysqli_num_rows($result) > 0) 
+											
+												{
+												
+													//Daten zusammensuchen
+													while($row = mysqli_fetch_assoc($result)) {
+														
+														$ID = $row["ID"];
+														$tname = $row["tname"];
+														$tbeschreibung = $row["tbeschreibung"];
+														$clantag = $row["clantag"];
+														$clanID = $row["clanID"];
+														$threatID = $row["threatID"];
+														$intern = $row["intern"];
+													
+													}
+												} 
+											
+											else 
+											
+												{
+												
+													echo '<article>
+													<div class="titel"><b id="titel">Keine Ergebnisse!</b></div>
+													<div class="inhalt">
+													
+													Irgendwas lief hier gewaltig falsch! ERROR_TEDIT_' . $tID . '_' . $trow . '_' . $sql . '
+													
+													</div>
+													<wbr></wbr><br>
+													</article>';
+												}
+											
+											if (!isset($_POST["tname"]))
+												
+												{
+											
+												echo '<article>
+												<div class="titel"><b id="titel">Threat editieren</b></div>
+												<div class="inhalt">
+												
+												<form action="index.php?page=forum&t=view&ta=et&tID=' . $tID . '&trow=' . $trow . '" method="post">
+
+														
+												<p>Felder mit ( * ) sind Pflichtfleder!</p>
+															
+												
+												( * ) Threatname:<br> <input type="text" name="tname" placeholder="Threatname" maxlength="256" size="256" value="' . $tname . '" autofocus required><br>
+												
+												( * ) Threat Beschreibung:<br> <input type="text" name="tbeschreibung" placeholder="Threat Beschreibung" maxlength="256" size="256" value="' . $tbeschreibung . '" required><br><br>
+												
+												<fieldset>
+												<legend>Muss in der Regeln nicht editiert werden!</legend>
+												
+												ClanTAG:<br> <input type="text" name="clantag" placeholder="-=|Clan|=-" maxlength="256" size="256" value="' . $clantag . '"><br><br>
+												
+												clanID:<br> <input type="text" name="clanID" placeholder="10^9" maxlength="10" size="10" value="'. $clanID . '"><br><br>
+												
+												
+												Intern?<br>
+												<select name="intern">';
+												
+												if ($intern == 0)
+													{
+														
+														echo '
+														<option value="0" select>Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 1)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" select>Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 2)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" select>Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 3)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" select>Admin</option>
+														';
+														
+													}
+												
+													
+												echo '
+												</select>
+												
+												</fieldset>
+												
+												<br><br>
+												<input type="hidden" name="tID" value="' . $tID . '">
+												<input type="hidden" name="trow" value="' . $trow . '">
+												<input class="button button1" type="submit" value="Threat editieren" > <a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+															
+												</form>
+												
+												</div>
+												<wbr></wbr><br>
+												</article>';
+												
+												}
+												
+											if (isset($_POST["tname"]))
+												
+												{
+													
+													
+													$erstellerID = $_SESSION["ID"];
 							
-									
-									
-						
+													$ersteller = $_SESSION["user"];
+													
+													$tname = editieren($_POST["tname"]);
+													
+													$tbeschreibung = editieren($_POST["tbeschreibung"]);
+													
+													$clantag = editieren($_POST["clantag"]);
+													
+													$clanID = editieren($_POST["clanID"]);
+													
+													$threatID = editieren($_POST["tID"]);
+													
+													$trow = editieren($_POST["trow"]);
+													
+													$intern = $_POST["intern"];
+													
+													$ferror1 = $ferror2 = $ferror3 = $ferror4 = $ferror5 = "";
+													$ferrornum = 0; 
+													
+													if ($tname == NULL OR $tname == "" OR $tbeschreibung == NULL OR $tbeschreibung == "")
+														
+														{
+															
+															if ($tname == NULL OR $tname == "")
+																
+																{
+																	
+																	$ferror1 = "Threat Titel darf nicht Leer sein!<br><br>";
+																	$ferrornum++;
+																	
+																}
+																
+															if ($tbeschreibung == NULL OR $tbeschreibung == "")
+																
+																{
+																	
+																	$ferror2 = "Threat Beschreibung darf nicht Leer sein!<br><br>";
+																	$ferrornum++;
+																	
+																}
+															
+														}
+													
+													$sql2 = "SELECT ID, tname, tbeschreibung, ersteller, erstellerID, clantag, clanID, threatID ,intern FROM " . $forum . " . ". $forum . "_t WHERE threatID=" . $threatID . " AND ID=" . $trow . "";
+													$ergebnis2 = mysqli_query($db_forum, $sql2);
+													
+													//Threats anzeigen
+													if (mysqli_num_rows($ergebnis2) > 0)
+														
+														{
+															
+															while($row = mysqli_fetch_assoc($ergebnis2)) {
+																
+																if ($row["tname"] == $tname)
+																	
+																	{
+																		
+																		$ferror3 = "Der gewählte Threat Name, gleicht bereits einem vorhandenem Threat Namen!<br><br>";
+																		$ferrornum++;
+																		
+																	}
+																
+															}
+															
+																													
+														}
+																								
+														if ($ferrornum > 0)
+														
+															{
+															
+																echo '<article>
+																<div class="titel"><b id="titel">Folgende Fehler Traten auf!</b></div>
+																<div class="inhalt">
+																<br>
+																
+																' . $ferror1 . $ferror2 . $ferror3 . '
+																
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';
+																 
+															}
+															
+														if ($ferrornum == 0)
+														
+															{
+															
+																													
+																$sql = "UPDATE " . $forum . " . " . $forum . "_t SET tname='" . $tname . "', tbeschreibung='" . $tbeschreibung . "', ersteller='" . $ersteller . "', erstellerID='" . $erstellerID . "', clantag='" . $clantag . "', clanID='" . $clanID . "', threatID='" . $threatID . "', intern='" . $intern . "' WHERE threatID=" . $threatID . " AND ID=" . $trow . "";
+
+																if (mysqli_query($db_forum, $sql)) 
+																
+																	{
+																	
+																		echo '<article>
+																		<div class="titel"><b id="titel">Eintrag in ' . $forum . ' . ' . $forum . '_t mit threatID=' . $threatID . ' erfolgreich editiert!</b></div>
+																		<div class="inhalt">
+																		<br>
+																																
+																		<a class="navi navi1" title="Weiter gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Weiter</a>
+																		
+																		</div>
+																		<wbr></wbr><br>
+																		</article>';
+																	
+																	}
+																	
+																else
+																
+																	{
+																	
+																	echo '<article>
+																		<div class="titel"><b id="titel">Eintrag in ' . $forum . ' . ' . $forum . '_t mit threatID=' . $threatID . ' editieren fehlgeschlagen!</b></div>
+																		<div class="inhalt">
+																		<br>
+																		Fehler: ' . $sql . '<br>' . mysqli_error($db_forum) . '
+																		
+																		<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $threatID . '">Zurück</a>
+																		
+																		</div>
+																		<wbr></wbr><br>
+																		</article>';
+																	
+																	}
+															
+															}
+														
+														
+														
+													
+												}
+								
+										}
+										
+										
+									//Threat Löschen
+									if (isset($_GET['ta']) AND isset($_GET['tID']) AND isset($_GET['trow']) AND $_GET['ta'] == "dt")
+										
+										{
+										
+											$tID = $_GET['tID'];
+											
+											$trow = $_GET['trow'];
+											
+											$sql = "DELETE FROM " . $forum . " . " . $forum . "_t WHERE ID=" . $trow . "";
+											
+											if(mysqli_query($db_forum, $sql)) 
+											
+												{  
+												
+												echo '<article>
+																<div class="titel"><b id="titel">Tabelle ' . $forum . ' . ' . $forum . '_t gelöscht</b></div>
+																<div class="inhalt">
+																<br>
+																
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';   
+												
+												}
+
+											else 
+											
+												{  
+												
+													echo '<article>
+																<div class="titel"><b id="titel">Eintrag aus ' . $forum . ' . ' . $forum . '_t nicht gelöscht!</b></div>
+																<div class="inhalt">
+																<br>
+																
+																' . mysqli_error($db_forum) . '
+																
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';  
+												
+												}  
+																					
+											$sql = "DROP TABLE " . $forum . " . " . $forum . "_" . $trow . "_p ";
+											
+											if(mysqli_query($db_forum, $sql)) 
+											
+												{  
+												
+												echo '<article>
+																<div class="titel"><b id="titel">Tabelle ' . $forum . ' . ' . $forum . '_' . $trow . '_p gelöscht</b></div>
+																<div class="inhalt">
+																<br>
+																												
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';  
+												
+												}
+
+											else 
+											
+												{  
+												
+													echo '<article>
+																<div class="titel"><b id="titel">Tabelle ' . $forum . ' . ' . $forum . '_' . $trow . '_p nicht gelöscht!</b></div>
+																<div class="inhalt">
+																<br>
+																
+																' . mysqli_error($db_forum) . '
+																<br><br>
+																Tabelle nicht gefunden da entweder:
+																<br><br>
+																- Tabelle noch nicht generiert wurde
+																<br>
+																- Der Zeiger zur Tabelle fehlerhaft ist.
+																<br><br>
+																<a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&t=view&tID=' . $tID . '">Zurück</a>
+																
+																</div>
+																<wbr></wbr><br>
+																</article>';
+												
+												}
+											
+								
+										}
+					
 					    }
+						
+					// Posts anzeigen ...
 					
-					//Forum Löschen Frage
-					
-					echo '<article>
-					<div class="titel"><b id="titel">Forum löschen?</b></div>
-					<div class="inhalt">
-					
-					<a class="navi navi1" title="Forum löschen!<-- !!" href="index.php?page=forum&fa=ddb">Ja</a> | <a class="navi navi1" title="Forum nicht löschen" href="index.php?page=forum&sf=view">Nein</a>
-					
-					</div>
-					<wbr></wbr><br>
-					</article>';
+					if (isset($_GET['p']) AND $_GET['p'] == "view")
+						
+						{
+							
+						if (isset($_POST["pID"]))
+							
+							{
+								
+								
+								$tID = $_POST["tID"];
+								$pID = $_POST["pID"];
+																
+								$sql = "";
+								$sql = "CREATE TABLE IF NOT EXISTS " . $forum . " . " . $forum . "_" . $pID . "_p (
+														ID INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+														pname TEXT NOT NULL,
+														pbeschreibung TEXT NOT NULL,
+														ersteller TEXT NOT NULL,
+														erstellerID VARCHAR(10) NOT NULL,
+														clantag TEXT NULL,
+														clanID INT(10) NULL,
+														threatID VARCHAR(10) NOT NULL,
+														postID VARCHAR(10) NOT NULL,
+														sticky INT(1) NOT NULL,
+														datetimecreation TIMESTAMP NOT NULL,
+														intern VARCHAR(1) NOT NULL
+														)";	
+								
+								
+								
+								mysqli_query($db_forum, $sql);
+
+								$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, intern FROM " . $forum . "_" . $pID . "_p";
+								$result = mysqli_query($db_forum, $sql);
+
+								if (mysqli_num_rows($result) > 0) 
+								
+									{
+										
+										echo '<article>
+										<div class="titel"><b id="titel">Neuen Posteintrag in "' . $forum . '_' . $pID . '_p" erstellen? </b></div>
+										<div class="inhalt">
+										Neuen Posteintrag erstellen?<br><br>
+											
+										<a class="navi navi1" title="Neuen Posteintrag erstellen" href="index.php?page=forum&p=view&pa=cp">Ja</a>
+
+										</div>
+										<wbr></wbr><br>
+										</article>';
+										
+										// Daten anzeigen
+										while($row = mysqli_fetch_assoc($result)) {
+											
+											echo '<article>
+											<div class="titel"><b id="titel">Neuen Posteintrag in "' . $forum . '_' . $pID . '_p" erstellen? </b></div>
+											<div class="inhalt">
+											Neuen Posteintrag erstellen?<br><br>
+												
+											<a class="navi navi1" title="Neuen Posteintrag erstellen" href="index.php?page=forum&p=view&pID=' . $pID . '&pa=cp">Ja</a> | <a class="navi navi1" title="Zurück zu den Threats gehen" href="index.php?page=forum&t=viewt&showID=' . $tID. '">Nein! Zurück zu den Threats</a>
+
+											</div>
+											<wbr></wbr><br>
+											</article>';
+
+											
+										}
+									} 
+								else 
+								
+									{
+									
+										echo '<article>
+										<div class="titel"><b id="titel">Neuen Posteintrag in "' . $forum . '_' . $pID . '_p" erstellen? </b></div>
+										<div class="inhalt">
+										Neuen Posteintrag erstellen?<br><br>
+											
+										<a class="navi navi1" title="Neuen Posteintrag erstellen" href="index.php?page=forum&p=view&pID=' . $pID . '&pa=cp">Ja</a> | <a class="navi navi1" title="Zurück zu den Threats gehen" href="index.php?page=forum&t=view&showID=' . $tID. '">Nein! Zurück zu den Threats</a>
+
+										</div>
+										<wbr></wbr><br>
+										</article>';
+									
+									}
+								
+							}
+								
+						}
+						
+						//Forum Löschen Frage
+						
+						echo '<article>
+						<div class="titel"><b id="titel">Forum löschen?</b></div>
+						<div class="inhalt">
+						
+						<a class="navi navi1" title="Forum löschen!<-- !!" href="index.php?page=forum&fa=ddb">Ja</a> | <a class="navi navi1" title="Forum nicht löschen" href="index.php?page=forum&sf=view">Nein</a>
+						
+						</div>
+						<wbr></wbr><br>
+						</article>';
 					
 				}
 				
