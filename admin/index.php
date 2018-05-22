@@ -1325,17 +1325,7 @@ if ($_GET ['page'] == "benutzerinfo")
 if ($_GET['page'] == "forum")
 	
 	{
-		
-		/****************/
-		/* Forensetting */
-		/****************/
-						
-		/****************/
-		
-		
-		
-
-			
+	
 		if (isset($_GET['fa']))
 			
 			{
@@ -1708,7 +1698,11 @@ if ($_GET['page'] == "forum")
 																							
 										}
 									
-									echo '</div>
+									
+									
+									echo '<br><br>
+									<a class="navi navi1" title="Editieren" href="index.php?page=forum&sf=view&sfa=esf&sfID=' . $row["ID"] . '">Editieren</a> | <a class="navi navi1" title="löschen" href="index.php?page=forum&sf=view&sfa=dsf&sfID=' . $row["ID"] . '">Löschen</a>
+									</div>
 									<wbr></wbr><br>
 									</article>';
 									
@@ -1887,9 +1881,301 @@ if ($_GET['page'] == "forum")
 										
 									}
 								
-								}
-					
-						}
+							}
+							
+						// _sf Eintrag editieren					
+						if (isset($_GET['sfa']) AND $_GET['sfa'] == "esf")
+							
+							{
+								
+								if (!isset($_GET['sfe']))
+									
+									{
+										if (isset($_GET['sfID']))
+											
+											{
+												
+												$sfID = $_GET['sfID'];
+												
+											}
+											
+										$sql = "";
+										$sql = "SELECT sfname, sfbeschreibung FROM " . $forum . "_sf WHERE ID=" . $sfID . "";
+										
+										$ergebnis = mysqli_query($db_forum, $sql);
+										
+										if (mysqli_num_rows($ergebnis) > 0)
+											
+											{
+												
+												while($row = mysqli_fetch_assoc($ergebnis)) {
+													
+													$sfname = editieren($row["sfname"]);
+													$sfbeschreibung = editieren($row["sfbeschreibung"]);
+													
+												}
+												
+											}
+										
+										echo '
+											
+										<article>
+												<div class="titel"><b id="titel">Subforum Eintrag "' . $forum . '_sf" editieren.</b></div>
+												<div class="inhalt">
+												
+										<form action="index.php?page=forum&sf=view&sfa=esf&sfe=1" method="post">
+
+												
+										<p>Bitte füllen Sie alle Felder aus.</p>
+													
+										
+										Subforumname:<br> <input type="text" name="sfname" placeholder="Subforumtitel" maxlength="256" size="256" value="' . $sfname . '" autofocus required><br>
+										
+										Subforum Beschreibung:<br> <input type="text" name="sfbeschreibung" placeholder="Subforum Beschreibung" maxlength="256" size="256" value="' . $sfbeschreibung . '" required><br><br>
+										
+										
+										Intern?<br>
+										
+										<select name="intern">';
+												
+												if ($intern == 0)
+													{
+														
+														echo '
+														<option value="0" selected>Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 1)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" selected>Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 2)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" selected>Mods</option>
+														<option value="3" >Admin</option>
+														';
+														
+													}
+													
+												if ($intern == 3)
+													{
+														
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" selected>Admin</option>
+														';
+														
+													}
+												
+													
+												echo '
+												</select>
+										
+										<br><br>
+										<input type="hidden" name="sfID" value="' . $sfID . '">
+										<input class="button button1" type="submit" value="Subforum editieren" > <a class="navi navi1" title="Zurück gehen" href="index.php?page=forum&sf=view">Zurück</a>
+													
+										</form>
+											
+										</div>
+										<wbr></wbr><br>
+										</article>
+													
+										';
+									
+									}
+									
+								if (isset($_GET['sfe']) AND $_GET['sfe'] == "1")
+									
+									{
+										
+										$sfname = editieren($_POST["sfname"]);
+										
+										$sfbeschreibung = editieren($_POST["sfbeschreibung"]);
+										
+										$sfname = editieren($_POST["sfname"]);
+										
+										$erstellerID = $_SESSION["ID"];
+							
+										$ersteller = $_SESSION["user"];
+										
+										$intern = editieren($_POST["intern"]);
+										
+										$sfID = editieren($_POST["sfID"]);
+										
+										if ($sfname == "" OR $sfbeschreibung == "")
+											
+											{
+											
+												echo '<article>
+												<div class="titel"><b id="titel">Bitte füllen Sie alle Felder aus!</b></div>
+												<div class="inhalt">
+												
+												<br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+
+												</div>
+												<wbr></wbr><br>
+												</article>';
+											
+											}
+											
+										else
+											
+											{
+										
+												$sql = "UPDATE " . $forum . " . " . $forum . "_sf SET sfname='" . $sfname . "', sfbeschreibung='" . $sfbeschreibung . "', ersteller='" . $ersteller . "', erstellerID='" . $erstellerID . "', intern='" . $intern . "' WHERE ID=" . $sfID . "";
+												
+												if (mysqli_query($db_forum, $sql))
+												
+													{
+													
+														echo '<article>
+														<div class="titel"><b id="titel">Subforum editiert!</b></div>
+														<div class="inhalt">
+														
+														Eintrag in der "' . $forum . '_sf" ID=' . $sfID . ' Tabelle der Datenbank "' . $forum . '" wurde editiert.
+														
+														<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+
+														</div>
+														<wbr></wbr><br>
+														</article>';
+													
+													}
+												
+												else 
+													
+													{
+														
+														echo '<article>
+														<div class="titel"><b id="titel">Subforum Eintrag konnte nicht editiert werden.</b></div>
+														<div class="inhalt">
+														
+														"subforum" Eintrag in der "' . $forum . '_sf" Tabelle der Datenbank "' . $forum . '" konnte nicht aktualisiert werden!<br>
+														' . mysqli_error($db_forum) . '
+														
+														<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+														
+														</div>
+														<wbr></wbr><br>
+														</article>';
+														
+													}
+												
+											}
+										
+									}
+								
+							}
+						
+						// _sf Eintrag Löschen 					
+						if (isset($_GET['sfa']) AND $_GET['sfa'] == "dsf")
+							
+							{
+								
+								
+								if (isset($_GET['sfID']))
+											
+									{
+												
+										$sfID = $_GET['sfID'];
+												
+									}
+											
+								$sql = "";
+								$sql = "SELECT ID FROM " . $forum . "_t";
+										
+								$ergebnis = mysqli_query($db_forum, $sql);
+										
+								if (mysqli_num_rows($ergebnis) > 0)
+											
+									{
+												
+										echo '<article>
+										<div class="titel"><b id="titel">Konnte Eintrag nicht löschen!</b></div>
+										<div class="inhalt">
+													
+										Es sind noch im ' . $forum . '_t Einträge vorhanden. Bitte Lösche diese zu erst, wenn Sie weiterhin den Subforeneintrag Löschen möchten. 
+													
+										<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+													
+										</div>
+										<wbr></wbr><br>
+										</article>';
+												
+									}
+										
+								else 
+										
+									{
+												
+										$sql = "";
+										$sql = "DROP TABLE " . $forum . "_t";
+												
+										mysqli_query($db_forum, $sql);
+												
+										$sql = "";
+										$sql = "DELETE FROM " . $forum . "_sf WHERE ID=" . $sfID . "";
+												
+										if (mysqli_query($db_forum, $sql))
+												
+											{
+													
+												echo '<article>
+												<div class="titel"><b id="titel">Eintrag gelöscht!</b></div>
+												<div class="inhalt">
+														
+												Eintrag aus "' . $forum . '_sf" mit der ID=' . $sfID . ' wurde gelöscht.
+												
+												<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+														
+												</div>
+												<wbr></wbr><br>
+												</article>';
+													
+											}
+
+										else 
+												
+											{
+														
+												echo '<article>
+												<div class="titel"><b id="titel">Eintrag NICHT gelöscht!</b></div>
+												<div class="inhalt">
+												
+												Eintrag aus "' . $forum . '_st" mit der ID=' . $sfID . ' wurde NICHT gelöscht.
+												<br>
+												Fehler: ' . mysqli_error($db_forum) . '
+												<br><br><a class="navi navi1" title="Zurück" href="index.php?page=forum&sf=view">Zurück</a>
+														
+												</div>
+												<wbr></wbr><br>
+												</article>';
+																											
+											}
+									
+									}
+							}
+						}	
 					
 					// Threats anzeigen, erstelen, editieren und anzeigen ( und ja, threats ist ein joke! Ich weiß, dass es thread heißen sollte, heißt aber aus gründen so ;) )
 					if (isset($_GET['t']) AND $_GET['t'] == "view")
@@ -2643,11 +2929,11 @@ if ($_GET['page'] == "forum")
 											//Erste Zahl
 											$tID = $_GET['tID'];
 											
-											$sql2 = "SELECT ID, FROM " . $forum . " . " .  $forum . "_" . $tID . $trow . "_st";
+											$sql2 = "SELECT ID FROM " . $forum . " . " .  $forum . "_" . $tID . $trow . "_st";
 													$ergebnis2 = mysqli_query($db_forum, $sql2);
 													
 													//Threats anzeigen
-													if ($ergebnis2 === TRUE AND mysqli_num_rows($ergebnis2) > 0)
+													if (mysqli_num_rows($ergebnis2) > 0)
 														
 														{
 															
@@ -3496,20 +3782,11 @@ if ($_GET['page'] == "forum")
 											//Dritte Zahl
 											$_GET["subthreatID"];
 											
-											//einträge zählen
-											$postcounter = "SELECT COUNT(ID) FROM " . $forum . " . " .  $forum . "_" . $_GET["ID"] . $_GET["threatID"] . $_GET["subthreatID"] . "_p";
-											$postanzahl = mysqli_query($db_link, $postcounter);
-											$anzahl = mysqli_fetch_assoc($postanzahl);
-											
-											$posts = $anzahl["COUNT(ID)"];
-											
-											
-											$sql2 = "SELECT ID, FROM " . $forum . " . " .  $forum . "_" . $_GET["ID"] . $_GET["threatID"] . $_GET["subthreatID"] . "_p";
+											$sql2 = "SELECT ID FROM " . $forum . " . " . $forum . "_" . $_GET["ID"] . $_GET["threatID"] . $_GET["subthreatID"] . "_p";
 													$ergebnis2 = mysqli_query($db_forum, $sql2);
 													
-													//Threats anzeigen
-													if ($ergebnis2 === TRUE AND mysqli_num_rows($ergebnis2) > 0)
-														
+													if ($ergebnis2 AND mysqli_num_rows($ergebnis2) > 0)
+
 														{
 															
 															echo '<article>
@@ -3518,7 +3795,7 @@ if ($_GET['page'] == "forum")
 														<br>
 														Bitte Löschen Sie zu erst die Posts vom Subthreat, bevor Sie diesen Subthreateintrag löschen können.
 														<br><br>				
-														<a class="navi navi1" title="Weiter" href="index.php?page=forum&st=view&ID=' . $_GET["threatID"] . '&threatID=' . $_GET["subthreatID"] . '">Weiter</a>
+														<a class="navi navi1" title="Weiter" href="index.php?page=forum&st=view&ID=' . $_GET["subthreatID"] . '&threatID=' . $_GET["threatID"] . '">Weiter</a>
 																		
 														</div>
 														<wbr></wbr><br>
@@ -3532,6 +3809,7 @@ if ($_GET['page'] == "forum")
 															
 															$sql = "DROP TABLE " . $forum . " . " . $forum . "_" . $_GET["ID"] . $_GET["threatID"] . $_GET["subthreatID"] . "_p";
 															mysqli_query($db_forum, $sql);
+
 															
 															$sql = "DELETE FROM " . $forum . " . " . $forum . "_" . $_GET["subthreatID"] . $_GET["threatID"] . "_st WHERE ID=" . $_GET["ID"] . "";
 															
@@ -4011,42 +4289,42 @@ if ($_GET['page'] == "forum")
 										
 												
 									}
-									
+								
+								// Ausgewählten Post anzeigen, antworten, bearbeiten, löschen.
 								if (isset($_POST['open']) AND isset($_GET['p']) AND $_GET['p'] == "open") 
 										
-											{
+									{
 											
 											
 											
-											$ID = editieren($_POST["ID"]);
-											$threatID = editieren($_POST["threatID"]);
-											$subthreatID = editieren($_POST["subthreatID"]);
-											$clantag = editieren($_POST["clantag"]);
-											$clanID = editieren($_POST["clanID"]);
-											$intern = editieren($_POST["intern"]);
-											$pID = editieren($_POST["pID"]);
+										$ID = editieren($_POST["ID"]);
+										$threatID = editieren($_POST["threatID"]);
+										$subthreatID = editieren($_POST["subthreatID"]);
+										$clantag = editieren($_POST["clantag"]);
+										$clanID = editieren($_POST["clanID"]);
+										$intern = editieren($_POST["intern"]);
+										$pID = editieren($_POST["pID"]);
 											
-											echo '
-											
-												<article>
-																	<div class="titel"><b id="titel">Zurück zur Postübersicht?</b></div>
-																	<div class="inhalt"><br>
-																	<form action="index.php?page=forum&p=view" method="post">
+										echo '
+											<article>
+											<div class="titel"><b id="titel">Zurück zur Postübersicht?</b></div>
+											<div class="inhalt"><br>
+											<form action="index.php?page=forum&p=view" method="post">
 																
-																	<input type="hidden" name="threatID" value="' . $threatID . '">
-																	<input type="hidden" name="ID" value="' . $ID . '">
-																	<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
-																	<input type="hidden" name="clantag" value="' . $clantag . '">
-																	<input type="hidden" name="clanID" value="' . $clanID . '">
-																	<input type="hidden" name="intern" value="' . $intern . '">
-																	<input class="button button1" type="submit" value="Zurück" >
+											<input type="hidden" name="threatID" value="' . $threatID . '">
+											<input type="hidden" name="ID" value="' . $ID . '">
+											<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+											<input type="hidden" name="clantag" value="' . $clantag . '">
+											<input type="hidden" name="clanID" value="' . $clanID . '">
+											<input type="hidden" name="intern" value="' . $intern . '">
+											<input class="button button1" type="submit" value="Zurück" >
 																				
-																	</form>
+											</form>
 																	
-																	</div>
-																	<wbr></wbr><br>
-																	</article>
-																	';
+											</div>
+											<wbr></wbr><br>
+											</article>
+											';
 											
 											$sql = "";
 											$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text, zeitstempel FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp";
@@ -4054,55 +4332,62 @@ if ($_GET['page'] == "forum")
 											
 											$ergebnis = mysqli_query($db_forum, $sql);
 													
-													//posts anzeigen
+											//posts anzeigen
 													
 													
-													if (mysqli_num_rows($ergebnis) > 0)
+											if (mysqli_num_rows($ergebnis) > 0)
 														
-														{
+												{
 															
 															
-															while($row = mysqli_fetch_assoc($ergebnis)) {
+													while($row = mysqli_fetch_assoc($ergebnis)) {
 																
-																echo '<article>
-																		<div class="titel"><b id="titel">' . $row["ID"] . ' | ' . $row["pname"] . '</b></div>
-																		<div class="inhalt"><br>
-																		Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Erstellt am. ' . $row["zeitstempel"] . '
-																		<br>
-																		<br>
+														echo '<article>
+															<div class="titel"><b id="titel">' . $row["ID"] . ' | ' . $row["pname"] . '</b></div>
+															<div class="inhalt"><br>
+															Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Erstellt am. ' . $row["zeitstempel"] . '
+															<br>
+															<br>
 																		
-																		' . lesen($row["text"]) . '
+															' . lesen($row["text"]) . '
 																		
-																		<br><br>
-																		<form method="post">
+															<br><br>
+															<form method="post">
 															
-																		<input type="hidden" name="threatID" value="' . $threatID . '">
-																		<input type="hidden" name="ID" value="' . $ID . '">
-																		<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
-																		<input type="hidden" name="clantag" value="' . $clantag . '">
-																		<input type="hidden" name="clanID" value="' . $clanID . '">
-																		<input type="hidden" name="intern" value="' . $intern . '">
-																		<input type="hidden" name="pID" value="' . $pID . '">
-																		<input type="hidden" name="spID" value="' . $row["ID"] . '">
+															<input type="hidden" name="threatID" value="' . $threatID . '">
+															<input type="hidden" name="ID" value="' . $ID . '">
+															<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+															<input type="hidden" name="clantag" value="' . $clantag . '">
+															<input type="hidden" name="clanID" value="' . $clanID . '">
+															<input type="hidden" name="intern" value="' . $intern . '">
+															<input type="hidden" name="pID" value="' . $pID . '">
+															<input type="hidden" name="spID" value="' . $row["ID"] . '">
+															
+															<input type="hidden" name="pname" value="' . $row["pname"] . '">
 																		
-																		<input class="button button1" formaction="index.php?page=forum&sp=edit" type="submit" name="edit" value="Post editieren"> 
+															<input class="button button1" formaction="index.php?page=forum&p=open" type="submit" name="answer" value="Antworten"> 
 																		
-																		<input class="button button1" formaction="index.php?page=forum&sp=delete" type="submit" name="delete" value="Post löschen">
+															<input class="button button1" formaction="index.php?page=forum&p=open" type="submit" name="edit" value="Post editieren"> 
+																		
+															<input class="button button1" formaction="index.php?page=forum&p=open" type="submit" name="delete" value="Post löschen">
 																					
-																		</form>
+															</form>
 																		
-																		</div>
-																		<wbr></wbr><br>
-																		</article>';
+															</div>
+															<wbr></wbr><br>
+															</article>';
 																		
 																		
 																
-															}
+														}
 															
 																													
-														}
-											
-											}
+												}
+												
+									
+									
+									
+									}
 											
 										if (isset($_POST['delete']) AND isset($_GET['p']) AND $_GET['p'] == "delete") 
 										
@@ -4133,24 +4418,24 @@ if ($_GET['page'] == "forum")
 											echo '
 											
 												<article>
-																	<div class="titel"><b id="titel">Post erfolgreich gelöscht</b></div>
-																	<div class="inhalt"><br>
-																	<form action="index.php?page=forum&p=view" method="post">
+												<div class="titel"><b id="titel">Post erfolgreich gelöscht</b></div>
+												<div class="inhalt"><br>
+												<form action="index.php?page=forum&p=view" method="post">
 																
-																	<input type="hidden" name="threatID" value="' . $threatID . '">
-																	<input type="hidden" name="ID" value="' . $ID . '">
-																	<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
-																	<input type="hidden" name="clantag" value="' . $clantag . '">
-																	<input type="hidden" name="clanID" value="' . $clanID . '">
-																	<input type="hidden" name="intern" value="' . $intern . '">
-																	<input class="button button1" type="submit" value="Zurück" >
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input class="button button1" type="submit" value="Zurück" >
 																				
-																	</form>
+												</form>
 																	
-																	</div>
-																	<wbr></wbr><br>
-																	</article>
-																	';
+												</div>
+												<wbr></wbr><br>
+												</article>
+												';
 																	
 												}
 												
@@ -4161,31 +4446,709 @@ if ($_GET['page'] == "forum")
 													echo '
 											
 														<article>
-																	<div class="titel"><b id="titel">Fehler beim Löschen des Posts</b></div>
-																	<div class="inhalt"><br>
+														<div class="titel"><b id="titel">Fehler beim Löschen des Posts</b></div>
+														<div class="inhalt"><br>
 																	
-																	Fehler: ' . mysqli_error($db_forum) . '<br>
-																	<form action="index.php?page=forum&p=view" method="post">
+														Fehler: ' . mysqli_error($db_forum) . '<br>
+														<form action="index.php?page=forum&p=view" method="post">
 																
-																	<input type="hidden" name="threatID" value="' . $threatID . '">
-																	<input type="hidden" name="ID" value="' . $ID . '">
-																	<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
-																	<input type="hidden" name="clantag" value="' . $clantag . '">
-																	<input type="hidden" name="clanID" value="' . $clanID . '">
-																	<input type="hidden" name="intern" value="' . $intern . '">
-																	<input class="button button1" type="submit" value="Zurück" >
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="clantag" value="' . $clantag . '">
+														<input type="hidden" name="clanID" value="' . $clanID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input class="button button1" type="submit" value="Zurück" >
 																				
-																	</form>
+														</form>
 																	
-																	</div>
-																	<wbr></wbr><br>
-																	</article>
-																	';
+														</div>
+														<wbr></wbr><br>
+														</article>
+														';
 													
 												
 												}
 											
 											}
+											
+							//Auf Post antworten
+									
+								if ($_GET['p'] == "open" AND isset($_POST["answer"]))
+										
+									{
+										
+										if (!isset($_POST["text"]))
+											
+											{	
+										
+												$ID = $_POST["ID"];
+												$threatID = $_POST["threatID"];
+												$subthreatID = $_POST["subthreatID"];
+												$clantag = $_POST["clantag"];
+												$clanID = $_POST["clanID"];
+												$intern = $_POST["intern"];
+												$pID = $_POST["pID"];
+												$spID = $_POST["spID"];
+												
+												$pname = editieren($_POST["pname"]);
+												
+												echo '<article>
+												<div class="titel"><b id="titel">Antwort erstellen.</b></div>
+												<div class="inhalt"><br>
+																					
+												<form action="index.php?page=forum&p=open" method="post">
+
+												<p>Felder mit ( * ) sind Pflichtfleder!</p>
+																					
+																		
+												Postname:<br> <input type="text" name="pname" placeholder="postname" maxlength="256" size="256" value="' . $pname . '" readonly><br>
+																		
+												Postbeschreibung:<br> <input type="text" name="pbeschreibung" placeholder="Post Beschreibung" maxlength="256" size="256" value="" ><br>
+																		
+												( * ) Posttext:<br>
+												<textarea name="text" rows="20" cols="192" required autofocus></textarea>
+												<br><br>
+																		
+												<fieldset>
+												<legend>Nicht editierbar, nur zur Datenanzeige!</legend>
+																		
+												ClanTAG:<br> <input type="text" name="clantag" placeholder="-=|Clan|=-" maxlength="256" size="256" value="' . $clantag . '" readonly><br><br>
+																		
+												clanID:<br> <input type="text" name="clanID" placeholder="10^9" maxlength="10" size="10" value="' . $clanID . '" readonly><br><br>
+																		
+																		
+												Intern?<br>
+												<select name="intern" disabled>';
+																		
+												if ($intern == 0)
+													{
+																				
+													echo '
+													<option value="0" selected>Nein</option>
+													<option value="1" >Clanmitglieder</option>
+													<option value="2" >Mods</option>
+													<option value="3" >Admin</option>
+													';
+																				
+													}
+																			
+												if ($intern == 1)
+													{
+																				
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" selected>Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" >Admin</option>
+														';
+																				
+													}
+																			
+												if ($intern == 2)
+													{
+																				
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" selected>Mods</option>
+														<option value="3" >Admin</option>
+														';
+																				
+													}
+																			
+												if ($intern == 3)
+													{
+																				
+														echo '
+														<option value="0" >Nein</option>
+														<option value="1" >Clanmitglieder</option>
+														<option value="2" >Mods</option>
+														<option value="3" selected>Admin</option>
+														';
+																				
+													}
+																		
+																			
+												echo '
+												</select>
+																		
+												</fieldset>
+												<br>
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="pID" value="' . $pID . '">
+												<input type="hidden" name="spID" value="' . $spID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input type="hidden" name="answer" value="answer">
+												<input class="button button1" type="submit" value="Antwortpost erstellen" >
+																					
+												</form>
+																		
+												<form action="index.php?page=forum&p=open" method="post">
+																	
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input type="hidden" name="pID" value="' . $pID . '">
+												<input type="hidden" name="open" value="open">
+												<input class="button button1" type="submit" value="Abrechen" >
+																					
+												</form>
+																		
+												</div>
+												<wbr></wbr><br>
+												</article>';
+												
+											}
+											
+										if (isset($_POST["text"]))
+											
+											{
+											
+												$ID = editieren($_POST["ID"]);
+												$threatID = editieren($_POST["threatID"]);
+												$subthreatID = editieren($_POST["subthreatID"]);
+												$clantag = editieren($_POST["clantag"]);
+												$clanID = editieren($_POST["clanID"]);
+												$intern = editieren($_POST["intern"]);
+												$pID = editieren($_POST["pID"]);
+												$spID = editieren($_POST["spID"]);
+												
+												$pname = editieren($_POST["pname"]);
+												$pbeschreibung = editieren($_POST["pbeschreibung"]);
+												$text = schreiben($_POST["text"]);
+												
+												$user = $_SESSION["user"];
+												
+												$userID = $_SESSION["ID"];
+												
+												if ($text == "")
+													
+												
+													{
+														
+														echo '
+											
+														<article>
+														<div class="titel"><b id="titel">Fehler beim Erstellen des Posts!</b></div>
+														<div class="inhalt"><br><br>
+																	
+														Bitte ertsellen Sie einen Beitrag im Pflichtfeld!
+														<br><br>
+														<form action="index.php?page=forum&p=view" method="post">
+																
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="clantag" value="' . $clantag . '">
+														<input type="hidden" name="clanID" value="' . $clanID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input type="hidden" name="pID" value="' . $pID . '">
+														<input type="hidden" name="open" value="open">
+														<input class="button button1" type="submit" value="Zurück" >
+																				
+														</form>
+																	
+														</div>
+														<wbr></wbr><br>
+														</article>
+														';
+														
+													}
+													
+												else
+													
+													{
+														
+														$sql ="";
+														$sql ="INSERT INTO " . $forum . " . " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp (pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text) VALUES ('" . $pname . "', '" . $pbeschreibung . "', '" . $user . "', '" . $userID . "', '" . $clantag . "', '" . $clanID . "', '" . $threatID . "', '" . $subthreatID . "', '" . $intern . "', '" . $text . "')";
+												
+														if (mysqli_query($db_forum, $sql))
+															
+															{
+																
+																echo '
+											
+																<article>
+																<div class="titel"><b id="titel">Antwort erstellt.</b></div>
+																<div class="inhalt"><br><br>
+																
+																<form action="index.php?page=forum&p=open" method="post">
+																		
+																<input type="hidden" name="threatID" value="' . $threatID . '">
+																<input type="hidden" name="ID" value="' . $ID . '">
+																<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+																<input type="hidden" name="clantag" value="' . $clantag . '">
+																<input type="hidden" name="clanID" value="' . $clanID . '">
+																<input type="hidden" name="intern" value="' . $intern . '">
+																<input type="hidden" name="pID" value="' . $pID . '">
+																<input type="hidden" name="open" value="open">
+																<input class="button button1" type="submit" value="Zurück" >
+																						
+																</form>
+																			
+																</div>
+																<wbr></wbr><br>
+																</article>
+																';
+																
+															}
+															
+														else
+															
+															{
+																
+																echo '
+											
+																<article>
+																<div class="titel"><b id="titel">Fehler beim Erstellen des Posts!</b></div>
+																<div class="inhalt"><br><br>
+																			
+																Fehler: ' . $sql . '<br>' . mysqli_error($db_forum) . '
+																<br><br>
+																<form action="index.php?page=forum&p=view" method="post">
+																		
+																<input type="hidden" name="threatID" value="' . $threatID . '">
+																<input type="hidden" name="ID" value="' . $ID . '">
+																<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+																<input type="hidden" name="clantag" value="' . $clantag . '">
+																<input type="hidden" name="clanID" value="' . $clanID . '">
+																<input type="hidden" name="intern" value="' . $intern . '">
+																<input type="hidden" name="pID" value="' . $pID . '">
+																<input type="hidden" name="open" value="open">
+																<input class="button button1" type="submit" value="Zurück" >
+																						
+																</form>
+																			
+																</div>
+																<wbr></wbr><br>
+																</article>
+																';
+															
+															}
+												
+													}
+												
+											}
+											
+									}
+									
+							//Post Editieren
+									
+								if ($_GET['p'] == "open" AND isset($_POST["edit"]))
+										
+									{
+										
+										if (!isset($_POST["text"]))
+											
+											{
+										
+												$ID = $_POST["ID"];
+												$threatID = $_POST["threatID"];
+												$subthreatID = $_POST["subthreatID"];
+												$clantag = $_POST["clantag"];
+												$clanID = $_POST["clanID"];
+												$intern = $_POST["intern"];
+												$pID = $_POST["pID"];
+												$spID = $_POST["spID"];
+
+												$sql = "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text FROM " . $forum . " . " . $forum . "_" . $ID .$threatID . $subthreatID . $pID . "_sp WHERE ID=" . $spID . "";
+												
+												$ergebnis =  mysqli_query($db_forum, $sql);
+												
+												if (mysqli_num_rows($ergebnis) > 0)
+													
+													{
+													
+														while ($row = mysqli_fetch_assoc($ergebnis)) {
+															
+															$spID = $row["ID"];
+															$pname = editieren($row["pname"]);
+															$pbeschreibung = editieren($row["pbeschreibung"]);
+															$clantag = $row["clantag"];
+															$clanID = $row["clanID"];
+															$threatID = $row["threatID"];
+															$subthreatID = $row["subthreatID"];
+															$intern = $row["intern"];
+															$text = lesen($row["text"]);
+															$ersteller = $row["ersteller"];
+															$erstellerID = $row["erstellerID"];
+															
+														}
+														
+													}
+												
+												else
+													
+													{
+													
+														echo '
+													
+														<article>
+														<div class="titel"><b id="titel">Konnte Posting nicht finden!</b></div>
+														<div class="inhalt"><br><br>
+														
+														Der ausgewählte Posting eintrag konnte nicht gefunden werden! 
+
+														<br><br>
+														<form action="index.php?page=forum&p=view" method="post">
+																				
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="clantag" value="' . $clantag . '">
+														<input type="hidden" name="clanID" value="' . $clanID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input type="hidden" name="pID" value="' . $pID . '">
+														<input type="hidden" name="open" value="open">
+														<input class="button button1" type="submit" value="Zurück" >
+																								
+														</form>
+																					
+														</div>
+														<wbr></wbr><br>
+														</article>';
+														
+													}
+												
+												echo '<article>
+														<div class="titel"><b id="titel">Posting Editieren</b></div>
+														<div class="inhalt"><br>
+																							
+														<form action="index.php?page=forum&p=open" method="post">
+
+														<p>Felder mit ( * ) sind Pflichtfleder!</p>
+																							
+																				
+														Postname:<br> <input type="text" name="pname" placeholder="postname" maxlength="256" size="256" value="' . $pname . '" readonly><br>
+																				
+														Postbeschreibung:<br> <input type="text" name="pbeschreibung" placeholder="Post Beschreibung" maxlength="256" size="256" value="' . $pbeschreibung . '" ><br>
+																				
+														( * ) Posttext:<br>
+														<textarea name="text" rows="20" cols="192" required autofocus>' . $text . '</textarea>
+														<br><br>
+																				
+														<fieldset>
+														<legend>Nicht editierbar, nur zur Datenanzeige!</legend>
+																				
+														ClanTAG:<br> <input type="text" name="clantag" placeholder="-=|Clan|=-" maxlength="256" size="256" value="' . $clantag . '" readonly><br><br>
+																				
+														clanID:<br> <input type="text" name="clanID" placeholder="10^9" maxlength="10" size="10" value="' . $clanID . '" readonly><br><br>
+																				
+																				
+														Intern?<br>
+														<select name="intern" disabled>';
+																				
+														if ($intern == 0)
+															{
+																						
+															echo '
+															<option value="0" selected>Nein</option>
+															<option value="1" >Clanmitglieder</option>
+															<option value="2" >Mods</option>
+															<option value="3" >Admin</option>
+															';
+																						
+															}
+																					
+														if ($intern == 1)
+															{
+																						
+																echo '
+																<option value="0" >Nein</option>
+																<option value="1" selected>Clanmitglieder</option>
+																<option value="2" >Mods</option>
+																<option value="3" >Admin</option>
+																';
+																						
+															}
+																					
+														if ($intern == 2)
+															{
+																						
+																echo '
+																<option value="0" >Nein</option>
+																<option value="1" >Clanmitglieder</option>
+																<option value="2" selected>Mods</option>
+																<option value="3" >Admin</option>
+																';
+																						
+															}
+																					
+														if ($intern == 3)
+															{
+																						
+																echo '
+																<option value="0" >Nein</option>
+																<option value="1" >Clanmitglieder</option>
+																<option value="2" >Mods</option>
+																<option value="3" selected>Admin</option>
+																';
+																						
+															}
+																				
+																					
+														echo '
+														</select>
+																				
+														</fieldset>
+														<br>
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="pID" value="' . $pID . '">
+														<input type="hidden" name="spID" value="' . $spID . '">
+														<input type="hidden" name="ersteller" value="' . $ersteller . '">
+														<input type="hidden" name="erstellerID" value="' . $erstellerID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input type="hidden" name="edit" value="edit">
+														<input class="button button1" type="submit" value="Posting Editieren" >
+																							
+														</form>
+																				
+														<form action="index.php?page=forum&p=open" method="post">
+																			
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="clantag" value="' . $clantag . '">
+														<input type="hidden" name="clanID" value="' . $clanID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input type="hidden" name="pID" value="' . $pID . '">
+														<input type="hidden" name="open" value="open">
+														<input class="button button1" type="submit" value="Abrechen" >
+																							
+														</form>
+																				
+														</div>
+														<wbr></wbr><br>
+														</article>';
+												
+											}
+											
+										if (isset($_POST["text"]))
+											
+											{
+												
+												$ID = editieren($_POST["ID"]);
+												$pID = editieren($_POST["pID"]);
+												$spID = editieren($_POST["spID"]);
+												$pname = editieren($_POST["pname"]);
+												$pbeschreibung = editieren($_POST["pbeschreibung"]);
+												$clantag = editieren($_POST["clantag"]);
+												$clanID = editieren($_POST["clanID"]);
+												$threatID = editieren($_POST["threatID"]);
+												$subthreatID = editieren($_POST["subthreatID"]);
+												$intern = editieren($_POST["intern"]);
+												$text = schreiben($_POST["text"]);
+												
+												$ersteller = editieren($_POST["ersteller"]);
+												$erstellerID = editieren($_POST["erstellerID"]);
+												
+												if ($pname == "" OR $text == "")
+													
+													{
+														
+														echo '
+													
+														<article>
+														<div class="titel"><b id="titel">Bitte füllen Sie alle Relevanten Felder aus!</b></div>
+														<div class="inhalt"><br><br>
+														
+														Das Posting konnte nicht editiert werden da spezifische Felder nicht ausgefüllt wurden. 
+
+														<br><br>
+														<form action="index.php?page=forum&p=open" method="post">
+																				
+														<input type="hidden" name="threatID" value="' . $threatID . '">
+														<input type="hidden" name="ID" value="' . $ID . '">
+														<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+														<input type="hidden" name="clantag" value="' . $clantag . '">
+														<input type="hidden" name="clanID" value="' . $clanID . '">
+														<input type="hidden" name="intern" value="' . $intern . '">
+														<input type="hidden" name="pID" value="' . $pID . '">
+														<input type="hidden" name="open" value="open">
+														<input class="button button1" type="submit" value="Zurück" >
+																								
+														</form>
+																					
+														</div>
+														<wbr></wbr><br>
+														</article>';
+														
+													}
+													
+												else
+													
+													{
+														
+														$user = $_SESSION["user"];
+														
+														
+														
+														$edittext = $text . "<br ><br > Editiert von " . $user . " am " . date("d.m.Y") . " um " . date("H:i.s") . " .";
+														
+														$sql = "";
+														$sql = "UPDATE " . $forum . " . " . $forum . "_" . $ID .$threatID . $subthreatID . $pID . "_sp SET pname='" . $pname . "', pbeschreibung='" . $pbeschreibung . "', ersteller='" . $ersteller . "', erstellerID='" . $erstellerID . "', clantag='" . $clantag . "', clanID='" . $clanID . "', threatID='" . $threatID . "', subthreatID='" . $subthreatID . "', intern='" . $intern . "', text='" . $edittext . "' WHERE ID=" . $spID . "";
+														
+														if (mysqli_query($db_forum, $sql))
+															
+															{
+																
+																echo '
+															
+																<article>
+																<div class="titel"><b id="titel">Posting erfolgreich editiert.</b></div>
+																<div class="inhalt"><br><br>
+																<form action="index.php?page=forum&p=open" method="post">
+																						
+																<input type="hidden" name="threatID" value="' . $threatID . '">
+																<input type="hidden" name="ID" value="' . $ID . '">
+																<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+																<input type="hidden" name="clantag" value="' . $clantag . '">
+																<input type="hidden" name="clanID" value="' . $clanID . '">
+																<input type="hidden" name="intern" value="' . $intern . '">
+																<input type="hidden" name="pID" value="' . $pID . '">
+																<input type="hidden" name="open" value="open">
+																<input class="button button1" type="submit" value="Weiter" >
+																										
+																</form>
+																							
+																</div>
+																<wbr></wbr><br>
+																</article>';
+																
+															}
+															
+														else
+															
+															{
+																
+																echo '
+															
+																<article>
+																<div class="titel"><b id="titel">Posting konnte nicht editiert werden!</b></div>
+																<div class="inhalt"><br><br>
+																
+																Fehler: ' .  mysqli_error($db_forum) . '
+
+																<br><br>
+																<form action="index.php?page=forum&p=open" method="post">
+																						
+																<input type="hidden" name="threatID" value="' . $threatID . '">
+																<input type="hidden" name="ID" value="' . $ID . '">
+																<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+																<input type="hidden" name="clantag" value="' . $clantag . '">
+																<input type="hidden" name="clanID" value="' . $clanID . '">
+																<input type="hidden" name="intern" value="' . $intern . '">
+																<input type="hidden" name="pID" value="' . $pID . '">
+																<input type="hidden" name="open" value="open">
+																<input class="button button1" type="submit" value="Weiter" >
+																										
+																</form>
+																							
+																</div>
+																<wbr></wbr><br>
+																</article>';
+																
+															}
+														
+													}
+											
+											}
+											
+									}
+									
+							//Gewählten Post Löschen
+									
+								if ($_GET['p'] == "open" AND isset($_POST["delete"]))
+										
+									{
+									
+										$ID = $_POST["ID"];
+										$threatID = $_POST["threatID"];
+										$subthreatID = $_POST["subthreatID"];
+										$clantag = $_POST["clantag"];
+										$clanID = $_POST["clanID"];
+										$intern = $_POST["intern"];
+										$pID = $_POST["pID"];
+										$spID = $_POST["spID"];
+										
+										$sql = "";
+										$sql = "DELETE FROM " . $forum . " . " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp WHERE ID=" . $spID . "";
+										
+										if (mysqli_query($db_forum, $sql))
+											
+											{
+											
+												echo '
+											
+												<article>
+												<div class="titel"><b id="titel">Posting gelöscht</b></div>
+												<div class="inhalt"><br><br>
+																
+												<form action="index.php?page=forum&p=view" method="post">
+																		
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input type="hidden" name="pID" value="' . $pID . '">
+												<input type="hidden" name="open" value="open">
+												<input class="button button1" type="submit" value="Zurück" >
+																						
+												</form>
+																			
+												</div>
+												<wbr></wbr><br>
+												</article>
+																';
+												
+											}
+											
+										else
+											
+											{
+												
+												echo '
+											
+												<article>
+												<div class="titel"><b id="titel">Posting nicht gelöscht!</b></div>
+												<div class="inhalt"><br><br>
+												
+												' .  mysqli_error($db_forum) . '
+
+												<br><br>
+												<form action="index.php?page=forum&p=view" method="post">
+																		
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input type="hidden" name="pID" value="' . $pID . '">
+												<input type="hidden" name="open" value="open">
+												<input class="button button1" type="submit" value="Zurück" >
+																						
+												</form>
+																			
+												</div>
+												<wbr></wbr><br>
+												</article>
+																';
+												
+											}
+										
+									}
 									
 							}								
 																		
