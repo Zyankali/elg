@@ -330,20 +330,19 @@ if ($_GET['page'] == "main")
 			$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
 			$limmit = $eintragsAnzahl;
 				
-			$sql = "SELECT * FROM main ORDER BY ID DESC LIMIT " . $limmit . " OFFSET " . $offset . "";
+			$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main ORDER BY ID DESC LIMIT " . $limmit . " OFFSET " . $offset . "";
 
 		}
 	else
 				
 		{
 					
-			$sql = "SELECT * FROM main ORDER BY ID DESC";
+			$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main ORDER BY ID DESC";
 					
 		}
 		
 		echo "<a title=\"Neuen Eintrag erstellen\" href=\"index.php?page=createnewcontent\">Neuer Eintrag erstellen?</a><br>";
 		
-		$sql = "SELECT ID, Author, Uhrzeit, Datum, Titel, inhalt, Tags, Sticky FROM main ORDER BY ID DESC";
 		$spm = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($spm) > 0) 
@@ -3913,11 +3912,173 @@ if ($_GET['page'] == "forum")
 																				
 										mysqli_query($db_forum, $sql);
 										
+										//Posts zählen
 										
-										$sql = "";
-										$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY ID DESC";
+										$zsql = "SELECT COUNT(ID) FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p";
+										$zergebnis = mysqli_query($db_forum, $zsql);
 										
+										$anzahl = mysqli_fetch_assoc($zergebnis);
+		
+										$posts = $anzahl["COUNT(ID)"];
+										
+										
+										if ($posts > $eintragsAnzahl)
+											
+											
+										
+											{
+												
+												if (!isset($_GET['seite']))
+													
+													{
+													
+														$seite = 1;
+													
+													}
+												
+												if (isset($_GET['seite']))
+													
+													{
+													
+														$seite = $_GET['seite'];
+														
+													}
+												
+												$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
+
+												
+												$seiten = $posts / $eintragsAnzahl;
+												
+												// Maximale Seiten ermittel und anschließend ggf. die tatsächliche Seitenanzahl ermitteln wenn float.
+												for ($y = 0; $y <= $seiten; $y++) {
+													
+													$maxseiten = $y;
+													
+												}
+												
+												//Float Seitenanzahl aufrunden zu einer INTIGER Zahl, oder so... whayne cares!
+												if ($maxseiten < $seiten)
+													
+													{
+														
+														$maxseiten = $maxseiten + 1;
+
+													}
+												
+												// uuund wieder sollte ein Overflow über die &seite $_GET Eingabe unterbunden worden sein.
+												if (isset($_GET['seite']) AND $_GET['seite'] > $maxseiten)
+													
+													{
+														
+														$seite = $maxseiten;
+														
+													}
+												
+												$minseiten = $seite - 1;
+												
+												$min = $minseiten - 3;
+												
+												$maxdreier = $seite + 3;
+
+												echo '
+												<form method="post">
+															
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												';
+												
+												
+												if (1 <= $min)
+													
+													{
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=1" type="submit" name="view" value="&laquo;"> 
+														';
+														
+														for ($x = $minseiten - 2; $x <= $minseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+													
+												else
+													
+													{
+														
+														for ($x = 1; $x <= $minseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+												
+												echo $seite;
+														
+												if ($maxdreier < $maxseiten)
+													
+													{
+														
+														
+														for ($x = $seite + 1; $x <= $maxdreier; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $maxseiten . '" type="submit" name="view" value="&raquo;"> 
+														';
+														
+													}
+													
+												else
+													
+													{												
+														
+														for ($x = $seite + 1; $x <= $maxseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+												
+												echo '									
+												</form>';
+												
+												
+												$sql = "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY ID DESC LIMIT " . $eintragsAnzahl . " OFFSET " . $offset . "";
+											}
+										
+										// Wenn Einträge kleiner oder gleich der maximalen Eintragsanzahl entsprechen standart SLQ query ausführen ohne Limitierung 
+										if ($posts <= $eintragsAnzahl)
+											
+											{
+												
+												$sql = "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY ID DESC";
+												
+											}	
+										
+										//Ende des Zählens
+										
+																	
 										$ergebnis = mysqli_query($db_forum, $sql);
+										
+
 													
 													//posts anzeigen
 													
@@ -3963,7 +4124,7 @@ if ($_GET['page'] == "forum")
 																echo '<article>
 																		<div class="titel"><b id="titel">' . $row["ID"] . ' | ' . $row["pname"] . '</b></div>
 																		<div class="inhalt"><br>
-																		Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Erstellt am. ' . $row["zeitstempel"] . '
+																		Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Letzter Eintrag: ' . $row["zeitstempel"] . '
 																		
 																		<form method="post">
 															
@@ -4304,7 +4465,171 @@ if ($_GET['page'] == "forum")
 										$clanID = editieren($_POST["clanID"]);
 										$intern = editieren($_POST["intern"]);
 										$pID = editieren($_POST["pID"]);
+										
+										//Posts zählen
+										
+										$zsql = "SELECT COUNT(ID) FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp";
+										$zergebnis = mysqli_query($db_forum, $zsql);
+										
+										$anzahl = mysqli_fetch_assoc($zergebnis);
+		
+										$posts = $anzahl["COUNT(ID)"];
+										
+										
+										if ($posts > $eintragsAnzahl)
 											
+											
+										
+											{
+												
+												if (!isset($_GET['seite']))
+													
+													{
+													
+														$seite = 1;
+													
+													}
+												
+												if (isset($_GET['seite']))
+													
+													{
+													
+														$seite = $_GET['seite'];
+														
+													}
+												
+												$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
+
+												
+												$seiten = $posts / $eintragsAnzahl;
+												
+												// Maximale Seiten ermittel und anschließend ggf. die tatsächliche Seitenanzahl ermitteln wenn float.
+												for ($y = 0; $y <= $seiten; $y++) {
+													
+													$maxseiten = $y;
+													
+												}
+												
+												//Float Seitenanzahl aufrunden zu einer INTIGER Zahl, oder so... whayne cares!
+												if ($maxseiten < $seiten)
+													
+													{
+														
+														$maxseiten = $maxseiten + 1;
+
+													}
+												
+												// uuund wieder sollte ein Overflow über die &seite $_GET Eingabe unterbunden worden sein.
+												if (isset($_GET['seite']) AND $_GET['seite'] > $maxseiten)
+													
+													{
+														
+														$seite = $maxseiten;
+														
+													}
+												
+												$minseiten = $seite - 1;
+												
+												$min = $minseiten - 3;
+												
+												$maxdreier = $seite + 3;
+
+												echo '
+												<form method="post">
+															
+												<input type="hidden" name="threatID" value="' . $threatID . '">
+												<input type="hidden" name="ID" value="' . $ID . '">
+												<input type="hidden" name="subthreatID" value="' . $subthreatID . '">
+												<input type="hidden" name="clantag" value="' . $clantag . '">
+												<input type="hidden" name="clanID" value="' . $clanID . '">
+												<input type="hidden" name="intern" value="' . $intern . '">
+												<input type="hidden" name="pID" value="' . $pID . '">
+												';
+												
+												
+												if (1 <= $min)
+													
+													{
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=1" type="submit" name="view" value="&laquo;"> 
+														';
+														
+														for ($x = $minseiten - 2; $x <= $minseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+													
+												else
+													
+													{
+														
+														for ($x = 1; $x <= $minseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+												
+												echo $seite;
+														
+												if ($maxdreier < $maxseiten)
+													
+													{
+														
+														
+														for ($x = $seite + 1; $x <= $maxdreier; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=' . $maxseiten . '" type="submit" name="view" value="&raquo;"> 
+														';
+														
+													}
+													
+												else
+													
+													{												
+														
+														for ($x = $seite + 1; $x <= $maxseiten; $x++) {
+														
+														echo '
+														<input class="button button1" formaction="index.php?page=forum&p=open&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+														';
+														}
+														
+													}
+												
+												echo '									
+												</form>';
+												
+												
+												$sql = "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text, zeitstempel FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp LIMIT " . $eintragsAnzahl . " OFFSET " . $offset . "";
+											}
+										
+										// Wenn Einträge kleiner oder gleich der maximalen Eintragsanzahl entsprechen standart SLQ query ausführen ohne Limitierung 
+										if ($posts <= $eintragsAnzahl)
+											
+											{
+												
+												$sql = "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text, zeitstempel FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp";
+												
+											}	
+										
+										//Ende des Zählens
+										
 										echo '
 											<article>
 											<div class="titel"><b id="titel">Zurück zur Postübersicht?</b></div>
@@ -4326,8 +4651,8 @@ if ($_GET['page'] == "forum")
 											</article>
 											';
 											
-											$sql = "";
-											$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text, zeitstempel FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp";
+											//$sql = "";
+											//$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text, zeitstempel FROM " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp";
 											
 											
 											$ergebnis = mysqli_query($db_forum, $sql);
@@ -4345,7 +4670,7 @@ if ($_GET['page'] == "forum")
 														echo '<article>
 															<div class="titel"><b id="titel">' . $row["ID"] . ' | ' . $row["pname"] . '</b></div>
 															<div class="inhalt"><br>
-															Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Erstellt am. ' . $row["zeitstempel"] . '
+															Ersteller: <a href="index.php?page=benutzerinfo&benutzer=' . $row["ersteller"] . '&userID=' . $row["erstellerID"] . '" title="Benutzer">' . $row["ersteller"] . '</a> | Clan: ' . $row["clantag"] . ' | Erstellt am: ' . $row["zeitstempel"] . '
 															<br>
 															<br>
 																		
@@ -4664,6 +4989,16 @@ if ($_GET['page'] == "forum")
 												else
 													
 													{
+														
+														$sql ="";
+														$sql ="UPDATE " . $forum . "_" . $ID . $threatID . $subthreatID . "_p SET pname='" . $pname . "1' WHERE ID=" . $pID . "";
+														
+														mysqli_query($db_forum, $sql);
+														
+														$sql ="";
+														$sql ="UPDATE " . $forum . "_" . $ID . $threatID . $subthreatID . "_p SET pname='" . $pname . "' WHERE ID=" . $pID . "";
+														
+														mysqli_query($db_forum, $sql);
 														
 														$sql ="";
 														$sql ="INSERT INTO " . $forum . " . " . $forum . "_" . $ID . $threatID . $subthreatID . $pID . "_sp (pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, text) VALUES ('" . $pname . "', '" . $pbeschreibung . "', '" . $user . "', '" . $userID . "', '" . $clantag . "', '" . $clanID . "', '" . $threatID . "', '" . $subthreatID . "', '" . $intern . "', '" . $text . "')";
