@@ -1533,7 +1533,7 @@ kontakt
     </div>
 </div>
 
-<wbr></wbr>
+<br>
 
 <footer>
 © 2018  - <?php echo date("Y");?> by  Eiserne Legenden. <br><br>
@@ -1542,16 +1542,6 @@ Sonictechnologic <br>
 We deliver offensive and defensive solutions.<br>
 ©2013 - <?php echo date("Y");?>
 </footer>
-
-         <p>
-    <a href="http://jigsaw.w3.org/css-validator/check/referer">
-        <img style="border:0;width:88px;height:31px"
-            src="http://jigsaw.w3.org/css-validator/images/vcss"
-            alt="CSS ist valide!" />
-    </a>
-
-
-</p>
 
 </main>
 

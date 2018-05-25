@@ -12,10 +12,11 @@ $_SESSION["rang"] = "4";
 
 	}
 	
-if ($_SESSION["rang"] > "1")
+if ($_SESSION["rang"] > "1" OR !isset($_SESSION["rang"]))
 
 	{
 	
+			
 			// vernichte alle session variablen
 			session_unset();
 
@@ -105,6 +106,7 @@ if (mysqli_num_rows($ergebniSS) > 0)
 			$spalteRechts = $row["spalte_rechts"];
 			//Zu zeigende einträge definieren
 			$eintragsAnzahl = $row["eintrags_anzahl"];
+			//Zu zeigendes Forum definieren
 			$forum = $row["forum"];
 			
 													}
@@ -916,8 +918,6 @@ if ($_GET['page'] == "overview")
 if ($_GET['page'] == "user")
 	
 	{
-		
-		echo "<h4>Benutzer</h4>";
 				
 		echo "<b>Benutzerübersicht</b><br><br>";
 		
@@ -1176,7 +1176,7 @@ if ($_GET ['page'] == "benutzerinfo")
 		$userGET = $_GET['benutzer'];
 		$userID = $_GET['userID'];
 		
-		$sql = "SELECT ID, user, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "' OR ID='" . $userID . "'";
+		$sql = "SELECT ID, user, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, clanid, clantag, signatur, submodID, submod, Banned, setfree, intinfo FROM benutzer WHERE user='" . $userGET . "' OR ID='" . $userID . "'";
 		$benutzerliste = mysqli_query($db_link, $sql);
 		
 		if (mysqli_num_rows($benutzerliste) > 0) 
@@ -1199,9 +1199,26 @@ if ($_GET ['page'] == "benutzerinfo")
 					$Login_Uhrzeit = $row["Login_Uhrzeit"];
 					$erstellt_uhrzeit = $row["erstellt_uhrzeit"];
 					$erstellt_datum = $row["erstellt_datum"];
+					$clanid = $row["clanid"];
+					$clantag = $row["clantag"];
+					$signatur = lesen($row["signatur"]);
+					$intinfo = lesen($row["intinfo"]);
+					$submodID = $row["submodID"];
 					
+					echo '<article>
+					<div class="titel"><b id="titel">Benutzer: ' . $user . ' &bull; ID: ' . $ID . '</b></div>
+					<div class="inhalt"><br>
+					<div class="titel"><b id="titel">Geburtstag</b></div>
+					<p>' . $gtag . "." . $gmon . "." . $gjahr . '</p>
+					<div class="titel"><b id="titel">E-Mail</b></div>
+					<p>E-Mail: ' . $email . '</p>
+
+					<div class="titel"><b id="titel">Profilbild</b></div>
+					<p><img src="' . $profile_image . '" alt="Profilbild" width="128" height="128"></p>
 					
-					if ($row["clanmitglied"] == "0")
+					<div class="titel"><b id="titel">Gruppen-/Clanmitglied</b></div>
+					<p>
+					'; if ($row["clanmitglied"] == "0")
 						
 						{
 							
@@ -1212,25 +1229,33 @@ if ($_GET ['page'] == "benutzerinfo")
 						{
 						
 							$clanmitglied = "Ja!";
-						
-						}
+							echo '' . $clanmitglied . ' von &Prime;' . $clantag . '&Prime; <br>&bull; ' . $clanid . '';
+							
+						}  
+					echo '</p>
 					
-					if ($row["Banned"] == "1")
+					<div class="titel"><b id="titel">Signatur</b></div>
+					<p>' . $signatur . '</p>
+					
+					<div class="titel"><b id="titel">Submod</b></div>
+					<p>'; if ($row["submod"] == "0")
 						
 						{
 							
-							$Banned = "Ja";
+							$submod = "Nein!";
+							echo $submod;
 							
 						}
-						
 					else
-						
 						{
-							
-							$Banned = "Nein!";
-							
-						}
 						
+							$submod = "Ja!";
+							echo '' . $submod . ' vom <br> Subthreat: &bull; ' . $submodID . '';
+							
+						}  
+					echo '</p>
+					
+					<div class="titel"><b id="titel">Status</b></div>';
 					
 					if ($row["setfree"] == "0")
 						
@@ -1247,26 +1272,44 @@ if ($_GET ['page'] == "benutzerinfo")
 							
 						}
 					
-					$intinfo = lesen($row["intinfo"]);
+					echo '<p>' . $setfree . '</p>';
+					
+					if ($row["Banned"] == "1")
+						
+						{
+							
+							$Banned = "Ist gebannt!";
+							
+						}
+						
+					else
+						
+						{
+							
+							$Banned = "Ist nicht gebannt. :)";
+							
+						}
 					
 					
-					echo "ID: " . $ID . " Benutzer: " . $user . "<br>";
-					echo "E-Mail: " . $email . "<br>";
-					echo "Geburtstag: " . $gtag . "." . $gmon . "." . $gjahr . "<br>";
-					echo "Profilbild:  <img src=\"" . $profile_image . "\" alt=\"Profilbild\" width=\"128\" height=\"128\"><br>";
+					echo ' <p>' . $Banned . '</p>
+					
+					<p>Zuletzt eingeloggt am: ' . $Login_Date . ' um ' . $Login_Uhrzeit . 'Uhr. </p>
+					<p>Registriert am: ' . $erstellt_datum . ' um ' . $erstellt_uhrzeit . 'Uhr </p>
+					
+					<div class="titel"><b id="titel">Rang</b></div>';
 					
 					if ($Rang == "0")
 
 						{
 							
-							echo "Rang: MasterAdmin<br>";
+							$rangtext = "MasterAdmin";
 							
 						}
 					if ($Rang == "1")
 						
 						{
 							
-							echo "Rang: Admin/Administrator<br>";
+							$rangtext = "Admin/Administrator";
 							
 						}
 					
@@ -1274,31 +1317,35 @@ if ($_GET ['page'] == "benutzerinfo")
 						
 						{
 							
-							echo "Rang: Mod/Moderator<br>";
+							$rangtext = "Mod/Moderator";
 							
 						}
 					if ($Rang == "3")
 						
 						{
 							
-							echo "Rang: Benutzer/Regulärer Benutzer<br>";
+							$rangtext = "Benutzer/Regulärer Benutzer";
 							
 						}
 					if ($Rang == "4")
 					
 						{
 							
-							echo "Rang: Gast\(sollte hier nicht vor kommen!\)<br>";
+							$rangtext = "Gast\(sollte hier nicht vor kommen!\)";
 							
 						}
 					
-					echo "Zuletzt eingeloggt am: " . $Login_Date . " um " . $Login_Uhrzeit . "Uhr. <br>";
-					echo "Benutzer Registriert am: " . $erstellt_datum . " um " . $erstellt_uhrzeit . "Uhr <br>";
-					echo "Ist Clanmitglied? " . $clanmitglied . "<br>";
-					echo "Ist gebannt? " . $Banned . "<br>";
-					echo "Ist freigeschaltet? " . $setfree . "<br>";
-					echo "Sonstige Infos: " . $intinfo . "<br>";
+					echo ' <p>' . $rangtext . '</p>';
 					
+					echo '
+					
+					<div class="titel"><b id="titel">Interne Info</b></div>
+					<p>' . $intinfo . '</p>
+					
+					</div>
+					<wbr></wbr><br>
+					</article>';
+				
 				}
 			
 			}			 
@@ -4060,7 +4107,7 @@ if ($_GET['page'] == "forum")
 												
 												
 												$sql = "";
-												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY ID DESC LIMIT " . $eintragsAnzahl . " OFFSET " . $offset . "";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY zeitstempel DESC LIMIT " . $eintragsAnzahl . " OFFSET " . $offset . "";
 											}
 										
 										// Wenn Einträge kleiner oder gleich der maximalen Eintragsanzahl entsprechen standart SLQ query ausführen ohne Limitierung 
@@ -4069,7 +4116,7 @@ if ($_GET['page'] == "forum")
 											{
 												
 												$sql = "";
-												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY ID DESC";
+												$sql = "SELECT ID, pname, pbeschreibung, ersteller, erstellerID, clantag, clanID, threatID, subthreatID, intern, zeitstempel FROM " . $forum . " . " .  $forum . "_" . $ID . $threatID . $subthreatID . "_p ORDER BY zeitstempel DESC";
 												
 											}	
 										
@@ -4456,8 +4503,6 @@ if ($_GET['page'] == "forum")
 										
 									{
 											
-											
-											
 										$ID = editieren($_POST["ID"]);
 										$threatID = editieren($_POST["threatID"]);
 										$subthreatID = editieren($_POST["subthreatID"]);
@@ -4544,6 +4589,7 @@ if ($_GET['page'] == "forum")
 												<input type="hidden" name="clanID" value="' . $clanID . '">
 												<input type="hidden" name="intern" value="' . $intern . '">
 												<input type="hidden" name="pID" value="' . $pID . '">
+												<input type="hidden" name="open" value="open">
 												';
 												
 												
