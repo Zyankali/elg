@@ -390,18 +390,60 @@ if (!isset($page))
 			$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
 			$limmit = $eintragsAnzahl;
 				
-			$sql = "SELECT * FROM main ORDER BY ID DESC LIMIT " . $limmit . " OFFSET " . $offset . "";
+			$sql = "SELECT * FROM main WHERE sticky != '1' ORDER BY ID DESC LIMIT " . $limmit . " OFFSET " . $offset . "";
 
 		}
 	else
 				
 		{
 					
-			$sql = "SELECT * FROM main ORDER BY ID DESC";
+			$sql = "SELECT * FROM main WHERE sticky != '1' ORDER BY ID DESC";
 					
 		}
 	
 	
+		//Inhalt aus der DB von Main ausgeben welche angeheftet wurden (Sticky)
+		
+		$qstick = "SELECT * FROM main WHERE sticky != '0' ORDER BY ID DESC";
+		
+		$qsticky = mysqli_query($db_link, $qstick);
+	
+		if ($posts > 0) 
+			{
+				// output data of each row
+				while($row = mysqli_fetch_assoc($qsticky)) 
+				
+					{
+					
+					$Inhalt = $row["Inhalt"];
+					
+					$Inhalt = lesen($Inhalt);
+						
+						echo "<article>
+						<div class=\"titel\"> #:" . $row["ID"]. 
+						" <img src=\"img/author.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Author"]. 
+						" <img src=\"img/clock.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Uhrzeit"]. 
+						" <img src=\"img/calendar.png\" alt=\"\" border=\"0\" width=\"11\" height=\"11\"> " . $row["Datum"]. 
+						" PINNED!<br> <b id=\"titel\"> " . $row["Titel"]. 
+						" </b></div>
+						<div class=\"inhalt\"> " . $Inhalt . 
+						"<br>" . $row["Tags"]. 
+						"<br>
+						</div>
+						<wbr></wbr><br>
+						</article>";
+		
+
+					}
+			} 
+		else 
+			{
+			
+				
+				
+			}
+
+			mysqli_free_result($qsticky);
 		
 		//Inhalt aus der DB von Main ausgeben
 		
@@ -427,7 +469,6 @@ if (!isset($page))
 						" </b></div>
 						<div class=\"inhalt\"> " . $Inhalt . 
 						"<br>" . $row["Tags"]. 
-						"<br>" . $row["Sticky"]. 
 						"<br>
 						</div>
 						<wbr></wbr><br>
@@ -740,25 +781,6 @@ if (!isset($page))
 								}	
 				
 							$banned = $row["Banned"];
-				
-							if ($row["setfree"] != "1")
-					
-				
-								{
-					
-									/*echo '<article>
-									<div class="titel"><b id="titel">Noch nicht Freigeschaltet!</b></div>
-									<div class="inhalt">
-						
-									Sie wurden noch nicht von einem Admin freigeschaltet!
-									<br><a class="navi navi1" title="Hauptseite" href="index.php?page=index">Weiter</a>
-						
-									<br><br>
-									</div>
-									<wbr></wbr><br>
-									</article>';*/
-											
-								}
 					
 							$setfree = $row["setfree"];
 			
@@ -1154,23 +1176,6 @@ if (!isset($page))
 							}
 						
 					}
-					
-				if ($_POST["gtag"] < 1 OR $_POST["gtag"] > 31)
-					
-					{
-						
-						$errMSG6 = "Ungültiger Tag!<br>";
-						$errorhandler = $errorhandler + 1;
-						
-					}
-				
-				if ($_POST["gtag"] >= 1 AND $_POST["gtag"] <= 31)
-					
-					{
-						
-						$gtag = $_POST["gtag"];
-						
-					}
 				
 				if ($_POST["gmon"] < 1 OR $_POST["gmon"] > 12)
 					
@@ -1186,6 +1191,52 @@ if (!isset($page))
 					{
 						
 						$gmon = $_POST["gmon"];
+						
+						if ($_POST["gmon"] == 1 OR $_POST["gmon"] == 3 OR $_POST["gmon"] == 5 OR $_POST["gmon"] == 7 OR $_POST["gmon"] == 8 OR $_POST["gmon"] == 10 OR $_POST["gmon"] == 12)
+							
+							{
+								
+								if ($_POST["gtag"] < 1 OR $_POST["gtag"] > 31)
+					
+									{
+										
+										$errMSG6 = "Ungültiger Tag!<br>";
+										$errorhandler = $errorhandler + 1;
+										
+									}
+								
+								if ($_POST["gtag"] >= 1 AND $_POST["gtag"] <= 31)
+									
+									{
+										
+										$gtag = $_POST["gtag"];
+										
+									}
+								
+							}
+							
+							if ($_POST["gmon"] == 2 OR $_POST["gmon"] == 4 OR $_POST["gmon"] == 6 OR $_POST["gmon"] == 9 OR $_POST["gmon"] == 11)
+							
+							{
+								
+								if ($_POST["gtag"] < 1 OR $_POST["gtag"] > 30)
+					
+									{
+										
+										$errMSG6 = "Ungültiger Tag!<br>";
+										$errorhandler = $errorhandler + 1;
+										
+									}
+								
+								if ($_POST["gtag"] >= 1 AND $_POST["gtag"] <= 30)
+									
+									{
+										
+										$gtag = $_POST["gtag"];
+										
+									}
+								
+							}
 
 						}
 					
@@ -1360,8 +1411,8 @@ if (!isset($page))
 						$intinfo = "putputput";
 						
 						
-						$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, Banned, setfree, intinfo)
-						VALUES ('" . $benutzer . "', '" . $hash . "', '" . $hash2 . "', '" . $pmail . "', '" . $gtag . "', '" . $gmon . "', '" . $gjahr . "', '" . $standartprofilimg . "', '" . $rang . "', '" . $Login_Date . "', '" . $Login_Uhrzeit . "', '" . $Login_Uhrzeit . "', '" . $Login_Date . "', '" . $clanmitglied . "', '" . $banned . "', '" . $setfree . "', '" . $intinfo . "')";
+						$sql = "INSERT INTO benutzer (user, Passwort, Passwort_2, email, gtag, gmon, gjahr, profile_image, Rang, Login_Date, Login_Uhrzeit, erstellt_uhrzeit, erstellt_datum, clanmitglied, clanid, clantag, signatur, submodID, submod, Banned, setfree, intinfo)
+						VALUES ('" . $benutzer . "', '" . $hash . "', '" . $hash2 . "', '" . $pmail . "', '" . $gtag . "', '" . $gmon . "', '" . $gjahr . "', '" . $standartprofilimg . "', '" . $rang . "', '" . $Login_Date . "', '" . $Login_Uhrzeit . "', '" . $Login_Uhrzeit . "', '" . $Login_Date . "', '" . $clanmitglied . "', '0', ' ', ' ', '0000000000', '0', '" . $banned . "', '" . $setfree . "', '" . $intinfo . "')";
 
 						if (mysqli_query($db_link, $sql))
 							{
