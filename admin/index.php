@@ -25,7 +25,6 @@ if ($_SESSION["rang"] > "1" OR !isset($_SESSION["rang"]))
 						
 	}
 
-
 				//functionenliste
 				
 				// Eingabe ueberpruefen, anpassen und schreiben...
@@ -43,19 +42,150 @@ if ($_SESSION["rang"] > "1" OR !isset($_SESSION["rang"]))
 				$edit = trim($edit);
 				return $edit;							}
 				
-				//Ausgabe einlesen
+				//Ausgabe einlesen für Content der Mainseite
 				function lesen($einlesen) 				{
 				$einlesen = trim($einlesen);
 				//links suchen und anklickbar machen dank BBCode
 				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
-				$ersetzenlink = '<a href="$1" target="_blank">$1</a> ';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
 				$einlesen = preg_replace($linksuche, $ersetzenlink, $einlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$einlesen = preg_replace($linksuchetext, $ersetzenlinktext, $einlesen);
 					
 				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
 				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
 				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
 				$einlesen = preg_replace($bildsuche, $ersetzenbild, $einlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$einlesen = preg_replace($thumbsuche, $ersetzenthumb, $einlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic = '<i>$1</i>';
+				$einlesen = preg_replace($italicsuche, $ersetzenitalic, $einlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold = '<b>$1</b>';
+				$einlesen = preg_replace($boldsuche, $ersetzenbold, $einlesen);
+				
 				return $einlesen;						}
+				
+				//Ausgabe einlesen für Spaltencontent der Mainseite
+				function slesen($seinlesen) 				{
+				$seinlesen = trim($seinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="whitelink whitelink1" href="$1" target="_blank">$1</a> ';
+				$seinlesen = preg_replace($linksuche, $ersetzenlink, $seinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="whitelink whitelink1" href="$1" target="_blank">$3</a> ';
+				$seinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $seinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$seinlesen = preg_replace($bildsuche, $ersetzenbild, $seinlesen);
+				
+				// Bildwerbung anzeigen lassenmit Bild das auf Seite verweist
+				$adssuche = '/\[ADS=((https?|ftps?.*).*)\]+((https?|ftps?.*).*)\[\/ADS\]/im';
+				$ersetzenads = '<a href="$1" target="_blank"><img src="$3" alt="Bild" border="0"></a>';
+				$seinlesen = preg_replace($adssuche, $ersetzenads, $seinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$seinlesen = preg_replace($thumbsuche, $ersetzenthumb, $seinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic = '<i>$1</i>';
+				$seinlesen = preg_replace($italicsuche, $ersetzenitalic, $seinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold = '<b>$1</b>';
+				$seinlesen = preg_replace($boldsuche, $ersetzenbold, $seinlesen);
+				
+				return $seinlesen;						}
+				
+				//Ausgabe einlesen für das Forum
+				function flesen($feinlesen) 				{
+				$feinlesen = trim($feinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
+				$feinlesen = preg_replace($linksuche, $ersetzenlink, $feinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$feinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $feinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$feinlesen = preg_replace($bildsuche, $ersetzenbild, $feinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$feinlesen = preg_replace($thumbsuche, $ersetzenthumb, $feinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic= '<i>$1</i>';
+				$feinlesen = preg_replace($italicsuche, $ersetzenitalic, $feinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold= '<b>$1</b>';
+				$feinlesen = preg_replace($boldsuche, $ersetzenbold, $feinlesen);
+					
+				return $feinlesen;						}
+				
+				//Ausgabe einlesen für das Messegessystem
+				function mlesen($meinlesen) 				{
+				$meinlesen = trim($meinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
+				$meinlesen = preg_replace($linksuche, $ersetzenlink, $meinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$meinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $meinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$meinlesen = preg_replace($bildsuche, $ersetzenbild, $meinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:128px;"></a> ';
+				$meinlesen = preg_replace($thumbsuche, $ersetzenthumb, $meinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic= '<i>$1</i>';
+				$feinlesen = preg_replace($italicsuche, $ersetzenitalic, $meinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold= '<b>$1</b>';
+				$meinlesen = preg_replace($boldsuche, $ersetzenbold, $meinlesen);
+				
+				return $meinlesen;						}
 
 			
 												
@@ -135,7 +265,21 @@ else
 
 <header>Kontrolling : Hallo <?php echo "" . $_SESSION["user"] . ""; ?></header>
 
-<nav> <a title="&Uuml;bersicht" href="index.php?page=overview">&Uuml;bersicht</a> | <a title="hauptseite" href="index.php?page=main">Hauptseite</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum&sf=view">Forum</a> | <a title="Info" href="index.php?page=info">Info</a> | <a title="Benutzer" href="index.php?page=user">Benutzer</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> | <a title="Kontakt" href="index.php?page=kontakt">Kontakt</a> | <a title="Einstellungen" href="index.php?page=settings">Einstellungen</a> </nav>
+<nav> <a title="&Uuml;bersicht" href="index.php?page=overview">&Uuml;bersicht</a> | <a title="hauptseite" href="index.php?page=main">Hauptseite</a> | <a title="Server" href="index.php?page=server">Server</a> | <a title="Forum" href="index.php?page=forum&sf=view">Forum</a> 
+
+<?php
+
+ if ( $_SESSION["rang"] == "0") 
+	
+	{
+		
+		echo '| <a title="Messenger" href="index.php?page=messenger">Messenger</a>'; 
+	
+	}
+	
+?>
+	
+	| <a title="Info" href="index.php?page=info">Info</a> | <a title="Benutzer" href="index.php?page=user">Benutzer</a> | <a title="impressum" href="index.php?page=impressum">Impressum</a> | <a title="Kontakt" href="index.php?page=kontakt">Kontakt</a> | <a title="Einstellungen" href="index.php?page=settings">Einstellungen</a> </nav>
 
 <!--Main-->
 <main>
@@ -589,18 +733,18 @@ if ($_GET['page'] == "main")
 			echo "Werbung<br><br>";
 
 			$Werbung = $_SESSION["Werbung"];
-			echo "<img src=\"" . $Werbung . "\" alt=\"Werbung\">";	
+			echo slesen($Werbung);	
 			
 			echo "<br><br>Voicechat<br><br>";
 			
 			$Voicechat = $_SESSION["Voicechat"];	
-			$Voicechat = lesen($Voicechat);
+			$Voicechat = slesen($Voicechat);
 			echo $Voicechat;
 			
 			echo "<br><br>Twitchstreamer<br><br>";
 			
 			$Twitchstreamer = $_SESSION["Twitchstreamer"];	
-			$Twitchstreamer = lesen($Twitchstreamer);
+			$Twitchstreamer = slesen($Twitchstreamer);
 			echo $Twitchstreamer;
 		
 		echo "</div>";
@@ -624,7 +768,7 @@ if ($_GET['page'] == "main")
 					echo "<legend>Inhalt der Rechten Spalte</legend>";
 		
 					//Werbung wird eventuell noch weiter angepasst werden 
-					echo "<br>Werbung: <br><img src=\"" . $Werbung . "\" alt=\"Werbung\"><br><textarea type=\"text\" name=\"Werbung\" placeholder=\"Werbung\" style=\"width:300px; height:100px;\">" . editieren($Werbung) . "</textarea>";
+					echo "<br>Werbung: <br>" . slesen($Werbung) . "<br><textarea type=\"text\" name=\"Werbung\" placeholder=\"Werbung\" style=\"width:300px; height:100px;\">" . editieren($Werbung) . "</textarea>";
 					echo "<br>Voicechat: <br><textarea type=\"text\" name=\"Voicechat\" placeholder=\"Voicechat\" style=\"width:300px; height:400px;\">" . editieren($Voicechat) . "</textarea>";
 					echo "<br>Twitchstreamer: <br><textarea type=\"text\" name=\"Twitchstreamer\" placeholder=\"Twitchstreamer\" style=\"width:300px; height:400px;\">" . editieren($Twitchstreamer) . "</textarea>";
 					echo "</fieldset>";
@@ -1007,7 +1151,295 @@ if ($_GET['page'] == "overview")
 		mysqli_free_result($sammlung);
 	
 	}
+	
+	/////////////////
+	/// IMPRESSUM ///
+	/////////////////
+	
+if ($_GET['page'] == "impressum")
+	
+	{
+		
+		$sql = "";
+		$sql = "CREATE TABLE IF NOT EXISTS el . impressum (
+														ID INT(1) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+														text LONGTEXT NOT NULL
+														)";
+														
+		mysqli_query($db_link, $sql);
+		
+		if (!isset($_POST["impressum"]) AND !isset($_POST["impressumedit"]))
+			
+			{
+				
+																
+				$sql = "";
+				$sql = "SELECT ID, text FROM el . impressum WHERE ID=1";
+				
+				$impressum = mysqli_query($db_link, $sql);
+				
+				if (mysqli_num_rows($impressum) > 0) 
+					
+					{
+					// output data of each row
+					while($row = mysqli_fetch_assoc($impressum)) 
+						
+						{
+							
+							echo '<article>
+									<div class="titel"><b id="titel">Impressum</b></div>
+									<div class="inhalt"><br>
+									
+									<form action="index.php?page=impressum" method="post">
+												<textarea type="text" name="text" placeholder="Impressum" style="width:800px; height:1200px;">' . editieren($row["text"]) . '</textarea>
+												<br><br>
+												<input class="button button1" name="impressumedit" type="submit" value="Impressum editieren" >
+															
+												</form>
 
+									</div>
+									<wbr></wbr><br>
+									</article>';
+							
+						}
+						
+					}
+					
+				else 
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Kein Impressum gefunden!</b></div>
+									<div class="inhalt"><br><br>
+									
+									Impressum erstellen!
+									
+									<br><br>
+									
+									<form action="index.php?page=impressum" method="post">
+									
+												Impressums Text:<br>
+												
+												<textarea type="text" name="text" placeholder="Impressum" style="width:800px; height:1200px;"></textarea>
+												
+												<br><br>
+												<input class="button button1" name="impressum" type="submit" value="Impressum erstellen" >
+															
+												</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+		
+			}
+			
+	}
+	
+		
+	////////////
+	/// INFO ///
+	////////////
+	
+if ($_GET['page'] == "info")
+	
+	{
+		
+		$sql = "";
+		$sql = "CREATE TABLE IF NOT EXISTS el . info (
+														ID INT(1) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+														text LONGTEXT NOT NULL
+														)";
+														
+		mysqli_query($db_link, $sql);
+		
+		if (!isset($_POST["info"]) AND !isset($_POST["infoedit"]))
+			
+			{
+				
+																
+				$sql = "";
+				$sql = "SELECT ID, text FROM el . info WHERE ID=1";
+				
+				$info = mysqli_query($db_link, $sql);
+				
+				if (mysqli_num_rows($info) > 0) 
+					
+					{
+					// output data of each row
+					while($row = mysqli_fetch_assoc($info)) 
+						
+						{
+							
+							echo '<article>
+									<div class="titel"><b id="titel">Info</b></div>
+									<div class="inhalt"><br>
+									
+									<form action="index.php?page=info" method="post">
+												<textarea type="text" name="text" placeholder="Info" style="width:800px; height:1200px;">' . editieren($row["text"]) . '</textarea>
+												<br><br>
+												<input class="button button1" name="infoedit" type="submit" value="Info editieren" >
+															
+												</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+							
+						}
+						
+					}
+					
+				else 
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Keine Info gefunden!</b></div>
+									<div class="inhalt"><br>
+									
+									Info erstellen?
+									
+									<br>
+									
+									<form action="index.php?page=info" method="post">
+									
+												Info Text:<br>
+												
+												<textarea type="text" name="text" placeholder="Info" style="width:800px; height:1200px;"></textarea>
+												
+												<br><br>
+												<input class="button button1" name="info" type="submit" value="Info erstellen" >
+															
+												</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+		
+			}
+			
+		if (isset($_POST["info"]) AND !isset($_POST["infoedit"]))
+			
+			{
+			
+				$text = schreiben($_POST["text"]);
+				
+				$sql = "";
+				$sql = "INSERT INTO el . info (text)
+						VALUES ('" . $text . "')";
+				
+				if(mysqli_query($db_link, $sql))
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">info erfolgreich in DB erstellt.</b></div>
+									<div class="inhalt">
+									
+									<br><br>
+									
+									<form action="index.php?page=info" method="post">
+									
+									<input class="button button1" type="submit" value="Weiter" >
+															
+									</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+					
+				else
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Info NICHT erfolgreich in DB erstellt!</b></div>
+									<div class="inhalt"><br><br>
+									
+									Fehler : ' . $sql . '<br>' . mysqli_error($db_link) . ' 
+									
+									<br><br>
+									
+									<form action="index.php?page=info" method="post">
+									
+									<input class="button button1" type="submit" value="Weiter" >
+															
+									</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+			
+			}
+			
+		if (isset($_POST["infoedit"]) AND !isset($_POST["info"]))
+			
+			{
+				
+				$text = schreiben($_POST["text"]);
+			
+				$sql = "";
+				$sql = "UPDATE el . info SET text='" . $text . "' WHERE ID=1";
+				
+				if(mysqli_query($db_link, $sql))
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Info erfolgreich editiert.</b></div>
+									<div class="inhalt">
+									
+									<br><br>
+									
+									<form action="index.php?page=info" method="post">
+									
+									<input class="button button1" type="submit" value="Weiter" >
+															
+									</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+					
+				else
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Info NICHT erfolgreich editiert!</b></div>
+									<div class="inhalt"><br><br>
+									
+									Fehler : ' . $sql . '<br>' . mysqli_error($db_link) . ' 
+									
+									<br><br>
+									
+									<form action="index.php?page=info" method="post">
+									
+									<input class="button button1" type="submit" value="Weiter" >
+															
+									</form>
+
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
+			
+			}
+		
+	}
+	
 	// Liste Alle benutzer auf.
 if ($_GET['page'] == "user")
 	
@@ -5326,7 +5758,7 @@ if ($_GET['page'] == "forum")
 															<br>
 															<br>
 																		
-															' . lesen($row["text"]) . '
+															' . flesen($row["text"]) . '
 																		
 															<br><br>
 															<form method="post">
@@ -5763,7 +6195,7 @@ if ($_GET['page'] == "forum")
 															$threatID = $row["threatID"];
 															$subthreatID = $row["subthreatID"];
 															$intern = $row["intern"];
-															$text = lesen($row["text"]);
+															$text = flesen($row["text"]);
 															$ersteller = $row["ersteller"];
 															$erstellerID = $row["erstellerID"];
 															
@@ -6160,7 +6592,222 @@ if ($_GET['page'] == "forum")
 		
 	}
 
+if ($_GET['page'] == "messenger" AND $_SESSION["rang"] == "0")
 	
+	{
+
+	$sql = "CREATE TABLE IF NOT EXISTS el . messenger 
+	(
+	ID INT(10) AUTO_INCREMENT,
+	reciver TEXT NOT NULL,
+	reciverID INT(10) NOT NULL,
+	sender TEXT NOT NULL,
+	senderID INT(10) NOT NULL,
+	title TEXT NOT NULL,
+	text TEXT NOT NULL,
+	zeitstempel TIMESTAMP,
+	seen INT(1),
+	PRIMARY KEY (ID)	
+	)";
+	
+	mysqli_query($db_link, $sql);
+	
+	//Posts zählen
+				
+	$zsql = "SELECT COUNT(ID) FROM el . messenger";
+	$zergebnis = mysqli_query($db_forum, $zsql);
+										
+	$anzahl = mysqli_fetch_assoc($zergebnis);
+		
+	$posts = $anzahl["COUNT(ID)"];
+										
+										
+	if ($posts > $eintragsAnzahl)
+										
+		{
+												
+			if (!isset($_GET['seite']))
+													
+				{
+													
+					$seite = 1;
+													
+				}
+												
+			if (isset($_GET['seite']))
+													
+				{
+													
+					$seite = $_GET['seite'];
+														
+				}
+												
+			$offset = $seite * $eintragsAnzahl - $eintragsAnzahl;
+
+												
+			$seiten = $posts / $eintragsAnzahl;
+												
+			// Maximale Seiten ermittel und anschließend ggf. die tatsächliche Seitenanzahl ermitteln wenn float.
+			for ($y = 0; $y <= $seiten; $y++) {
+													
+			$maxseiten = $y;
+													
+			}
+												
+		//Float Seitenanzahl aufrunden zu einer INTIGER Zahl, oder so... whayne cares!
+			if ($maxseiten < $seiten)
+													
+				{
+														
+					$maxseiten = $maxseiten + 1;
+
+				}
+												
+			// uuund wieder sollte ein Overflow über die &seite $_GET Eingabe unterbunden worden sein.
+			if (isset($_GET['seite']) AND $_GET['seite'] > $maxseiten)
+													
+				{
+														
+					$seite = $maxseiten;
+														
+				}
+												
+			$minseiten = $seite - 1;
+												
+			$min = $minseiten - 3;
+												
+			$maxdreier = $seite + 3;
+
+			echo '
+			<form method="post">
+
+			';
+												
+												
+			if (1 <= $min)
+													
+				{
+														
+					echo '
+						<input class="button button1" formaction="index.php?page=messenger&seite=1" type="submit" name="view" value="&laquo;"> 
+						';
+														
+						for ($x = $minseiten - 2; $x <= $minseiten; $x++) {
+														
+						echo '
+						<input class="button button1" formaction="index.php?page=forum&p=view&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+						';
+						}
+														
+				}
+													
+			else
+													
+				{
+														
+					for ($x = 1; $x <= $minseiten; $x++) {
+														
+					echo '
+					<input class="button button1" formaction="index.php?page=messenger&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+					';
+					}
+														
+				}
+												
+			echo $seite;
+														
+			if ($maxdreier < $maxseiten)
+													
+				{
+														
+														
+					for ($x = $seite + 1; $x <= $maxdreier; $x++) {
+														
+						echo '
+							<input class="button button1" formaction="index.php?page=messenger&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+							';
+					}
+						
+					echo '
+					<input class="button button1" formaction="index.php?page=messenger&seite=' . $maxseiten . '" type="submit" name="view" value="&raquo;"> 
+					';
+														
+				}
+													
+			else
+													
+				{												
+														
+					for ($x = $seite + 1; $x <= $maxseiten; $x++) {
+														
+					echo '
+					<input class="button button1" formaction="index.php?page=messenger&seite=' . $x . '" type="submit" name="view" value="' . $x . '"> 
+					';
+				}
+														
+			}
+												
+			echo '									
+			</form>';
+												
+			$sql = "";
+			$sql = "SELECT ID, reciver, reciverID, sender, senderID, title, text, zeitstempel, seen FROM el . messenger ORDER BY zeitstempel DESC LIMIT " . $eintragsAnzahl . " OFFSET " . $offset . "";
+		}
+										
+		// Wenn Einträge kleiner oder gleich der maximalen Eintragsanzahl entsprechen standart SLQ query ausführen ohne Limitierung 
+		if ($posts <= $eintragsAnzahl)
+											
+			{
+												
+				$sql = "";
+				$sql = "SELECT ID, reciver, reciverID, sender, senderID, title, text, zeitstempel, seen FROM el . messenger ORDER BY zeitstempel DESC";
+												
+			}	
+										
+		//Ende des Zählens
+	
+	$erg = mysqli_query($db_link, $sql);
+	
+	if (mysqli_num_rows($erg) > 0)
+		
+		{
+			
+			while ($row = mysqli_fetch_assoc($erg)) {
+			
+			echo '<article>
+				<div class="titel"><b id="titel">' . $row["ID"] . ' | ' . $row["title"] . '</b></div>
+				<div class="inhalt"><br>
+				
+				Gesendet von: <a class="navi navi1" title="' . $row["reciver"] . '" href="index.php?page=benutzerinfo&benutzer=' . $row["reciver"] . '&userID=' . $row["reciverID"] . '">' . $row["reciver"] . '</a><br>Empfangen von: <a class="navi navi1" title="' . $row["sender"] . '" href="index.php?page=benutzerinfo&benutzer=' . $row["sender"] . '&userID=' . $row["senderID"] . '">' . $row["sender"] . '</a><br>
+				Gesendet am: ' . $row["zeitstempel"] . ' | Gesehen vom Empfänger: ' . $row["seen"] . ' (1=Ja/0=Nein)<br><br>
+				' . mlesen($row["text"]) . '
+				<br>
+				</div>
+				<wbr></wbr><br>
+				</article>';
+			
+			}
+			
+		}
+		
+	else
+		
+		{
+			
+			echo '<article>
+				<div class="titel"><b id="titel">Messanger</b></div>
+				<div class="inhalt"><br><br>
+				Keine Nachrichten vor gefunden.			
+								
+				<br><br>
+				</div>
+				<wbr></wbr><br>
+				</article>';
+			
+		}
+
+	}
+		
 if ($_GET['page'] == "settings")
 	
 	{

@@ -59,19 +59,150 @@ $_SESSION["rang"] = "4";
 				$edit = trim($edit);
 				return $edit;							}
 				
-				//Ausgabe einlesen
+				//Ausgabe einlesen für Content der Mainseite
 				function lesen($einlesen) 				{
 				$einlesen = trim($einlesen);
 				//links suchen und anklickbar machen dank BBCode
 				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
 				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
 				$einlesen = preg_replace($linksuche, $ersetzenlink, $einlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$einlesen = preg_replace($linksuchetext, $ersetzenlinktext, $einlesen);
 					
 				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
 				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
 				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
 				$einlesen = preg_replace($bildsuche, $ersetzenbild, $einlesen);
-				return $einlesen;						}		
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$einlesen = preg_replace($thumbsuche, $ersetzenthumb, $einlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic = '<i>$1</i>';
+				$einlesen = preg_replace($italicsuche, $ersetzenitalic, $einlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold = '<b>$1</b>';
+				$einlesen = preg_replace($boldsuche, $ersetzenbold, $einlesen);
+				
+				return $einlesen;						}
+				
+				//Ausgabe einlesen für Spaltencontent der Mainseite
+				function slesen($seinlesen) 				{
+				$seinlesen = trim($seinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="whitelink whitelink1" href="$1" target="_blank">$1</a> ';
+				$seinlesen = preg_replace($linksuche, $ersetzenlink, $seinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="whitelink whitelink1" href="$1" target="_blank">$3</a> ';
+				$seinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $seinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$seinlesen = preg_replace($bildsuche, $ersetzenbild, $seinlesen);
+				
+				// Bildwerbung anzeigen lassenmit Bild das auf Seite verweist
+				$adssuche = '/\[ADS=((https?|ftps?.*).*)\]+((https?|ftps?.*).*)\[\/ADS\]/im';
+				$ersetzenads = '<a href="$1" target="_blank"><img src="$3" alt="Bild" border="0"></a>';
+				$seinlesen = preg_replace($adssuche, $ersetzenads, $seinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$seinlesen = preg_replace($thumbsuche, $ersetzenthumb, $seinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic = '<i>$1</i>';
+				$seinlesen = preg_replace($italicsuche, $ersetzenitalic, $seinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold = '<b>$1</b>';
+				$seinlesen = preg_replace($boldsuche, $ersetzenbold, $seinlesen);
+				
+				return $seinlesen;						}
+				
+				//Ausgabe einlesen für das Forum
+				function flesen($feinlesen) 				{
+				$feinlesen = trim($feinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
+				$feinlesen = preg_replace($linksuche, $ersetzenlink, $feinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$feinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $feinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$feinlesen = preg_replace($bildsuche, $ersetzenbild, $feinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:200px;"></a> ';
+				$feinlesen = preg_replace($thumbsuche, $ersetzenthumb, $feinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic= '<i>$1</i>';
+				$feinlesen = preg_replace($italicsuche, $ersetzenitalic, $feinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold= '<b>$1</b>';
+				$feinlesen = preg_replace($boldsuche, $ersetzenbold, $feinlesen);
+					
+				return $feinlesen;						}
+				
+				//Ausgabe einlesen für das Messegessystem
+				function mlesen($meinlesen) 				{
+				$meinlesen = trim($meinlesen);
+				//links suchen und anklickbar machen dank BBCode
+				$linksuche = '/\[URL\]+((https?|ftps?.*).*)\[\/URL\]/im';
+				$ersetzenlink = '<a class="navi navi1" href="$1" target="_blank">$1</a> ';
+				$meinlesen = preg_replace($linksuche, $ersetzenlink, $meinlesen);
+				
+				//links suchen und anklickbar machen dank BBCode mit eigenem Linktext
+				$linksuchetext = '/\[URL=((https?|ftps?.*).*)\]+(.*)\[\/URL\]/im';
+				$ersetzenlinktext = '<a class="navi navi1" href="$1" target="_blank">$3</a> ';
+				$meinlesen = preg_replace($linksuchetext, $ersetzenlinktext, $meinlesen);
+					
+				// Bilder anzeigen lassen und als Link einfuegen unterstuetzt werden gif,jpg,png Bildformate dank BBCode
+				$bildsuche = '/\[IMG\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/IMG\]/im';
+				$ersetzenbild = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0"></a> ';
+				$meinlesen = preg_replace($bildsuche, $ersetzenbild, $meinlesen);
+				
+				// Bilder als vereinheitlichte Thumnbnails anzeigen
+				$thumbsuche = '/\[THUMB\]+((https?|ftps?.*).*(?=png\b|tiff?\b|gif\b|jpe?g\b)\w{2,4})\[\/THUMB\]/im';
+				$ersetzenthumb = '<a href="$1" target="_blank"><img src="$1" alt="Bild" border="0" style="width:128px;"></a> ';
+				$meinlesen = preg_replace($thumbsuche, $ersetzenthumb, $meinlesen);
+				
+				// Text italic formatieren
+				$italicsuche = '/\[I\](.*)\[\/I\]/im';
+				$ersetzenitalic= '<i>$1</i>';
+				$feinlesen = preg_replace($italicsuche, $ersetzenitalic, $meinlesen);
+				
+				// Text bold (Fett) formatieren
+				$boldsuche = '/\[B\](.*)\[\/B\]/im';
+				$ersetzenbold= '<b>$1</b>';
+				$meinlesen = preg_replace($boldsuche, $ersetzenbold, $meinlesen);
+				
+				return $meinlesen;						}
 	
 
 //Die Seiteneinstellungen abgreifen
@@ -103,9 +234,6 @@ else
 		
 	}
 	
-	
-	echo "" . $spalteLinks . "" . $spalteMain . "" . $spalteRechts . "" . $eintragsAnzahl . "";
-	
 mysqli_free_result($ergebniSS);
 ?>
 <!DOCTYPE html>
@@ -131,7 +259,7 @@ mysqli_free_result($ergebniSS);
 <!--Main-->
 <main>
 
-<header><img src="img/el_logo.jpg" alt="" border="0" width="960" height="370"></header>
+<header><img src="img/titellogo.png" alt="titellogo" border="0" width="960" height="370"></header>
 
 
 <!--//Dynamische LinknavLeiste -->
@@ -196,8 +324,8 @@ else
 	
 		while ($row = mysqli_fetch_assoc($ergebnis)) {
 		
-			$kurzinfos = $row["kurzinfos"];
-			$events = $row["events"];
+			$kurzinfos = slesen($row["kurzinfos"]);
+			$events = slesen($row["events"]);
 		
 													}
 		}
@@ -601,9 +729,18 @@ if (!isset($page))
   if ($_GET['page'] == "server")
 
   {
-
+	
+	echo '<article>
+				<div class="titel"><b id="titel">Server</b></div>
+				<div class="inhalt">
+						
+				...wo?
+				
+				</div>
+				<wbr></wbr><br>
+				</article>';
    ?>
-  Server<br>
+  
   <!--<br>
   <img class="server_images" src="img/rust_server.png" alt="RUST_SERVER" border="0" width="728" height="90"><br>
   <br>
@@ -626,38 +763,6 @@ if (!isset($page))
 
 	{
 		
-		
-		//einträge zählen
-		$fcounter = "SELECT COUNT(ID), COUNT(subfid) FROM forum";
-		$fpostanzahl = mysqli_query($db_link, $fcounter);
-		$fanzahl = mysqli_fetch_assoc($fpostanzahl);
-		
-		$FINDEX = $fanzahl["COUNT(ID)"];
-		$SUBFINDEX = $fanzahl["COUNT(subfid)"];
-		
-		$sql = "";
-		
-		mysqli_free_result($fpostanzahl);
-		
-		$sql = "SELECT ID, subfid FROM Forum";
-		$result = mysqli_query($db_link, $sql);
-		
-		echo '<article>
-			<div class="titel"><b id="titel">Forum</b></div>
-			<div class="inhalt">
-						
-			Unterforen: ' . $SUBFINDEX . '
-						
-			</div>
-			<wbr></wbr><br>
-			</article>';
-		
-		if ($SUBFINDEX > 0) 
-			{
-			// ForumIndex einlesen
-			while($row = mysqli_fetch_assoc($result)) {
-			
-			echo "ID: " . $row["ID"]. " - Foren: " . $row["subfid"]. "<br>";
 				echo '<article>
 				<div class="titel"><b id="titel"></b></div>
 				<div class="inhalt">
@@ -667,35 +772,53 @@ if (!isset($page))
 				</div>
 				<wbr></wbr><br>
 				</article>';
-				
-				
-				}
-			} 
-		else 
-			{
-				echo '<article>
-				<div class="titel"><b id="titel"></b></div>
-				<div class="inhalt">
-						
-				...wo?
-				
-				</div>
-				<wbr></wbr><br>
-				</article>';
-			}
-		
 		
 	}
 
   if ($_GET['page'] == "info")
 
 	{
+   
+		$sql = "";
+				$sql = "SELECT ID, text FROM el . info WHERE ID=1";
+				
+				$info = mysqli_query($db_link, $sql);
+				
+				if (mysqli_num_rows($info) > 0) 
+					
+					{
+					// output data of each row
+					while($row = mysqli_fetch_assoc($info)) 
+						
+						{
+							
+							echo '<article>
+									<div class="titel"><b id="titel">info</b></div>
+									<div class="inhalt"><br>
+									' . lesen($row["text"]) . '
+									</div>
+									<wbr></wbr><br>
+									</article>';
+							
+						}
+						
+					}
+					
+				else 
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Keine Info gefunden!</b></div>
+									<div class="inhalt"><br>
+									
+									Die Info wird noch erstellt.
 
-		?>
-		ClanInfo<br>
-		<br>
-		ClanInfoPage.
-		<?php
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
 
 	}
   
@@ -1099,7 +1222,7 @@ if (!isset($page))
 				E-Mail2:<br> <input type="email" name="email2" placeholder="name@xyz.welt" size="50" maxlength="256" required><br>
 				Geburtstag:<br> <input type="text" name="gtag" placeholder="TT" size="2" min="01" max="31" maxlength="2" required>.<input type="text" name="gmon" placeholder="MM" size="2" min="01" max="12" maxlength="2" required>.<input type="text" name="gjahr" placeholder="JJJJ" size="4" min= "1900" maxlength="4" required><br><br>
 				
-				<p>* Sie haben gewissenhaft unsere <a class="navi navi1" title="Datenschutzerklaerung" target="_blank" href="nbedingung.php">Datenschutzerklärung</a> und <a class="navi navi1" title="Nutzungsbedingung" target="_blank" href="nbeding.php">Nutzungsbedingungen</a> gelesen und sind über 14 Jahre alt.</p> 
+				<p>* Sie haben gewissenhaft unsere <a class="navi navi1" title="Datenschutzerklaerung" target="_blank" href="DSGVO.php">Datenschutzerklärung</a> und <a class="navi navi1" title="Nutzungsbedingung" target="_blank" href="nbeding.php">Nutzungsbedingungen</a> gelesen und sind über 16 Jahre alt.</p> 
 				
 				<input type="checkbox" name="AllesGelesen" value="read"> * Ich bin mit den oben Genannten Bedingungen und Vorraussetzungen einverstanden! <br>
 				
@@ -1242,7 +1365,7 @@ if (!isset($page))
 					
 					
 				$heutigesjahr = date ("Y");
-				$minderjahr = $heutigesjahr - 14;
+				$minderjahr = $heutigesjahr - 16;
 				
 				$maxjahr = $heutigesjahr - 100; 
 				
@@ -1251,7 +1374,7 @@ if (!isset($page))
 					
 					{
 						
-						$errMSG8 = "Zugang für unter 14 Jährige kann NICHT gestattet werden! Geh raus, Spielen!<br>";
+						$errMSG8 = "Zugang für unter 16 Jährige kann NICHT gestattet werden! Geh raus, Spielen!<br>";
 						$errorhandler = $errorhandler + 1;
 						
 					}
@@ -1463,55 +1586,73 @@ if (!isset($page))
 					
 		}
 
+	/////////////////
+	/// IMPRESSUM ///
+	/////////////////
 	
-
     if ($_GET['page'] == "impressum")
 
   {
 
    //LANG LEBE IMPERATOR IMPRESSUM!
    
-   								echo '<article>
-								<div class="titel"><b id="titel">Impressum</b></div>
-								<div class="inhalt">
-								
-								<p>Aus Selbstschutzgründen wird lediglich eine E-Mail zur Verfügung gestellt,<br>
-die für Private und Geschäftliche belänge verwendet werden darf, sofehrn diese KEINE Werbung oder Spam beinhalten!</p>
+$sql = "";
+				$sql = "SELECT ID, text FROM el . impressum WHERE ID=1";
+				
+				$impressum = mysqli_query($db_link, $sql);
+				
+				if (mysqli_num_rows($impressum) > 0) 
+					
+					{
+					// output data of each row
+					while($row = mysqli_fetch_assoc($impressum)) 
+						
+						{
+							
+							echo '<article>
+									<div class="titel"><b id="titel">Impressum</b></div>
+									<div class="inhalt"><br>
+									' . lesen($row["text"]) . '
+									</div>
+									<wbr></wbr><br>
+									</article>';
+							
+						}
+						
+					}
+					
+				else 
+					
+					{
+						
+						echo '<article>
+									<div class="titel"><b id="titel">Kein Impressum gefunden!</b></div>
+									<div class="inhalt"><br>									
+									Das Impressum wird noch erstellt.
 
-<p><strong>Kontakt:</strong> <br>
-E-Mail: <a href="mailto:sonictechnologic@gmail.com">sonictechnologic@gmail.com</a><br></p>
-
-<p><strong>Haftungsausschluss: </strong><br><br><strong>Haftung für Inhalte</strong><br><br>
-Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.<br><br><strong>Haftung für Links</strong><br><br>
-Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.<br><br><strong>Urheberrecht</strong><br><br>
-Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.<br><br><strong>Datenschutz</strong><br><br>
-Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder eMail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben. <br>
-Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
-Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.<br>
-<br><br><strong>Google Analytics</strong><br><br>
-Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. ("Google"). Google Analytics verwendet sog. "Cookies", Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) wird an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Sie können die Installation der Cookies durch eine entsprechende Einstellung Ihrer Browser Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.<br><br><strong>Google AdSense</strong><br><br>
-Diese Website benutzt Google Adsense, einen Webanzeigendienst der Google Inc., USA ("Google"). Google Adsense verwendet sog. "Cookies" (Textdateien), die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Google Adsense verwendet auch sog. "Web Beacons" (kleine unsichtbare Grafiken) zur Sammlung von Informationen. Durch die Verwendung des Web Beacons können einfache Aktionen wie der Besucherverkehr auf der Webseite aufgezeichnet und gesammelt werden. Die durch den Cookie und/oder Web Beacon erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) werden an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website im Hinblick auf die Anzeigen auszuwerten, um Reports über die Websiteaktivitäten und Anzeigen für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Das Speichern von Cookies auf Ihrer Festplatte und die Anzeige von Web Beacons können Sie verhindern, indem Sie in Ihren Browser-Einstellungen "keine Cookies akzeptieren" wählen (Im MS Internet-Explorer unter "Extras > Internetoptionen > Datenschutz > Einstellung"; im Firefox unter "Extras > Einstellungen > Datenschutz > Cookies"); wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.</p>
-
-								</div>
-								<wbr></wbr><br>
-								</article>';
+									</div>
+									<wbr></wbr><br>
+									</article>';
+						
+					}
    
 
 }
 
   
-  if ($_GET['page'] == "kontakt")
+	  if ($_GET['page'] == "kontakt")
 
-	{
+		{
 
-   ?>
-   
-  Kontakt<br>
-  <br>
-kontakt
-   
-   
-   <?php
+		   echo '<article>
+						<div class="titel"><b id="titel">Kontakt</b></div>
+						<div class="inhalt">
+								
+						...wo?
+						
+						</div>
+						<wbr></wbr><br>
+						</article>';
 		}
 	}
 //Ende der MAIN Spalte oder Mittlere Spalte
@@ -1545,11 +1686,11 @@ kontakt
 	?>
 	
 	<h2>Werbung</h2>
-    <p><?php echo "<img src=\"" . $row["Werbung"] . "\" alt=\"Werbung\">"; ?></p>
+    <p><?php echo "" . slesen($row["Werbung"]) . ""; ?></p>
     <h2>Discord</h2>
     <p><?php 
 	$Voicechat = $row["Voicechat"];
-	$Voicechat = lesen($Voicechat);
+	$Voicechat = slesen($Voicechat);
 	
 	echo $Voicechat; ?></p>
     <h2>TwitchStreamer</h2>
@@ -1558,7 +1699,7 @@ kontakt
 
 	
 	$Twitchstreamer = $row["Twitchstreamer"];
-	$Twitchstreamer = lesen($Twitchstreamer);
+	$Twitchstreamer = slesen($Twitchstreamer);
 	
 	echo $Twitchstreamer; ?></p>
 	

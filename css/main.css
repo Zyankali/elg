@@ -1,7 +1,7 @@
 body {
          background-color: black;
          background-image: url("../img/bg.png");
-         background-repeat: no-repeat;
+
          background-position: left top;
          background-attachment: fixed;
 }
@@ -176,7 +176,7 @@ text-shadow: 0 0 3px #cc0000;
 
 {
 	
-	color: #cc3300;
+	color: #ffffff;
     transition-duration: 0.3s;
 	text-shadow: 0 0 3px #ff751a;
     cursor: pointer;	
@@ -186,7 +186,7 @@ text-shadow: 0 0 3px #cc0000;
 .whitelink1:link {
 
 text-decoration: none;
-color: #1a0600;
+color: #ffffff;
 text-shadow: 0 0 3px #cc0000;
 
 
@@ -194,8 +194,8 @@ text-shadow: 0 0 3px #cc0000;
 
 .whitelink:visited {
 	text-decoration: none;
-	color: #1a0600;
-	text-shadow: 0 0 3px #cc0000;
+	color: #ffffff;
+	text-shadow: 0 0 3px #ffffff;
 
 
 
@@ -203,16 +203,16 @@ text-shadow: 0 0 3px #cc0000;
 	
 .whitelink:hover {
     text-decoration: none;
-	color: #cc3300;
-	text-shadow: 0 0 3px #cc0000;
+	color: #ffffff;
+	text-shadow: 0 0 3px #ffffff;
 
 
 	}
 	
 .whitelink1:active {
 	text-decoration: none;
-	color: #cc3300;
-	text-shadow: 0 0 3px #cc0000;
+	color: #ffffff;
+	text-shadow: 0 0 3px #ffffff;
 	
 	}	
 	
